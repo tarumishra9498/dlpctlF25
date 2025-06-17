@@ -1,5 +1,10 @@
 from ALP4 import ALP4
 import numpy as np
+import sys
+
+from PySide6 import QtWidgets
+from PySide6.QtWidgets import QMainWindow
+from ui.ui_dlpctl import Ui_MainWindow
 
 from image import ImageSeq
 
@@ -30,7 +35,29 @@ def rect_rotation_center(dmd: ALP4, framerate: int):
     input("Press Enter when done viewing animation")
 
 
+class MainWindow(QMainWindow, Ui_MainWindow):
+    dlp: ALP4 | None = None
+
+    def __init__(self) -> None:
+        super(MainWindow, self).__init__()
+        self.setupUi(self)
+        self.setWindowTitle("DLP Control")
+
+
+# TODO: Actually test this code on a Windows device
 if __name__ == "__main__":
+    app = None
+    if not QtWidgets.QApplication.instance():
+        QtWidgets.QApplication(sys.argv)
+    else:
+        app = QtWidgets.QApplication.instance()
+
+    window = MainWindow()
+
+    window.show()
+    if app:
+        app.exec()
+
     # Load dll
     dmd = ALP4(version="4.1")
 
