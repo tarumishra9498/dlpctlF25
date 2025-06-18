@@ -1,4 +1,4 @@
-from ALP4 import ALP4
+from ALP4 import ALP4, ALPError
 import numpy as np
 import sys
 
@@ -44,7 +44,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle("DLP Control")
 
         self.dlp = ALP4(version="4.1")
-        self.dlp.Initialize()
+
+        # TODO: Make it possible to reconnect in UI without restarting app
+        try:
+            self.dlp.Initialize()
+        except ALPError:
+            print("No DLP Found")
 
     def __del__(self) -> None:
         if self.dlp:
