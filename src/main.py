@@ -57,7 +57,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.dlp.Free()
 
 
-# TODO: Actually test this code on a Windows device
 if __name__ == "__main__":
     app = None
     if not QtWidgets.QApplication.instance():
