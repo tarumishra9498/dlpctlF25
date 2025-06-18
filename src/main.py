@@ -43,6 +43,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowTitle("DLP Control")
 
+        self.dlp = ALP4(version="4.1")
+        self.dlp.Initialize()
+
+    def __del__(self) -> None:
+        if self.dlp:
+            self.dlp.Halt()
+            self.dlp.Free()
+
 
 # TODO: Actually test this code on a Windows device
 if __name__ == "__main__":
@@ -57,17 +65,3 @@ if __name__ == "__main__":
     window.show()
     if app:
         app.exec()
-
-    # Load dll
-    dmd = ALP4(version="4.1")
-
-    # Initialize connection to DMD
-    dmd.Initialize()
-
-    rect_rotation_center(dmd=dmd, framerate=1000)
-
-    # Stop device
-    dmd.Halt()
-
-    # De-allocate device
-    dmd.Free()
