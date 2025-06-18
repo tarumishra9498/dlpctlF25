@@ -61,7 +61,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 if __name__ == "__main__":
     app = None
     if not QtWidgets.QApplication.instance():
-        QtWidgets.QApplication(sys.argv)
+        app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
 
