@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QMainWindow
 from ALP4 import ALP4, ALPError
 
 from pypylon import pylon
-from pypylon.pylon import InstantCamera
+from pypylon.pylon import InstantCamera, RuntimeException
 
 from ui.ui_dlpctl import Ui_MainWindow
 
@@ -49,9 +49,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowTitle("DLP Control")
 
-        camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())
-        camera.open()
-        print("Using Basler Camera: ", camera.GetDeviceInfo().GetModelName())
+        # TODO: Make it possible to reconnect in UI without restarting app
+        try:
+            self.camera = pylon.InstantCamera(
+                pylon.TlFactory.GetInstance().CreateFirstDevice()
+            )
+            self.camera.open()
+            print("Using Basler Camera: ", self.camera.GetDeviceInfo().GetModelName())
+        except RuntimeException:
+            print("No Basler Camera found")
 
         self.dlp = ALP4(version="4.1")
 
