@@ -33,7 +33,7 @@
        <bool>false</bool>
       </property>
       <property name="frameShape">
-       <enum>QFrame::Box</enum>
+       <enum>QFrame::Shape::Box</enum>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="10,0,4">
        <property name="spacing">
@@ -46,7 +46,6 @@
            <property name="font">
             <font>
              <pointsize>10</pointsize>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
@@ -54,31 +53,31 @@
             <string>Video</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignCenter</set>
+            <set>Qt::AlignmentFlag::AlignCenter</set>
            </property>
           </widget>
          </item>
          <item>
           <widget class="Line" name="line_2">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QWidget" name="widget_2" native="true"/>
+          <widget class="QWidget" name="video_placeholder" native="true"/>
          </item>
          <item>
           <widget class="Line" name="line_3">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QSlider" name="video_slider">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -119,7 +118,7 @@
        <item>
         <widget class="Line" name="line">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Orientation::Vertical</enum>
          </property>
         </widget>
        </item>
@@ -130,7 +129,6 @@
            <property name="font">
             <font>
              <pointsize>10</pointsize>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
@@ -138,14 +136,14 @@
             <string>Tools</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignCenter</set>
+            <set>Qt::AlignmentFlag::AlignCenter</set>
            </property>
           </widget>
          </item>
          <item>
           <widget class="Line" name="line_4">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -154,12 +152,11 @@
            <property name="font">
             <font>
              <pointsize>10</pointsize>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
            <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
+            <enum>Qt::LayoutDirection::LeftToRight</enum>
            </property>
            <property name="currentIndex">
             <number>0</number>
@@ -176,7 +173,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -184,7 +180,7 @@
                   <string>OpenCV Filter</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignCenter</set>
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -198,7 +194,7 @@
                <item row="1" column="0" colspan="2">
                 <widget class="QSlider" name="horizontalSlider">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -211,7 +207,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -219,7 +214,7 @@
                   <string>OpenCV Filter</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignCenter</set>
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -233,7 +228,7 @@
                <item row="1" column="0" colspan="2">
                 <widget class="QSlider" name="horizontalSlider_2">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -246,7 +241,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -254,7 +248,7 @@
                   <string>OpenCV Filter</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignCenter</set>
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -268,7 +262,7 @@
                <item row="1" column="0" colspan="2">
                 <widget class="QSlider" name="horizontalSlider_3">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -281,7 +275,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -289,7 +282,7 @@
                   <string>OpenCV Filter</string>
                  </property>
                  <property name="alignment">
-                  <set>Qt::AlignCenter</set>
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -303,7 +296,7 @@
                <item row="1" column="0" colspan="2">
                 <widget class="QSlider" name="horizontalSlider_4">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -336,7 +329,7 @@
      <x>0</x>
      <y>0</y>
      <width>1135</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

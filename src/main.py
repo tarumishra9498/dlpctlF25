@@ -1,9 +1,14 @@
-from ALP4 import ALP4, ALPError
 import numpy as np
 import sys
 
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMainWindow
+
+from ALP4 import ALP4, ALPError
+
+from pypylon import pylon
+from pypylon.pylon import InstantCamera
+
 from ui.ui_dlpctl import Ui_MainWindow
 
 from image import ImageSeq
@@ -36,12 +41,17 @@ def rect_rotation_center(dmd: ALP4, framerate: int):
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
+    camera: InstantCamera | None = None
     dlp: ALP4 | None = None
 
     def __init__(self) -> None:
         super(MainWindow, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("DLP Control")
+
+        camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())
+        camera.open()
+        print("Using Basler Camera: ", camera.GetDeviceInfo().GetModelName())
 
         self.dlp = ALP4(version="4.1")
 
@@ -52,6 +62,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print("No DLP Found")
 
     def __del__(self) -> None:
+        if self.camera:
+            self.camera.close()
+
         if self.dlp:
             self.dlp.Halt()
             self.dlp.Free()
