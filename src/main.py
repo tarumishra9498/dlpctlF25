@@ -89,7 +89,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if grab.GrabSucceeded():
                 img: NDArray = grab.GetArray()
                 print(f"img.shape: {img.shape}")
-            self.camera.Close()
 
 
 if __name__ == "__main__":
