@@ -55,6 +55,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             )
             print("Using Basler Camera: ", self.camera.GetDeviceInfo().GetModelName())
         except RuntimeException:
+            self.camera = None
             print("No Basler Camera found")
 
         self.capture_timer: QTimer = QTimer(self)
@@ -62,29 +63,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         CAPTURE_INTERVAL = 1000 // 30
         self.capture_timer.start(CAPTURE_INTERVAL)
 
-        self.dlp: ALP4 = ALP4(version="4.1")
+        self.dlp: ALP4 | None = ALP4(version="4.1")
 
         # TODO: Make it possible to reconnect in UI without restarting app
         try:
             self.dlp.Initialize()
         except ALPError:
+            self.dlp = None
             print("No DLP Found")
 
     def __del__(self) -> None:
-        self.camera.Close()
+        if self.camera:
+            self.camera.Close()
 
-        self.dlp.Halt()
-        self.dlp.Free()
+        if self.dlp:
+            self.dlp.Halt()
+            self.dlp.Free()
 
     def camera_capture(self):
-        self.camera.Open()
-        self.camera.StartGrabbing(1)
-        timeout = 2000  # milliseconds
-        grab = self.camera.RetrieveResult(timeout, pylon.TimeoutHandling_Return)
-        if grab.GrabSucceeded():
-            img: NDArray = grab.GetArray()
-            print(f"img.shape: {img.shape}")
-        self.camera.Close()
+        if self.camera:
+            self.camera.Open()
+            self.camera.StartGrabbing(1)
+            timeout = 2000  # milliseconds
+            grab = self.camera.RetrieveResult(timeout, pylon.TimeoutHandling_Return)
+            if grab.GrabSucceeded():
+                img: NDArray = grab.GetArray()
+                print(f"img.shape: {img.shape}")
+            self.camera.Close()
 
 
 if __name__ == "__main__":
