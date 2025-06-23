@@ -1,3 +1,4 @@
+from PySide6.QtCore import QTimer
 import numpy as np
 import sys
 
@@ -6,6 +7,7 @@ from PySide6.QtWidgets import QMainWindow
 
 from ALP4 import ALP4, ALPError
 
+from numpy._typing import NDArray
 from pypylon import pylon
 from pypylon.pylon import InstantCamera, RuntimeException
 
@@ -41,9 +43,6 @@ def rect_rotation_center(dmd: ALP4, framerate: int):
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    camera: InstantCamera | None = None
-    dlp: ALP4 | None = None
-
     def __init__(self) -> None:
         super(MainWindow, self).__init__()
         self.setupUi(self)
@@ -54,12 +53,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.camera = pylon.InstantCamera(
                 pylon.TlFactory.GetInstance().CreateFirstDevice()
             )
-            self.camera.open()
             print("Using Basler Camera: ", self.camera.GetDeviceInfo().GetModelName())
         except RuntimeException:
             print("No Basler Camera found")
 
-        self.dlp = ALP4(version="4.1")
+        self.capture_timer: QTimer = QTimer(self)
+        self.capture_timer.timeout.connect(self.camera_capture)
+        CAPTURE_INTERVAL = 1000 // 30
+        self.capture_timer.start(CAPTURE_INTERVAL)
+
+        self.dlp: ALP4 = ALP4(version="4.1")
 
         # TODO: Make it possible to reconnect in UI without restarting app
         try:
@@ -68,12 +71,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print("No DLP Found")
 
     def __del__(self) -> None:
-        if self.camera:
-            self.camera.close()
+        self.camera.Close()
 
-        if self.dlp:
-            self.dlp.Halt()
-            self.dlp.Free()
+        self.dlp.Halt()
+        self.dlp.Free()
+
+    def camera_capture(self):
+        self.camera.Open()
+        self.camera.StartGrabbing(1)
+        timeout = 2000  # milliseconds
+        grab = self.camera.RetrieveResult(timeout, pylon.TimeoutHandling_Return)
+        if grab.GrabSucceeded():
+            img: NDArray = grab.GetArray()
+            print(f"img.shape: {img.shape}")
+        self.camera.Close()
 
 
 if __name__ == "__main__":
