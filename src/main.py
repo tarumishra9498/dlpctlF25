@@ -1,45 +1,14 @@
 from PySide6.QtCore import QTimer
-import numpy as np
 import sys
 
 from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMainWindow
 
-from ALP4 import ALP4, ALPError
-
-from numpy._typing import NDArray
-from pypylon import pylon
-from pypylon.pylon import InstantCamera, RuntimeException
-
 from ui.ui_dlpctl import Ui_MainWindow
 
+from camera import Camera
 from image import ImageSeq
-
-
-def rect_rotation_center(dmd: ALP4, framerate: int):
-    """
-    This function draws a rotating rectangle at `framerate` on the `dmd`
-
-    Args:
-        dmd: The DLP device/connection
-        framerate: Framerate of animation, should not exceed 1000
-    """
-    # In milliseconds
-    frametime = 1_000_000 / framerate
-
-    dmd.SeqAlloc()
-    dmd.SetTiming(pictureTime=frametime)
-
-    frame_count = 358
-    rect_image_seq = ImageSeq(200, 100, frame_count)
-
-    blank_rect = np.zeros([rect_image_seq.width, rect_image_seq.height])
-
-    rect_image_seq.image_data = [blank_rect]
-    print(rect_image_seq.image_data)
-
-    dmd.Run()
-    input("Press Enter when done viewing animation")
+from dlp import DLP
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -49,46 +18,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle("DLP Control")
 
         # TODO: Make it possible to reconnect in UI without restarting app
-        try:
-            self.camera = pylon.InstantCamera(
-                pylon.TlFactory.GetInstance().CreateFirstDevice()
-            )
-            print("Using Basler Camera: ", self.camera.GetDeviceInfo().GetModelName())
-        except RuntimeException:
-            self.camera = None
-            print("No Basler Camera found")
-
-        self.capture_timer: QTimer = QTimer(self)
-        self.capture_timer.timeout.connect(self.camera_capture)
-        CAPTURE_INTERVAL = 1000 // 30
-        self.capture_timer.start(CAPTURE_INTERVAL)
-
-        self.dlp: ALP4 | None = ALP4(version="4.1")
+        self.dlp = DLP()
 
         # TODO: Make it possible to reconnect in UI without restarting app
-        try:
-            self.dlp.Initialize()
-        except ALPError:
-            self.dlp = None
-            print("No DLP Found")
-
-    def __del__(self) -> None:
-        if self.camera:
-            self.camera.Close()
-
-        if self.dlp:
-            self.dlp.Halt()
-            self.dlp.Free()
-
-    def camera_capture(self):
-        if self.camera:
-            self.camera.Open()
-            self.camera.StartGrabbing(1)
-            timeout = 2000  # milliseconds
-            grab = self.camera.RetrieveResult(timeout, pylon.TimeoutHandling_Return)
-            if grab.GrabSucceeded():
-                img: NDArray = grab.GetArray()
-                print(f"img.shape: {img.shape}")
+        self.camera = Camera()
 
 
 if __name__ == "__main__":
