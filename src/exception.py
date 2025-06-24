@@ -1,0 +1,2 @@
+class DlpctlException(Exception):
+    pass

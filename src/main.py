@@ -9,6 +9,7 @@ from ui.ui_dlpctl import Ui_MainWindow
 from camera import Camera
 from image import ImageSeq
 from dlp import DLP
+from exception import DlpctlException
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -17,11 +18,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowTitle("DLP Control")
 
-        # TODO: Make it possible to reconnect in UI without restarting app
-        self.dlp = DLP()
+        self.dlp: DLP | None
+        self.camera: Camera | None
 
         # TODO: Make it possible to reconnect in UI without restarting app
-        self.camera = Camera()
+
+        try:
+            self.dlp = DLP()
+        except DlpctlException:
+            self.dlp = None
+
+        try:
+            self.camera = Camera()
+        except DlpctlException:
+            self.camera = None
 
 
 if __name__ == "__main__":

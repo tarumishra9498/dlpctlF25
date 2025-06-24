@@ -1,5 +1,7 @@
 from ALP4 import ALP4, ALPError
 
+from exception import DlpctlException
+
 
 class DLP:
     def __init__(self) -> None:
@@ -9,7 +11,7 @@ class DLP:
             self.dmd.Initialize()
         except ALPError:
             self.dmd = None
-            print("No DLP Found")
+            raise DlpctlException("DLP not found")
 
     def __del__(self) -> None:
         if self.dmd:

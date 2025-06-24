@@ -1,6 +1,8 @@
 from pypylon import pylon
 from pypylon.pylon import InstantCamera, RuntimeException
 
+from exception import DlpctlException
+
 
 class Camera:
     def __init__(self) -> None:
@@ -20,11 +22,14 @@ class Camera:
 
             self.basler.AcquisitionFrameRateEnable.Value = False
             self.basler.AcquisitionFrameRate.Value = 100
+
         except RuntimeException:
-            self.camera = None
-            print("No Basler Camera found")
+            raise DlpctlException("Basler camera not found")
 
     def start(self) -> None:
+        """
+        Continuously grab the latest image in the background
+        """
         self.basler.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
 
     def stop(self) -> None:
