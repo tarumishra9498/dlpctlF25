@@ -25,14 +25,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         try:
             self.dlp = DLP()
-        except DlpctlException as e:
-            print(e)
+        except DlpctlException:
             self.dlp = None
 
         try:
             self.camera = Camera()
-        except DlpctlException as e:
-            print(e)
+        except DlpctlException:
             self.camera = None
 
 
