@@ -7,7 +7,7 @@ from exception import DlpctlException
 class Camera:
     def __init__(self) -> None:
         try:
-            self.basler: InstantCamera = (
+            self.basler: InstantCamera | None = (
                 pylon.TlFactory.GetInstance().CreateFirstDevice()
             )
 
@@ -31,32 +31,34 @@ class Camera:
                 self.converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
 
         except RuntimeException:
+            self.basler = None
             raise DlpctlException("Basler camera not found")
 
     def start(self) -> None:
         """
         Continuously grab the latest image in the background
         """
-        self.basler.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
+        if self.basler:
+            self.basler.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
 
     def stop(self) -> None:
-        self.basler.StopGrabbing()
+        if self.basler:
+            self.basler.StopGrabbing()
 
     def run(self) -> None:
-        if self.basler.IsGrabbing():
-            grab_result = self.basler.RetrieveResult(
-                5000, pylon.TimeoutHandling_ThrowException
-            )
+        if self.basler:
+            if self.basler.IsGrabbing():
+                grab_result = self.basler.RetrieveResult(
+                    5000, pylon.TimeoutHandling_ThrowException
+                )
 
-            if grab_result.GrabSucceeded():
-                image = self.converter.Convert(grab_result)
-                img_array = image.GetArray()
-                print(img_array)
+                if grab_result.GrabSucceeded():
+                    image = self.converter.Convert(grab_result)
+                    img_array = image.GetArray()
+                    print(img_array)
 
-            grab_result.Release()
+                grab_result.Release()
 
     def __del__(self) -> None:
-        # Sometimes this object is invalid because the camera didn't connect
-        # so we have to check if it even has a self.basler object before destruction
         if self.basler:
             self.basler.Close()
