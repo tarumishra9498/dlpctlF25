@@ -7,7 +7,7 @@ from exception import DlpctlException
 class Camera:
     def __init__(self) -> None:
         try:
-            self.basler: InstantCamera | None = (
+            self.basler: InstantCamera | None = pylon.InstantCamera(
                 pylon.TlFactory.GetInstance().CreateFirstDevice()
             )
 
@@ -15,6 +15,7 @@ class Camera:
                 print(
                     "Using Basler Camera: ", self.basler.GetDeviceInfo().GetModelName()
                 )
+                self.basler.Open()
                 self.basler.PixelFormat.Value = "Mono8"
                 self.basler.ExposureAuto.Value = "Off"
                 self.basler.Gain.Value = 0
