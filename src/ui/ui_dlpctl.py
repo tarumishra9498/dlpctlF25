@@ -36,7 +36,7 @@ class Ui_MainWindow(object):
         self.horizontalFrame_2.setObjectName(u"horizontalFrame_2")
         self.horizontalFrame_2.setMouseTracking(True)
         self.horizontalFrame_2.setAutoFillBackground(False)
-        self.horizontalFrame_2.setFrameShape(QFrame.Shape.Box)
+        self.horizontalFrame_2.setFrameShape(QFrame.NoFrame)
         self.horizontalLayout_2 = QHBoxLayout(self.horizontalFrame_2)
         self.horizontalLayout_2.setSpacing(5)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
@@ -48,13 +48,12 @@ class Ui_MainWindow(object):
         font.setPointSize(10)
         font.setBold(True)
         self.label.setFont(font)
-        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.video_layout.addWidget(self.label)
 
         self.line_2 = QFrame(self.horizontalFrame_2)
         self.line_2.setObjectName(u"line_2")
-        self.line_2.setFrameShape(QFrame.Shape.HLine)
+        self.line_2.setFrameShape(QFrame.Shape.VLine)
         self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.video_layout.addWidget(self.line_2)
@@ -66,14 +65,14 @@ class Ui_MainWindow(object):
 
         self.line_3 = QFrame(self.horizontalFrame_2)
         self.line_3.setObjectName(u"line_3")
-        self.line_3.setFrameShape(QFrame.Shape.HLine)
+        self.line_3.setFrameShape(QFrame.Shape.VLine)
         self.line_3.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.video_layout.addWidget(self.line_3)
 
         self.video_slider = QSlider(self.horizontalFrame_2)
         self.video_slider.setObjectName(u"video_slider")
-        self.video_slider.setOrientation(Qt.Orientation.Horizontal)
+        self.video_slider.setOrientation(Qt.Horizontal)
 
         self.video_layout.addWidget(self.video_slider)
 
@@ -99,6 +98,16 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.capture)
 
+        self.pushButton = QPushButton(self.horizontalFrame_2)
+        self.pushButton.setObjectName(u"pushButton")
+
+        self.horizontalLayout.addWidget(self.pushButton)
+
+        self.pushButton_2 = QPushButton(self.horizontalFrame_2)
+        self.pushButton_2.setObjectName(u"pushButton_2")
+
+        self.horizontalLayout.addWidget(self.pushButton_2)
+
 
         self.video_layout.addLayout(self.horizontalLayout)
 
@@ -119,13 +128,12 @@ class Ui_MainWindow(object):
         self.tool_label = QLabel(self.horizontalFrame_2)
         self.tool_label.setObjectName(u"tool_label")
         self.tool_label.setFont(font)
-        self.tool_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.tool_layout.addWidget(self.tool_label)
 
         self.line_4 = QFrame(self.horizontalFrame_2)
         self.line_4.setObjectName(u"line_4")
-        self.line_4.setFrameShape(QFrame.Shape.HLine)
+        self.line_4.setFrameShape(QFrame.Shape.VLine)
         self.line_4.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.tool_layout.addWidget(self.line_4)
@@ -133,7 +141,7 @@ class Ui_MainWindow(object):
         self.tabWidget = QTabWidget(self.horizontalFrame_2)
         self.tabWidget.setObjectName(u"tabWidget")
         self.tabWidget.setFont(font)
-        self.tabWidget.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.tabWidget.setLayoutDirection(Qt.LeftToRight)
         self.video_filters = QWidget()
         self.video_filters.setObjectName(u"video_filters")
         self.verticalLayout_3 = QVBoxLayout(self.video_filters)
@@ -146,7 +154,6 @@ class Ui_MainWindow(object):
         font1.setPointSize(8)
         font1.setBold(False)
         self.label_2.setFont(font1)
-        self.label_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout.addWidget(self.label_2, 0, 0, 1, 1)
 
@@ -157,7 +164,7 @@ class Ui_MainWindow(object):
 
         self.horizontalSlider = QSlider(self.video_filters)
         self.horizontalSlider.setObjectName(u"horizontalSlider")
-        self.horizontalSlider.setOrientation(Qt.Orientation.Horizontal)
+        self.horizontalSlider.setOrientation(Qt.Horizontal)
 
         self.gridLayout.addWidget(self.horizontalSlider, 1, 0, 1, 2)
 
@@ -169,7 +176,6 @@ class Ui_MainWindow(object):
         self.label_3 = QLabel(self.video_filters)
         self.label_3.setObjectName(u"label_3")
         self.label_3.setFont(font1)
-        self.label_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_3.addWidget(self.label_3, 0, 0, 1, 1)
 
@@ -180,7 +186,7 @@ class Ui_MainWindow(object):
 
         self.horizontalSlider_2 = QSlider(self.video_filters)
         self.horizontalSlider_2.setObjectName(u"horizontalSlider_2")
-        self.horizontalSlider_2.setOrientation(Qt.Orientation.Horizontal)
+        self.horizontalSlider_2.setOrientation(Qt.Horizontal)
 
         self.gridLayout_3.addWidget(self.horizontalSlider_2, 1, 0, 1, 2)
 
@@ -192,7 +198,6 @@ class Ui_MainWindow(object):
         self.label_4 = QLabel(self.video_filters)
         self.label_4.setObjectName(u"label_4")
         self.label_4.setFont(font1)
-        self.label_4.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_4.addWidget(self.label_4, 0, 0, 1, 1)
 
@@ -203,7 +208,7 @@ class Ui_MainWindow(object):
 
         self.horizontalSlider_3 = QSlider(self.video_filters)
         self.horizontalSlider_3.setObjectName(u"horizontalSlider_3")
-        self.horizontalSlider_3.setOrientation(Qt.Orientation.Horizontal)
+        self.horizontalSlider_3.setOrientation(Qt.Horizontal)
 
         self.gridLayout_4.addWidget(self.horizontalSlider_3, 1, 0, 1, 2)
 
@@ -215,7 +220,6 @@ class Ui_MainWindow(object):
         self.label_5 = QLabel(self.video_filters)
         self.label_5.setObjectName(u"label_5")
         self.label_5.setFont(font1)
-        self.label_5.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_5.addWidget(self.label_5, 0, 0, 1, 1)
 
@@ -226,7 +230,7 @@ class Ui_MainWindow(object):
 
         self.horizontalSlider_4 = QSlider(self.video_filters)
         self.horizontalSlider_4.setObjectName(u"horizontalSlider_4")
-        self.horizontalSlider_4.setOrientation(Qt.Orientation.Horizontal)
+        self.horizontalSlider_4.setOrientation(Qt.Horizontal)
 
         self.gridLayout_5.addWidget(self.horizontalSlider_4, 1, 0, 1, 2)
 
@@ -260,7 +264,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1135, 22))
+        self.menubar.setGeometry(QRect(0, 0, 1135, 26))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuTools = QMenu(self.menubar)
@@ -288,6 +292,8 @@ class Ui_MainWindow(object):
         self.pause.setText(QCoreApplication.translate("MainWindow", u"Pause", None))
         self.replay.setText(QCoreApplication.translate("MainWindow", u"Replay", None))
         self.capture.setText(QCoreApplication.translate("MainWindow", u"Capture", None))
+        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Connect Camera", None))
+        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Connect DLP", None))
         self.tool_label.setText(QCoreApplication.translate("MainWindow", u"Tools", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"OpenCV Filter", None))
         self.radioButton.setText("")

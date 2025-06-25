@@ -18,20 +18,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowTitle("DLP Control")
 
-        self.dlp: DLP | None
         self.camera: Camera | None
+        self.pushButton.clicked.connect(self.connect_camera)
 
-        # TODO: Make it possible to reconnect in UI without restarting app
+        self.dlp: DLP | None
+        self.pushButton_2.clicked.connect(self.connect_dlp)
 
-        try:
-            self.dlp = DLP()
-        except DlpctlException:
-            self.dlp = None
-
+    def connect_camera(self):
         try:
             self.camera = Camera()
         except DlpctlException:
             self.camera = None
+
+    def connect_dlp(self):
+        try:
+            self.dlp = DLP()
+        except DlpctlException:
+            self.dlp = None
 
 
 if __name__ == "__main__":
