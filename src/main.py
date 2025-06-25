@@ -27,13 +27,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def connect_camera(self):
         try:
             self.camera = Camera()
+            print("Camera successfully connected")
         except DlpctlException:
             self.camera = None
+            print("Could not connect to Camera")
 
     def connect_dlp(self):
         try:
             self.dlp = DLP()
+            print("DLP successfully connected")
         except DlpctlException:
+            print("Could not connect to DLP")
             self.dlp = None
 
 
