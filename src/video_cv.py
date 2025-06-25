@@ -1,12 +1,14 @@
 import cv2 as cv
 import numpy as np
 import time
+import os
 
 # circles = dict()
 # radii = dict()
 
 # capture video
-video = cv.VideoCapture('static/sample_bubble_video.mp4')
+video = cv.VideoCapture(os.path.join(os.path.dirname(__file__), '../static/sample_bubble_video.mp4'))
+
 start_time = time.perf_counter()
 ret, frame = video.read()
 
@@ -39,9 +41,6 @@ video.set(cv.CAP_PROP_POS_FRAMES, frame_start)
 
 while True:
     ret, frame = video.read()
-    if not ret:
-        print("invalid video")
-        break
 
     # trackbar positions
     thresh_val = cv.getTrackbarPos("thresh_val", "Hough Circle Image")
