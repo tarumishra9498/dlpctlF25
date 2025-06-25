@@ -7,8 +7,12 @@ from PySide6.QtWidgets import QMainWindow
 from ui.ui_dlpctl import Ui_MainWindow
 
 from camera import Camera
-from image import ImageSeq
-from dlp import DLP
+
+if sys.platform == "win32":
+    from dlp import DLP
+else:
+    from dlp import MockDLP as DLP
+
 from exception import DlpctlException
 
 
@@ -27,17 +31,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def connect_camera(self):
         try:
             self.camera = Camera()
-            print("Camera successfully connected")
-        except DlpctlException:
+        except DlpctlException as e:
             self.camera = None
-            print("Could not connect to Camera")
+            print(e)
 
     def connect_dlp(self):
         try:
             self.dlp = DLP()
-            print("DLP successfully connected")
-        except DlpctlException:
-            print("Could not connect to DLP")
+        except DlpctlException as e:
+            print(e)
             self.dlp = None
 
 
