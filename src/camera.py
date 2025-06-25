@@ -7,7 +7,7 @@ from exception import DlpctlException
 class Camera:
     def __init__(self) -> None:
         try:
-            self.basler: InstantCamera | None = (
+            self.basler: InstantCamera = (
                 pylon.TlFactory.GetInstance().CreateFirstDevice()
             )
 
@@ -26,20 +26,34 @@ class Camera:
                 self.basler.AcquisitionFrameRateEnable.Value = False
                 self.basler.AcquisitionFrameRate.Value = 100
 
+                self.converter = pylon.ImageFormatConverter()
+                self.converter.OutputPixelFormat = pylon.PixelType_BGR8packed
+                self.converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
+
         except RuntimeException:
-            self.basler = None
             raise DlpctlException("Basler camera not found")
 
     def start(self) -> None:
         """
         Continuously grab the latest image in the background
         """
-        if self.basler:
-            self.basler.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
+        self.basler.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
 
     def stop(self) -> None:
-        if self.basler:
-            self.basler.Close()
+        self.basler.StopGrabbing()
+
+    def run(self) -> None:
+        if self.basler.IsGrabbing():
+            grab_result = self.basler.RetrieveResult(
+                5000, pylon.TimeoutHandling_ThrowException
+            )
+
+            if grab_result.GrabSucceeded():
+                image = self.converter.Convert(grab_result)
+                img_array = image.GetArray()
+                print(img_array)
+
+            grab_result.Release()
 
     def __del__(self) -> None:
-        self.stop()
+        self.basler.Close()
