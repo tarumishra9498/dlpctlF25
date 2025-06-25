@@ -56,4 +56,7 @@ class Camera:
             grab_result.Release()
 
     def __del__(self) -> None:
-        self.basler.Close()
+        # Sometimes this object is invalid because the camera didn't connect
+        # so we have to check if it even has a self.basler object before destruction
+        if self.basler:
+            self.basler.Close()
