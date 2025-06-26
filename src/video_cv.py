@@ -7,36 +7,45 @@ import os
 # radii = dict()
 
 # capture video
-video = cv.VideoCapture(os.path.join(os.path.dirname(__file__), '../static/sample_bubble_video.mp4'))
+# video = cv.VideoCapture(os.path.join(os.path.dirname(__file__), '../static/sample_bubble_video.mp4'))
+video = cv.VideoCapture(os.path.join(os.path.dirname(__file__), '../static/sample_bubble_video_unstable.mp4'))
 
 start_time = time.perf_counter()
 ret, frame = video.read()
 
 # scale first frame to start video writing
-scale_height = .75
-scale_width = .75
+scale_height = .55
+scale_width = .55
 frame = cv.resize(frame, (0, 0), fx=scale_width, fy=scale_height)
 h, w = frame.shape[:2]
 
 # start writing video
-fourcc = cv.VideoWriter_fourcc(*'mp4v')
-out = cv.VideoWriter("output.mp4", fourcc, 30.0, (w, h))
+fourcc = cv.VideoWriter_fourcc(*'XVID')
+out = cv.VideoWriter("output.avi", fourcc, 30.0, (w, h))
 
 def nothing(val):
     pass
 
 cv.namedWindow("Hough Circle Image")
-cv.createTrackbar("thresh_val", "Hough Circle Image", 1, 255, nothing)
-cv.createTrackbar("max_val", "Hough Circle Image",1, 255, nothing)
-cv.createTrackbar("med_blur", "Hough Circle Image", 1, 100, nothing)
-cv.createTrackbar("param1","Hough Circle Image",40, 300, nothing)
-cv.createTrackbar("param2","Hough Circle Image",40, 100, nothing)
-cv.createTrackbar("min_r","Hough Circle Image",1, 50, nothing)
-cv.createTrackbar("max_r","Hough Circle Image",40, 100, nothing)
-cv.createTrackbar("minDist","Hough Circle Image",40, 100, nothing)
+cv.createTrackbar("thresh_val", "Hough Circle Image", 90, 255, nothing)
+cv.createTrackbar("max_val", "Hough Circle Image",0, 255, nothing)
+cv.createTrackbar("med_blur", "Hough Circle Image", 13, 100, nothing)
+cv.createTrackbar("param1","Hough Circle Image",73, 300, nothing)
+cv.createTrackbar("param2","Hough Circle Image",21, 100, nothing)
+cv.createTrackbar("min_r","Hough Circle Image",6, 50, nothing)
+cv.createTrackbar("max_r","Hough Circle Image",50, 100, nothing)
+cv.createTrackbar("minDist","Hough Circle Image",20, 100, nothing)
 
-frame_end = 410
-frame_start = 225
+# # sample_bubble_video
+# frame_start = 225
+# frame_end = 410
+
+# sample_bubble_video_unstable
+frame_start = 0
+frame_end = 700
+
+# sample bubble video = start at 225, end at 410
+
 video.set(cv.CAP_PROP_POS_FRAMES, frame_start)
 
 while True:
@@ -74,6 +83,7 @@ while True:
         # resize and recalc frame shape
         frame = cv.resize(frame, (0, 0), fx=scale_width, fy=scale_height)
         h, w = frame.shape[:2]
+    
 
         # crop to top-left quarter
         # frame = frame[1 : h//2, 1 : w//2]
@@ -81,13 +91,13 @@ while True:
         # filters
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         gray = cv.medianBlur(gray, med_blur)
-        ret, gray = cv.threshold(gray, thresh_val, max_val, cv.THRESH_BINARY + cv.THRESH_OTSU)
-
+        ret, gray = cv.threshold(gray, thresh_val, max_val, cv.THRESH_TRUNC)
+        
         frame_circles = cv.HoughCircles(gray, cv.HOUGH_GRADIENT, 1, minDist=min_dist,
                                 param1=p1, param2= p2,
                                 minRadius= min_r, maxRadius=max_r)
 
-        # draw cirle etections
+        # draw cirle detections
         if frame_circles is not None:
             for x, y, r in np.uint16(np.around(frame_circles[0])):
                 cv.circle(frame, (x,y), r, (255,0,255), 2)
