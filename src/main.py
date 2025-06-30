@@ -22,25 +22,52 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowTitle("DLP Control")
 
-        self.camera: Camera | None
+        self.camera: Camera | None = None
         self.pushButton.clicked.connect(self.connect_camera)
 
-        self.dlp: DLP | None
+        self.dlp: DLP | None = None
         self.pushButton_2.clicked.connect(self.connect_dlp)
 
+        self.capture.setEnabled(False)
+        self.capture.pressed.connect(self.on_capture)
+
     def connect_camera(self):
-        try:
-            self.camera = Camera()
-        except DlpctlException as e:
+        if self.camera is None:
+            try:
+                self.camera = Camera()
+                self.camera.start()
+                self.capture.setEnabled(True)
+                self.pushButton.setStyleSheet("color: green;")
+            except DlpctlException as e:
+                self.camera = None
+                self.capture.setEnabled(False)
+                print(e)
+        else:
             self.camera = None
-            print(e)
+            self.capture.setEnabled(False)
+            self.pushButton.setStyleSheet("")
 
     def connect_dlp(self):
-        try:
-            self.dlp = DLP()
-        except DlpctlException as e:
-            print(e)
+        if self.dlp is None:
+            try:
+                self.dlp = DLP()
+                self.pushButton_2.setStyleSheet("color: green;")
+            except DlpctlException as e:
+                print(e)
+                self.dlp = None
+        else:
             self.dlp = None
+            self.pushButton_2.setStyleSheet("")
+
+    def on_capture(self):
+        if self.camera and not self.camera.recording:
+            print("starting capture")
+            self.capture.setStyleSheet("color: green;")
+            self.camera.start_recording()
+        elif self.camera and self.camera.recording:
+            self.camera.stop_recording()
+            self.capture.setStyleSheet("")
+            print("stopping capture, saved to output.mp4")
 
 
 if __name__ == "__main__":
