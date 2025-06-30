@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QMainWindow
 
 from ui.ui_dlpctl import Ui_MainWindow
 
-from camera import Camera
+from camera_thread import CameraThread
 from video_write_thread import VideoWriteThread
 
 if sys.platform == "win32":
@@ -23,7 +23,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowTitle("DLP Control")
 
-        self.camera: Camera = Camera()
+        self.camera: CameraThread = CameraThread()
         self.pushButton.clicked.connect(self.connect_camera)
 
         self.video_write_thread: VideoWriteThread = VideoWriteThread()

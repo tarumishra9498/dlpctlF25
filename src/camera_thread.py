@@ -6,7 +6,11 @@ from pypylon.pylon import GrabResult, InstantCamera, RuntimeException
 import cv2
 
 
-class Camera(QThread):
+class CameraThread(QThread):
+    """
+    A `QThread` based class for handling a Basler camera connection and its operations
+    """
+
     timestamp = Signal(float)
     display_out = Signal(tuple)
     frame_out = Signal(tuple)
@@ -164,7 +168,7 @@ class Camera(QThread):
             self.converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
             self.start_grabbing()
             return True
-        except RuntimeException as e:
+        except RuntimeException:
             self.basler = None
             return False
 
