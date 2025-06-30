@@ -5,8 +5,6 @@ from pypylon import pylon
 from pypylon.pylon import GrabResult, InstantCamera, RuntimeException
 import cv2
 
-from exception import DlpctlException
-
 
 class Camera(QThread):
     timestamp = Signal(float)
