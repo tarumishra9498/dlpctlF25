@@ -2,7 +2,8 @@ from PySide6.QtCore import QTimer
 import sys
 
 from PySide6 import QtWidgets
-from PySide6.QtWidgets import QMainWindow
+from PySide6.QtGui import QColor, QImage, QPixmap
+from PySide6.QtWidgets import QLabel, QMainWindow
 
 from ui.ui_dlpctl import Ui_MainWindow
 
@@ -43,6 +44,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.capture.setEnabled(True)
                 self.pushButton.setStyleSheet("color: green;")
                 self.camera.frame_out.connect(self.video_write_thread.save_frame)
+                self.camera.display_out.connect(self.update_display)
             except DlpctlException as e:
                 self.camera = None
                 self.capture.setEnabled(False)
@@ -78,6 +80,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.camera:
             self.camera.stop_recording()
             self.camera.wait()
+
+    def update_display(self, data):
+        print("updating display")
+        if self.camera:
+            frame, current_fps, exposure, recording_state = data
+            h, w = frame.shape
+            channels = 1
+            q_img = QImage(
+                frame.data, w, h, channels * w, QImage.Format.Format_Grayscale8
+            )
+            pixmap = QPixmap.fromImage(q_img)
+            self.video_frame.setPixmap(pixmap)
 
 
 if __name__ == "__main__":
