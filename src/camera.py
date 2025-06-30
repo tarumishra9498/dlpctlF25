@@ -1,3 +1,4 @@
+import time
 import numpy as np
 from PySide6.QtCore import QThread, Signal
 from pypylon import pylon
@@ -8,7 +9,9 @@ from exception import DlpctlException
 
 
 class Camera(QThread):
+    timestamp = Signal(float)
     display_out = Signal(tuple)
+    frame_out = Signal(tuple)
 
     def __init__(self, desired_fps=100) -> None:
         super().__init__()
@@ -60,6 +63,7 @@ class Camera(QThread):
 
     def start_recording(self):
         print("recording")
+        self.start_time = time.time()
         if self.basler:
             fourcc = cv2.VideoWriter.fourcc(*"mp4v")
             output_filename = "output.mp4"
@@ -85,7 +89,6 @@ class Camera(QThread):
 
         if self.basler:
             while self.basler.IsGrabbing():
-                print("grabbing")
                 grab_result: GrabResult = self.basler.RetrieveResult(
                     5000, pylon.TimeoutHandling_ThrowException
                 )
@@ -106,6 +109,13 @@ class Camera(QThread):
                     else:
                         previous_frame = frame.copy()
 
+                    if self.recording and self.out and self.out.isOpened():
+                        try:
+                            self.frame_out.emit((frame, self.out))
+                        except Exception as e:
+                            print(f"Error emitting write frame: {e}")
+                        self.timestamp.emit(time.time() - self.start_time)
+
                     if accumulator >= 1.0:
                         try:
                             exposure = self.basler.ExposureTime.Value
@@ -117,9 +127,6 @@ class Camera(QThread):
                             print(f"Error emitting display frame: {e}")
                         accumulator -= 1.0
 
-                    if self.recording and self.out and self.out.isOpened():
-                        self.out.write(frame)
-
     def handle_framerate(self) -> None:
         """
         This method basically checks if the current FPS is the target FPS.
@@ -130,7 +137,6 @@ class Camera(QThread):
             return
 
         current_fps = self.basler.ResultingFrameRate.Value
-        print(f"Current fps: {current_fps}")
         if current_fps < self.desired_fps:
             # Temporarily disable aquisition framerate mode
             self.basler.AcquisitionFrameRateEnable.SetValue(False)

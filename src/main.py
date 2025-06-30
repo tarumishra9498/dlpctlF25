@@ -7,6 +7,8 @@ from PySide6.QtWidgets import QMainWindow
 from ui.ui_dlpctl import Ui_MainWindow
 
 from camera import Camera
+from video_write_thread import VideoWriteThread
+import video_write_thread
 
 if sys.platform == "win32":
     from dlp import DLP
@@ -25,6 +27,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.camera: Camera | None = None
         self.pushButton.clicked.connect(self.connect_camera)
 
+        self.video_write_thread: VideoWriteThread = VideoWriteThread()
+
         self.dlp: DLP | None = None
         self.pushButton_2.clicked.connect(self.connect_dlp)
 
@@ -38,6 +42,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.camera.start()
                 self.capture.setEnabled(True)
                 self.pushButton.setStyleSheet("color: green;")
+                self.camera.frame_out.connect(self.video_write_thread.save_frame)
             except DlpctlException as e:
                 self.camera = None
                 self.capture.setEnabled(False)
@@ -68,6 +73,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.camera.stop_recording()
             self.capture.setStyleSheet("")
             print("stopping capture, saved to output.mp4")
+
+    def closeEvent(self, _):
+        if self.camera:
+            self.camera.stop_recording()
+            self.camera.wait()
 
 
 if __name__ == "__main__":
