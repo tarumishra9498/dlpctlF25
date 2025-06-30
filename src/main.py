@@ -41,7 +41,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             except DlpctlException as e:
                 self.camera = None
                 self.capture.setEnabled(False)
-                print(e)
+                print(f"Could not open camera: {e}")
         else:
             self.camera = None
             self.capture.setEnabled(False)
