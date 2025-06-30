@@ -16,53 +16,34 @@ class Camera(QThread):
     def __init__(self, desired_fps=100) -> None:
         super().__init__()
         self.recording: bool = False
+
+        # If `None`, there is no video writer
         self.out: cv2.VideoWriter | None = None
 
         self.desired_fps = desired_fps
 
-        try:
-            self.basler: InstantCamera | None = pylon.InstantCamera(
-                pylon.TlFactory.GetInstance().CreateFirstDevice()
-            )
-
-            if self.basler:
-                print(
-                    "Using Basler Camera: ", self.basler.GetDeviceInfo().GetModelName()
-                )
-                self.basler.Open()
-                self.basler.PixelFormat.Value = "Mono8"
-                self.basler.ExposureAuto.Value = "Off"
-                self.basler.Gain.Value = 0
-
-                self.MAX_EXPOSURE = 20000
-                self.MIN_EXPOSURE = 100
-                self.exposure = 1000
-                self.basler.ExposureTime.Value = self.exposure
-
-                self.basler.AcquisitionFrameRateEnable.SetValue(False)
-                self.basler.AcquisitionFrameRate.SetValue(self.desired_fps)
-
-                self.converter = pylon.ImageFormatConverter()
-                self.converter.OutputPixelFormat = pylon.PixelType_Mono8
-                self.converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
-                self.start_grabbing()
-        except RuntimeException as e:
-            self.basler = None
-            raise DlpctlException(e)
+        # If `None`, there is no Basler connection
+        self.basler: InstantCamera | None = None
 
     def start_grabbing(self) -> None:
         """
-        Continuously grab the latest image in the background
+        Starts the Basler camera's continuous frame grabbing
         """
         if self.basler:
             self.basler.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
 
     def stop_grabbing(self) -> None:
+        """
+        Stops the Basler camera from grabbing new frames
+        """
         if self.basler:
             self.basler.StopGrabbing()
 
-    def start_recording(self):
-        print("recording")
+    def start_recording(self) -> None:
+        """
+        Starts recording and opens the video writer
+        """
+        print("starting capture")
         self.start_time = time.time()
         if self.basler:
             fourcc = cv2.VideoWriter.fourcc(*"mp4v")
@@ -76,7 +57,10 @@ class Camera(QThread):
             )
         self.recording = True
 
-    def stop_recording(self):
+    def stop_recording(self) -> None:
+        """
+        Stops recording and saves the video
+        """
         self.recording = False
         if self.out:
             self.out.release()
@@ -129,7 +113,7 @@ class Camera(QThread):
 
     def handle_framerate(self) -> None:
         """
-        This method basically checks if the current FPS is the target FPS.
+        This method checks if the current FPS is the target FPS.
         If the current FPS is too low, it will disable `AcquisitionFrameRateEnable`
         mode temporarily in order to adjust the exposure accordingly.
         """
@@ -151,6 +135,44 @@ class Camera(QThread):
             self.basler.AcquisitionFrameRateEnable.SetValue(True)
             self.basler.AcquisitionFrameRate.SetValue(self.desired_fps)
 
-    def __del__(self) -> None:
+    def open(self) -> bool:
+        """
+        Opens a connection to a Basler camera
+
+        Returns `True` if connection succeeded and `False` if not
+        """
+
+        try:
+            self.basler = pylon.InstantCamera(
+                pylon.TlFactory.GetInstance().CreateFirstDevice()
+            )
+
+            print("Using Basler Camera: ", self.basler.GetDeviceInfo().GetModelName())
+            self.basler.Open()
+            self.basler.PixelFormat.Value = "Mono8"
+            self.basler.ExposureAuto.Value = "Off"
+            self.basler.Gain.Value = 0
+
+            self.MAX_EXPOSURE = 20000
+            self.MIN_EXPOSURE = 100
+            self.exposure = 1000
+            self.basler.ExposureTime.Value = self.exposure
+
+            self.basler.AcquisitionFrameRateEnable.SetValue(False)
+            self.basler.AcquisitionFrameRate.SetValue(self.desired_fps)
+
+            self.converter = pylon.ImageFormatConverter()
+            self.converter.OutputPixelFormat = pylon.PixelType_Mono8
+            self.converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
+            self.start_grabbing()
+            return True
+        except RuntimeException as e:
+            self.basler = None
+            return False
+
+    def close(self) -> None:
+        """
+        Close connection to Basler camera
+        """
         if self.basler:
             self.basler.Close()

@@ -1,15 +1,13 @@
-from PySide6.QtCore import QTimer
 import sys
 
 from PySide6 import QtWidgets
-from PySide6.QtGui import QColor, QImage, QPixmap
-from PySide6.QtWidgets import QLabel, QMainWindow
+from PySide6.QtGui import QImage, QPixmap
+from PySide6.QtWidgets import QMainWindow
 
 from ui.ui_dlpctl import Ui_MainWindow
 
 from camera import Camera
 from video_write_thread import VideoWriteThread
-import video_write_thread
 
 if sys.platform == "win32":
     from dlp import DLP
@@ -25,7 +23,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowTitle("DLP Control")
 
-        self.camera: Camera | None = None
+        self.camera: Camera = Camera()
         self.pushButton.clicked.connect(self.connect_camera)
 
         self.video_write_thread: VideoWriteThread = VideoWriteThread()
@@ -37,20 +35,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.capture.pressed.connect(self.on_capture)
 
     def connect_camera(self):
-        if self.camera is None:
-            try:
-                self.camera = Camera()
+        if not self.camera.basler:
+            if self.camera.open():
                 self.camera.start()
                 self.capture.setEnabled(True)
                 self.pushButton.setStyleSheet("color: green;")
                 self.camera.frame_out.connect(self.video_write_thread.save_frame)
                 self.camera.display_out.connect(self.update_display)
-            except DlpctlException as e:
-                self.camera = None
+            else:
                 self.capture.setEnabled(False)
-                print(f"Could not open camera: {e}")
+                self.pushButton.setStyleSheet("")
+                print("Could not connect to camera")
         else:
-            self.camera = None
+            self.camera.stop_recording()
+            self.camera.stop_grabbing()
+            self.camera.close()
             self.capture.setEnabled(False)
             self.pushButton.setStyleSheet("")
 
@@ -67,11 +66,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.pushButton_2.setStyleSheet("")
 
     def on_capture(self):
-        if self.camera and not self.camera.recording:
-            print("starting capture")
+        if not self.camera.recording:
             self.capture.setStyleSheet("color: green;")
             self.camera.start_recording()
-        elif self.camera and self.camera.recording:
+        else:
             self.camera.stop_recording()
             self.capture.setStyleSheet("")
             print("stopping capture, saved to output.mp4")
