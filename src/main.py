@@ -10,11 +10,9 @@ from camera_thread import CameraThread
 from video_write_thread import VideoWriteThread
 
 if sys.platform == "win32":
-    from dlp import DLP
+    from dlp_thread import DLPThread
 else:
-    from dlp import MockDLP as DLP
-
-from exception import DlpctlException
+    from dlp_thread import MockDlpThread as DlpThread
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -26,9 +24,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.camera: CameraThread = CameraThread()
         self.pushButton.clicked.connect(self.connect_camera)
 
-        self.video_write_thread: VideoWriteThread = VideoWriteThread()
+        self.video_writer: VideoWriteThread = VideoWriteThread()
 
-        self.dlp: DLP | None = None
+        self.dlp: DlpThread = DlpThread()
         self.pushButton_2.clicked.connect(self.connect_dlp)
 
         self.capture.setEnabled(False)
@@ -40,7 +38,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.camera.start()
                 self.capture.setEnabled(True)
                 self.pushButton.setStyleSheet("color: green;")
-                self.camera.frame_out.connect(self.video_write_thread.save_frame)
+                self.camera.frame_out.connect(self.video_writer.save_frame)
                 self.camera.display_out.connect(self.update_display)
             else:
                 self.capture.setEnabled(False)
@@ -54,16 +52,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.pushButton.setStyleSheet("")
 
     def connect_dlp(self):
-        if self.dlp is None:
-            try:
-                self.dlp = DLP()
+        if not self.dlp.connected:
+            if self.dlp.open():
                 self.pushButton_2.setStyleSheet("color: green;")
-            except DlpctlException as e:
-                print(e)
-                self.dlp = None
-        else:
-            self.dlp = None
-            self.pushButton_2.setStyleSheet("")
+            else:
+                self.pushButton_2.setStyleSheet("")
 
     def on_capture(self):
         if not self.camera.recording:
@@ -75,9 +68,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print("stopping capture, saved to output.mp4")
 
     def closeEvent(self, _):
-        if self.camera:
-            self.camera.stop_recording()
-            self.camera.wait()
+        self.camera.stop_recording()
+        self.video_writer.stop()
 
     def update_display(self, data):
         print("updating display")

@@ -67,6 +67,7 @@ class CameraThread(QThread):
         if self.out:
             self.out.release()
             self.out = None
+            self.wait()
 
     def run(self) -> None:
         previous_frame = None

@@ -13,3 +13,7 @@ class VideoWriteThread(QThread):
                 out.write(frame)
             except Exception as e:
                 print(f"Error reading frame from camera thread: {e}")
+
+    def stop(self):
+        self.quit()
+        self.wait()
