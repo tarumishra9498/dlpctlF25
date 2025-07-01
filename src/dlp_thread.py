@@ -1,7 +1,5 @@
 import sys
 
-from exception import DlpctlException
-
 if sys.platform == "win32":
     from ALP4 import ALP4, ALPError
 
