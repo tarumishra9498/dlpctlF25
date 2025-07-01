@@ -109,6 +109,11 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.pushButton_2)
 
+        self.load_bitmask = QPushButton(self.horizontalFrame_2)
+        self.load_bitmask.setObjectName(u"load_bitmask")
+
+        self.horizontalLayout.addWidget(self.load_bitmask)
+
 
         self.video_layout.addLayout(self.horizontalLayout)
 

@@ -2,17 +2,15 @@ import sys
 
 from PySide6 import QtWidgets
 from PySide6.QtGui import QImage, QPixmap
-from PySide6.QtWidgets import QMainWindow
+from PySide6.QtWidgets import QFileDialog, QMainWindow
 
+from image import ImageSeq
 from ui.ui_dlpctl import Ui_MainWindow
 
 from camera_thread import CameraThread
 from video_write_thread import VideoWriteThread
 
-if sys.platform == "win32":
-    from dlp_thread import DLPThread
-else:
-    from dlp_thread import MockDlpThread as DlpThread
+from dlp_thread import DlpThread
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -28,6 +26,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.dlp: DlpThread = DlpThread()
         self.pushButton_2.clicked.connect(self.connect_dlp)
+
+        self.bitmask: ImageSeq | None = None
+        self.load_bitmask.setEnabled(False)
+        self.load_bitmask.pressed.connect(self.on_load_bitmask)
 
         self.capture.setEnabled(False)
         self.capture.pressed.connect(self.on_capture)
@@ -55,8 +57,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not self.dlp.connected:
             if self.dlp.open():
                 self.pushButton_2.setStyleSheet("color: green;")
+                self.load_bitmask.setEnabled(True)
             else:
                 self.pushButton_2.setStyleSheet("")
+                self.load_bitmask.setEnabled(False)
 
     def on_capture(self):
         if not self.camera.recording:
@@ -66,6 +70,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.camera.stop_recording()
             self.capture.setStyleSheet("")
             print("stopping capture, saved to output.mp4")
+
+    def on_load_bitmask(self):
+        if self.bitmask is None:
+            print("opening file picker")
+            filename = QFileDialog.getOpenFileName(
+                self.load_bitmask,
+                "Open bitmask",
+                "",
+                ("Image Files (*.png *.jpg *.bmp"),
+            )[0]
+            print(filename)
 
     def closeEvent(self, _):
         self.camera.stop_recording()
