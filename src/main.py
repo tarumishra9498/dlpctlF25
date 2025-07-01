@@ -1,8 +1,10 @@
 import sys
 
 from PySide6 import QtWidgets
-from PySide6.QtGui import QImage, QPixmap
+from PySide6.QtGui import QImage, QImageReader, QPixmap
 from PySide6.QtWidgets import QFileDialog, QMainWindow
+
+import numpy as np
 
 from image import ImageSeq
 from ui.ui_dlpctl import Ui_MainWindow
@@ -72,19 +74,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print("stopping capture, saved to output.mp4")
 
     def on_load_bitmask(self):
-        if self.bitmask is None:
-            print("opening file picker")
-            filename = QFileDialog.getOpenFileName(
-                self.load_bitmask,
-                "Open bitmask",
-                "",
-                ("Image Files (*.png *.jpg *.bmp"),
-            )[0]
-            print(filename)
+        print("opening file picker")
+        filename = QFileDialog.getOpenFileName(
+            self.load_bitmask,
+            "Open bitmask",
+            "",
+            ("Image Files (*.png *.jpg *.bmp"),
+        )[0]
 
-    def closeEvent(self, _):
-        self.camera.stop_recording()
-        self.video_writer.stop()
+        bitmask = QImageReader(filename).read()
+        bitmask = bitmask.convertToFormat(QImage.Format.Format_Grayscale8)
+        w = bitmask.width()
+        h = bitmask.height()
+        ptr = bitmask.constBits()
+        arr = np.array(ptr).reshape(h, w, 1)
+        self.bitmask = ImageSeq(w, h, 1, arr)
+        print(self.bitmask.image_data)
 
     def update_display(self, data):
         print("updating display")
@@ -97,6 +102,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             )
             pixmap = QPixmap.fromImage(q_img)
             self.video_frame.setPixmap(pixmap)
+
+    def closeEvent(self, _):
+        self.camera.stop_recording()
+        self.video_writer.stop()
 
 
 if __name__ == "__main__":

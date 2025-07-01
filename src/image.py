@@ -23,13 +23,13 @@ class ImageSeq:
             height: Height of image in pixels
             frame_count: How many frames the sequence will have
         """
-        self.width = data
+        self.width = width
         self.height = height
         self.frame_count = frame_count
-        self._image_data = np.concatenate([])
-
         if data:
             self._image_data = np.concatenate(data)
+        else:
+            self._image_data = None
 
         self.alloc_dmd = None
         self.alloc_id = None
