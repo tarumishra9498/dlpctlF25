@@ -4,10 +4,10 @@ from PySide6 import QtWidgets
 from PySide6.QtGui import QImage, QImageReader, QPixmap
 from PySide6.QtWidgets import QFileDialog, QMainWindow
 
+import cv2
+
 import numpy as np
 
-import dlp_thread
-from image_seq import ImageSeq
 from ui.ui_dlpctl import Ui_MainWindow
 
 from camera_thread import CameraThread
@@ -30,10 +30,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dlp: DlpThread = DlpThread()
         self.pushButton_2.clicked.connect(self.connect_dlp)
 
-        self.bitmask: ImageSeq | None = None
         self.load_bitmask.setEnabled(False)
         self.load_bitmask.pressed.connect(self.on_load_bitmask)
-
         self.capture.setEnabled(False)
         self.capture.pressed.connect(self.on_capture)
 
@@ -82,19 +80,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             ("Image Files (*.png *.jpg *.bmp"),
         )[0]
 
-        bitmask = QImageReader(filename).read()
-        bitmask = bitmask.convertToFormat(QImage.Format.Format_Mono)
-        w = bitmask.width()
-        h = bitmask.height()
-        ptr = bitmask.constBits()
-        arr = np.array(ptr).reshape(h, w, 1)
-        self.bitmask = ImageSeq(w, h, 1, self.dlp.dmd, arr)
+        bitmask = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+        w = bitmask.shape[0]
+        h = bitmask.shape[1]
+        arr = bitmask.ravel().reshape(w, h, 1)
 
-        import time
-
-        # time.sleep(0.5)
-
-        self.bitmask.run()
+        self.dlp.push(arr)
         self.dlp.run()
 
     def update_display(self, data):
