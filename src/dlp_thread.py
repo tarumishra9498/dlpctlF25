@@ -1,12 +1,14 @@
-import sys
-
 from ALP4 import ALP4, ALPError
+from PySide6.QtCore import QThread
 
 
-class DlpThread:
+class DlpThread(QThread):
     def __init__(self) -> None:
         self.dmd: ALP4 = ALP4(version="4.1")
         self.connected = False
+
+    def run(self) -> None:
+        self.dmd.Wait()
 
     def open(self) -> bool:
         """
@@ -19,6 +21,9 @@ class DlpThread:
         except ALPError:
             self.connected = True
             return False
+
+    def stop(self):
+        self.quit()
 
     def __del__(self) -> None:
         if self.dmd:

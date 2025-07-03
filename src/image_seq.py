@@ -17,9 +17,11 @@ class ImageSeq:
         alloc_id (c_long): The ID of the sequence in the dlp's memory
     """
 
-    def __init__(self, width: int, height: int, frame_count: int, data=None) -> None:
+    def __init__(
+        self, width: int, height: int, frame_count: int, dmd: ALP4, data
+    ) -> None:
         """
-        Args:
+        Parameters:
             width: Width of image in pixels
             height: Height of image in pixels
             frame_count: How many frames the sequence will have
@@ -27,17 +29,15 @@ class ImageSeq:
         self.width: int = width
         self.height: int = height
         self.frame_count: int = frame_count
-        self._image_data: NDArray | None
-        if data:
-            self._image_data = np.concatenate(data)
-        else:
-            self._image_data = None
+        self._image_data: NDArray
 
-        self.alloc_dmd: ALP4 | None = None
+        self.alloc_dmd: ALP4 = dmd
         self.alloc_id: c_long | None = None
 
+        self.image_data = data
+
     def __del__(self):
-        self.deallocate()
+        self._deallocate()
 
     @property
     def image_data(self):
@@ -48,30 +48,45 @@ class ImageSeq:
         """
         This setter allows the user to not worry about deallocating and reallocating the image from dlp memory every time they update the image data
         """
-        if self.alloc_dmd:
-            dmd = self.alloc_dmd
-            self.deallocate()
+        if self.alloc_id:
+            self._deallocate()
 
-            self._image_data = np.concatenate(data)
+        img_black = np.zeros([self.alloc_dmd.nSizeY, self.alloc_dmd.nSizeX])
+        img_white = np.ones([self.alloc_dmd.nSizeY, self.alloc_dmd.nSizeX]) * (2**8 - 1)
+        self._image_data = np.concatenate([img_black.ravel(), img_white.ravel()])
 
-            self.allocate(dmd)
-        else:
-            self._image_data = np.concatenate(data)
+        self._allocate()
 
-    def allocate(self, dmd: ALP4) -> None:
+    def _allocate(self) -> None:
         """
         Allocate sequence to `dmd`'s memory and store the allocated sequence's ID
         """
-        if self._image_data and not self.alloc_dmd:
-            self.alloc_id = dmd.SeqAlloc(nbImg=self._image_data.shape[0], bitDepth=8)
-            self.alloc_dmd = dmd
-        print("ImageSeq allocated to dlp")
+        print("_allocate")
+        if self._image_data is not None and not self.alloc_id:
+            self.alloc_id = self.alloc_dmd.SeqAlloc(
+                nbImg=self._image_data.shape[0], bitDepth=1
+            )
+            self.alloc_dmd.SeqPut(self.image_data, self.alloc_id)
+            print("ImageSeq allocated to dlp")
+        else:
+            print(
+                f"ImageSeq already allocated to {self.alloc_dmd}, nothing will change"
+            )
 
-    def deallocate(self) -> None:
+    def _deallocate(self) -> None:
         """
-        Remove the sequence from dlp's memory
+        Remove the sequence from `dmd`'s memory
         """
-        if self.alloc_dmd:
+        print("_deallocate")
+        if self.alloc_id:
             self.alloc_dmd.FreeSeq()
-            self.alloc_dmd = None
             self.alloc_id = None
+
+    def run(self, loop: bool = True) -> None:
+        """
+        Display the sequence on `self.alloc_dmd`
+        """
+        if self.alloc_id:
+            self.alloc_dmd.Run(self.alloc_id, loop)
+        else:
+            print("Sequence is not allocated to any DLP device")

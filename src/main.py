@@ -6,6 +6,7 @@ from PySide6.QtWidgets import QFileDialog, QMainWindow
 
 import numpy as np
 
+import dlp_thread
 from image_seq import ImageSeq
 from ui.ui_dlpctl import Ui_MainWindow
 
@@ -74,7 +75,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print("stopping capture, saved to output.mp4")
 
     def on_load_bitmask(self):
-        print("opening file picker")
         filename = QFileDialog.getOpenFileName(
             self.load_bitmask,
             "Open bitmask",
@@ -83,13 +83,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )[0]
 
         bitmask = QImageReader(filename).read()
-        bitmask = bitmask.convertToFormat(QImage.Format.Format_Grayscale8)
+        bitmask = bitmask.convertToFormat(QImage.Format.Format_Mono)
         w = bitmask.width()
         h = bitmask.height()
         ptr = bitmask.constBits()
         arr = np.array(ptr).reshape(h, w, 1)
-        self.bitmask = ImageSeq(w, h, 1, arr)
-        print(self.bitmask.image_data)
+        self.bitmask = ImageSeq(w, h, 1, self.dlp.dmd, arr)
+
+        import time
+
+        # time.sleep(0.5)
+
+        self.bitmask.run()
+        self.dlp.run()
 
     def update_display(self, data):
         print("updating display")
