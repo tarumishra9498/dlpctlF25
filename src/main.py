@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QFileDialog, QMainWindow
 
 import numpy as np
 
-from image import ImageSeq
+from image_seq import ImageSeq
 from ui.ui_dlpctl import Ui_MainWindow
 
 from camera_thread import CameraThread

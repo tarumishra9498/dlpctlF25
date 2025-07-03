@@ -1,3 +1,4 @@
+from ctypes import c_long
 from ALP4 import ALP4
 import numpy as np
 from numpy._typing import NDArray
@@ -13,7 +14,7 @@ class ImageSeq:
         frame_count (int): How many frames the sequence will have
         image_data: Data of each frame concatenated into one big `NDArray`
         alloc_dmd (ALP4): The dlp this sequence is allocated to, None if not allocated
-        alloc_id (ALP4_ID): The ID of the sequence in the dlp's memory
+        alloc_id (c_long): The ID of the sequence in the dlp's memory
     """
 
     def __init__(self, width: int, height: int, frame_count: int, data=None) -> None:
@@ -23,16 +24,17 @@ class ImageSeq:
             height: Height of image in pixels
             frame_count: How many frames the sequence will have
         """
-        self.width = width
-        self.height = height
-        self.frame_count = frame_count
+        self.width: int = width
+        self.height: int = height
+        self.frame_count: int = frame_count
+        self._image_data: NDArray | None
         if data:
             self._image_data = np.concatenate(data)
         else:
             self._image_data = None
 
-        self.alloc_dmd = None
-        self.alloc_id = None
+        self.alloc_dmd: ALP4 | None = None
+        self.alloc_id: c_long | None = None
 
     def __del__(self):
         self.deallocate()
@@ -60,7 +62,7 @@ class ImageSeq:
         """
         Allocate sequence to `dmd`'s memory and store the allocated sequence's ID
         """
-        if not self.alloc_dmd:
+        if self._image_data and not self.alloc_dmd:
             self.alloc_id = dmd.SeqAlloc(nbImg=self._image_data.shape[0], bitDepth=8)
             self.alloc_dmd = dmd
         print("ImageSeq allocated to dlp")
