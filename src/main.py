@@ -30,6 +30,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dlp: DlpThread = DlpThread()
         self.pushButton_2.clicked.connect(self.connect_dlp)
 
+        self.load_bitmask.setEnabled(False)
+        self.load_bitmask.pressed.connect(self.on_load_bitmask)
         self.capture.setEnabled(False)
         self.capture.pressed.connect(self.on_capture)
 
@@ -119,8 +121,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not self.dlp.connected:
             if self.dlp.open():
                 self.pushButton_2.setStyleSheet("color: green;")
+                self.load_bitmask.setEnabled(True)
             else:
                 self.pushButton_2.setStyleSheet("")
+                self.load_bitmask.setEnabled(False)
 
     def on_capture(self):
         if not self.camera.recording:
@@ -131,9 +135,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.capture.setStyleSheet("")
             print("stopping capture, saved to output.mp4")
 
-    def closeEvent(self, _):
-        self.camera.stop_recording()
-        self.video_writer.stop()
+    def on_load_bitmask(self):
+        filename = QFileDialog.getOpenFileName(
+            self.load_bitmask,
+            "Open bitmask",
+            "",
+            ("Image Files (*.png *.jpg *.bmp"),
+        )[0]
+
+        bitmask = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+        w = bitmask.shape[0]
+        h = bitmask.shape[1]
+        arr = bitmask.ravel().reshape(w, h, 1)
+
+        self.dlp.push(arr)
+        self.dlp.run()
 
     def update_display(self, data):
         print("updating display")
@@ -194,6 +210,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def update_min_pos_err(self, val):
         self.min_pos_err = val
+    def closeEvent(self, _):
+        self.camera.stop_recording()
+        self.video_writer.stop()
+
 
 if __name__ == "__main__":
     app = None

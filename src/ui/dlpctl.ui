@@ -125,6 +125,13 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QPushButton" name="load_bitmask">
+             <property name="text">
+              <string>Load Bitmask</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
