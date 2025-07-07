@@ -2,7 +2,13 @@ import sys
 
 from PySide6 import QtWidgets
 from PySide6.QtGui import QImage, QImageReader, QPixmap
-from PySide6.QtWidgets import QFileDialog, QMainWindow, QCheckBox, QDoubleSpinBox, QSpinBox
+from PySide6.QtWidgets import (
+    QFileDialog,
+    QMainWindow,
+    QCheckBox,
+    QDoubleSpinBox,
+    QSpinBox,
+)
 
 import cv2
 
@@ -38,65 +44,73 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.blur = 5
         self.adapt_area = 60
         self.adapt_c = 13
-        self.min_area = 25 
+        self.min_area = 25
         self.circularity = 0.7
-        self.min_pos_err = 5 
+        self.min_pos_err = 5
 
         self.blur_on = True
         self.thresh_on = True
         self.contours_on = True
         self.tracking_on = True
 
-        self.horizontalSlider_7.setValue(self.blur)
-        self.spinBox.setValue(self.blur)
-        self.horizontalSlider_7.valueChanged.connect(self.update_blur)
-        self.horizontalSlider_7.valueChanged.connect(self.spinBox.setValue)
-        self.spinBox.valueChanged.connect(self.update_blur)
-        self.spinBox.valueChanged.connect(self.horizontalSlider_7.setValue)
+        self.blur_slider.setValue(self.blur)
+        self.blur_spinbox.setValue(self.blur)
+        self.blur_slider.valueChanged.connect(self.update_blur)
+        self.blur_slider.valueChanged.connect(self.blur_spinbox.setValue)
+        self.blur_spinbox.valueChanged.connect(self.update_blur)
+        self.blur_spinbox.valueChanged.connect(self.blur_slider.setValue)
 
-        self.horizontalSlider_2.setValue(self.adapt_area)
-        self.spinBox_2.setValue(self.adapt_area)
-        self.horizontalSlider_2.valueChanged.connect(self.update_adapt_area)
-        self.horizontalSlider_2.valueChanged.connect(self.spinBox_2.setValue)
-        self.spinBox_2.valueChanged.connect(self.update_adapt_area)
-        self.spinBox_2.valueChanged.connect(self.horizontalSlider_2.setValue)
+        self.thresh_area_slider.setValue(self.adapt_area)
+        self.thresh_area_spinbox.setValue(self.adapt_area)
+        self.thresh_area_slider.valueChanged.connect(self.update_adapt_area)
+        self.thresh_area_slider.valueChanged.connect(self.thresh_area_spinbox.setValue)
+        self.thresh_area_spinbox.valueChanged.connect(self.update_adapt_area)
+        self.thresh_area_spinbox.valueChanged.connect(self.thresh_area_slider.setValue)
 
-        self.horizontalSlider_3.setValue(self.adapt_c)
-        self.spinBox_3.setValue(self.adapt_c)
-        self.horizontalSlider_3.valueChanged.connect(self.update_adapt_c)
-        self.horizontalSlider_3.valueChanged.connect(self.spinBox_3.setValue)
-        self.spinBox_3.valueChanged.connect(self.update_adapt_c)
-        self.spinBox_3.valueChanged.connect(self.horizontalSlider_3.setValue)
+        self.thresh_const_slider.setValue(self.adapt_c)
+        self.thresh_const_spinbox.setValue(self.adapt_c)
+        self.thresh_const_slider.valueChanged.connect(self.update_adapt_c)
+        self.thresh_const_slider.valueChanged.connect(
+            self.thresh_const_spinbox.setValue
+        )
+        self.thresh_const_spinbox.valueChanged.connect(self.update_adapt_c)
+        self.thresh_const_spinbox.valueChanged.connect(
+            self.thresh_const_slider.setValue
+        )
 
-        self.horizontalSlider_4.setValue(self.min_area)
-        self.spinBox_4.setValue(self.min_area)
-        self.horizontalSlider_4.valueChanged.connect(self.update_min_area)
-        self.horizontalSlider_4.valueChanged.connect(self.spinBox_4.setValue)
-        self.spinBox_4.valueChanged.connect(self.update_min_area)
-        self.spinBox_4.valueChanged.connect(self.horizontalSlider_4.setValue)
+        self.contour_slider.setValue(self.min_area)
+        self.contour_spinbox.setValue(self.min_area)
+        self.contour_slider.valueChanged.connect(self.update_min_area)
+        self.contour_slider.valueChanged.connect(self.contour_spinbox.setValue)
+        self.contour_spinbox.valueChanged.connect(self.update_min_area)
+        self.contour_spinbox.valueChanged.connect(self.contour_slider.setValue)
 
-        self.horizontalSlider_5.setValue(int(self.circularity))
-        self.doubleSpinBox.setValue(self.circularity)
-        self.horizontalSlider_5.valueChanged.connect(self.update_circularity)
-        self.horizontalSlider_5.valueChanged.connect(self.doubleSpinBox.setValue)
-        self.doubleSpinBox.valueChanged.connect(self.update_circularity)
-        self.doubleSpinBox.valueChanged.connect(self.horizontalSlider_5.setValue)
+        self.circularity_slider.setValue(int(self.circularity))
+        self.circularity_spinbox.setValue(self.circularity)
+        self.circularity_slider.valueChanged.connect(self.update_circularity)
+        self.circularity_slider.valueChanged.connect(self.circularity_spinbox.setValue)
+        self.circularity_spinbox.valueChanged.connect(self.update_circularity)
+        self.circularity_spinbox.valueChanged.connect(self.circularity_slider.setValue)
 
-        self.horizontalSlider_6.setValue(int(self.min_pos_err))
-        self.doubleSpinBox_2.setValue(self.min_pos_err)
-        self.horizontalSlider_6.valueChanged.connect(self.update_min_pos_err)
-        self.horizontalSlider_6.valueChanged.connect(self.doubleSpinBox_2.setValue)
-        self.doubleSpinBox_2.valueChanged.connect(self.update_min_pos_err)
-        self.doubleSpinBox_2.valueChanged.connect(self.horizontalSlider_6.setValue)
+        self.circularity_slider.setValue(int(self.min_pos_err))
+        self.tracking_min_error_spinbox.setValue(self.min_pos_err)
+        self.circularity_slider.valueChanged.connect(self.update_min_pos_err)
+        self.circularity_slider.valueChanged.connect(
+            self.tracking_min_error_spinbox.setValue
+        )
+        self.tracking_min_error_spinbox.valueChanged.connect(self.update_min_pos_err)
+        self.tracking_min_error_spinbox.valueChanged.connect(
+            self.circularity_slider.setValue
+        )
 
-        self.checkBox.setChecked(True)
-        self.checkBox_2.setChecked(True)
-        self.checkBox_3.setChecked(True)
-        self.checkBox_4.setChecked(True)
-        self.checkBox.stateChanged.connect(self.checked_blur)
-        self.checkBox_2.stateChanged.connect(self.checked_thresh)
-        self.checkBox_3.stateChanged.connect(self.checked_contour)
-        self.checkBox_4.stateChanged.connect(self.checked_tracking)
+        self.blur_checkbox.setChecked(True)
+        self.thresh_checkbox.setChecked(True)
+        self.contour_checkbox.setChecked(True)
+        self.tracking_checkbox.setChecked(True)
+        self.blur_checkbox.stateChanged.connect(self.checked_blur)
+        self.thresh_checkbox.stateChanged.connect(self.checked_thresh)
+        self.contour_checkbox.stateChanged.connect(self.checked_contour)
+        self.tracking_checkbox.stateChanged.connect(self.checked_tracking)
 
     def connect_camera(self):
         if not self.camera.basler:
@@ -164,25 +178,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.video_frame.setPixmap(pixmap)
 
     def checked_blur(self):
-        if self.checkBox.isChecked():
+        if self.blur_checkbox.isChecked():
             self.blur_on = True
         else:
             self.blur_on = False
 
     def checked_thresh(self):
-        if self.checkBox_2.isChecked():
+        if self.thresh_checkbox.isChecked():
             self.thresh_on = True
         else:
             self.thresh_on = False
-    
+
     def checked_contour(self):
-        if self.checkBox_3.isChecked():
+        if self.contour_checkbox.isChecked():
             self.contours_on = True
         else:
             self.contours_on = False
-    
+
     def checked_tracking(self):
-        if self.checkBox_4.isChecked():
+        if self.tracking_checkbox.isChecked():
             self.tracking_on = True
         else:
             self.tracking_on = False
@@ -210,6 +224,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def update_min_pos_err(self, val):
         self.min_pos_err = val
+
     def closeEvent(self, _):
         self.camera.stop_recording()
         self.video_writer.stop()
@@ -227,6 +242,3 @@ if __name__ == "__main__":
     window.show()
     if app:
         app.exec()
-
-
-
