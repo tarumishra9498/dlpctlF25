@@ -166,7 +166,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dlp.run()
 
     def update_display(self, data):
-        print("updating display")
         if self.camera:
             frame, current_fps, exposure, recording_state = data
             h, w = frame.shape
