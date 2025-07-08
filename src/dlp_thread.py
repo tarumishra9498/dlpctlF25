@@ -4,7 +4,7 @@ from ctypes import c_long
 import numpy as np
 from ALP4 import ALP4, ALPError
 from numpy._typing import NDArray
-from PySide6.QtCore import QThread
+from PySide6.QtCore import QMutex, QMutexLocker, QThread
 
 
 class DlpThread(QThread):
@@ -13,6 +13,7 @@ class DlpThread(QThread):
         self.connected = False
         self.img_seqs: list[NDArray] = []
         self.seq_ids: list[c_long] = []
+        self.load_bitmask_mutex = QMutex()
 
     def run(self) -> None:
         for i, _ in enumerate(self.img_seqs):
@@ -36,20 +37,21 @@ class DlpThread(QThread):
         """
         Push a new image sequence to the DLP
         """
-        if self.validate_img_seq(img_seq):
-            self.img_seqs.append(img_seq)
-            id = self.dmd.SeqAlloc(nbImg=1, bitDepth=img_seq.shape[2])
-            self.seq_ids.append(id)
+        with QMutexLocker(self.load_bitmask_mutex):
+            if self.validate_img_seq(img_seq):
+                self.img_seqs.append(img_seq)
+                id = self.dmd.SeqAlloc(nbImg=1, bitDepth=img_seq.shape[2])
+                self.seq_ids.append(id)
 
-            additional_bits = (self.dmd.nSizeX * self.dmd.nSizeY) - (
-                img_seq.shape[0] * img_seq.shape[1]
-            )
-            padded_seq = np.pad(
-                array=img_seq.ravel(),
-                pad_width=additional_bits,
-                constant_values=0,
-            )
-            self.dmd.SeqPut(padded_seq)
+                additional_bits = (self.dmd.nSizeX * self.dmd.nSizeY) - (
+                    img_seq.shape[0] * img_seq.shape[1]
+                )
+                padded_seq = np.pad(
+                    array=img_seq.ravel(),
+                    pad_width=additional_bits,
+                    constant_values=0,
+                )
+                self.dmd.SeqPut(padded_seq)
 
     def validate_img_seq(self, img_seq: NDArray) -> bool:
         """
