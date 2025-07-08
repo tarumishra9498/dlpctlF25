@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>902</width>
-    <height>610</height>
+    <height>929</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -39,7 +39,7 @@
        <bool>false</bool>
       </property>
       <property name="frameShape">
-       <enum>QFrame::Shape::NoFrame</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="3,3,1">
        <property name="spacing">
@@ -63,21 +63,21 @@
          <item>
           <widget class="Line" name="line_2">
            <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
+            <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>
          <item>
           <widget class="Line" name="line_3">
            <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
+            <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QSlider" name="video_slider">
            <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -139,7 +139,7 @@
        <item>
         <widget class="Line" name="line">
          <property name="orientation">
-          <enum>Qt::Orientation::Vertical</enum>
+          <enum>Qt::Vertical</enum>
          </property>
         </widget>
        </item>
@@ -156,11 +156,12 @@
            <property name="font">
             <font>
              <pointsize>10</pointsize>
+             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
            <property name="layoutDirection">
-            <enum>Qt::LayoutDirection::LeftToRight</enum>
+            <enum>Qt::LeftToRight</enum>
            </property>
            <property name="currentIndex">
             <number>0</number>
@@ -194,7 +195,7 @@
                <item row="1" column="0" colspan="2">
                 <widget class="Line" name="line_8">
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -209,14 +210,12 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>75</weight>
                    <bold>true</bold>
                   </font>
                  </property>
                  <property name="text">
                   <string>Gaussian Blur</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
@@ -235,7 +234,7 @@
                   <number>2</number>
                  </property>
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -250,14 +249,12 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
                  <property name="text">
                   <string>Gaussian Blur</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
@@ -272,6 +269,7 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -285,7 +283,7 @@
              <item>
               <spacer name="horizontalSpacer">
                <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -309,7 +307,7 @@
                   <number>1</number>
                  </property>
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -324,14 +322,12 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
                  <property name="text">
                   <string>Adaptive Thresh Area</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
@@ -344,20 +340,20 @@
                   </sizepolicy>
                  </property>
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
                <item row="1" column="0" colspan="2">
                 <widget class="Line" name="line_6">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -366,14 +362,12 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>75</weight>
                    <bold>true</bold>
                   </font>
                  </property>
                  <property name="text">
                   <string>Adaptive Thresh</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
@@ -388,14 +382,12 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
                  <property name="text">
                   <string>Adaptive Thresh Constant</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
@@ -417,6 +409,7 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -436,6 +429,7 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -446,7 +440,7 @@
              <item>
               <spacer name="horizontalSpacer_2">
                <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -457,7 +451,7 @@
               </spacer>
              </item>
              <item>
-              <layout class="QGridLayout" name="contour_grid" rowstretch="0,0,0,0,0,0,0" columnstretch="3,0">
+              <layout class="QGridLayout" name="contour_grid" rowstretch="0,0,0,0,0,0" columnstretch="3,0">
                <item row="3" column="1">
                 <widget class="QSpinBox" name="contour_spinbox">
                  <property name="sizePolicy">
@@ -469,6 +463,7 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -479,14 +474,12 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>75</weight>
                    <bold>true</bold>
                   </font>
                  </property>
                  <property name="text">
                   <string>Contour Detection</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
@@ -501,14 +494,12 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
                  <property name="text">
                   <string>Circularity</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
@@ -523,14 +514,12 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
                  <property name="text">
                   <string>Min Area</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
@@ -538,6 +527,26 @@
                 <widget class="QCheckBox" name="contour_checkbox">
                  <property name="text">
                   <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0" colspan="2">
+                <widget class="Line" name="line_5">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>26</pointsize>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -550,31 +559,11 @@
                   </sizepolicy>
                  </property>
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0" colspan="2">
-                <widget class="Line" name="line_5">
-                 <property name="font">
-                  <font>
-                   <pointsize>26</pointsize>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="0">
-                <widget class="QSlider" name="circularity_slider">
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="1">
+               <item row="5" column="0" colspan="2">
                 <widget class="QDoubleSpinBox" name="circularity_spinbox">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -585,6 +574,7 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -604,7 +594,7 @@
              <item>
               <spacer name="horizontalSpacer_3">
                <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
+                <enum>Qt::Horizontal</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -627,21 +617,19 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>75</weight>
                    <bold>true</bold>
                   </font>
                  </property>
                  <property name="text">
                   <string>Bubble Tracking</string>
                  </property>
-                 <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-                 </property>
                 </widget>
                </item>
                <item row="1" column="0" colspan="2">
                 <widget class="Line" name="line_7">
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -656,14 +644,12 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
                  <property name="text">
                   <string>Min Position Error</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                  </property>
                 </widget>
                </item>
@@ -674,14 +660,7 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
-                <widget class="QSlider" name="tracking_min_error_slider">
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
+               <item row="3" column="0" colspan="2">
                 <widget class="QDoubleSpinBox" name="tracking_min_error_spinbox">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -692,6 +671,7 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -725,7 +705,7 @@
      <x>0</x>
      <y>0</y>
      <width>902</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

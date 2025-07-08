@@ -85,23 +85,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.contour_spinbox.valueChanged.connect(self.update_min_area)
         self.contour_spinbox.valueChanged.connect(self.contour_slider.setValue)
 
-        self.circularity_slider.setValue(int(self.circularity))
         self.circularity_spinbox.setValue(self.circularity)
-        self.circularity_slider.valueChanged.connect(self.update_circularity)
-        self.circularity_slider.valueChanged.connect(self.circularity_spinbox.setValue)
         self.circularity_spinbox.valueChanged.connect(self.update_circularity)
-        self.circularity_spinbox.valueChanged.connect(self.circularity_slider.setValue)
-
-        self.circularity_slider.setValue(int(self.min_pos_err))
         self.tracking_min_error_spinbox.setValue(self.min_pos_err)
-        self.circularity_slider.valueChanged.connect(self.update_min_pos_err)
-        self.circularity_slider.valueChanged.connect(
-            self.tracking_min_error_spinbox.setValue
-        )
         self.tracking_min_error_spinbox.valueChanged.connect(self.update_min_pos_err)
-        self.tracking_min_error_spinbox.valueChanged.connect(
-            self.circularity_slider.setValue
-        )
 
         self.blur_checkbox.setChecked(True)
         self.thresh_checkbox.setChecked(True)

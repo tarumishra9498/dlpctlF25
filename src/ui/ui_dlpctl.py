@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlQPsWnj.ui'
+## Form generated from reading UI file 'dlpctl.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(902, 610)
+        MainWindow.resize(902, 929)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -46,7 +46,7 @@ class Ui_MainWindow(object):
         self.horizontalFrame_2.setObjectName(u"horizontalFrame_2")
         self.horizontalFrame_2.setMouseTracking(True)
         self.horizontalFrame_2.setAutoFillBackground(False)
-        self.horizontalFrame_2.setFrameShape(QFrame.Shape.NoFrame)
+        self.horizontalFrame_2.setFrameShape(QFrame.NoFrame)
         self.horizontalLayout_2 = QHBoxLayout(self.horizontalFrame_2)
         self.horizontalLayout_2.setSpacing(5)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
@@ -78,7 +78,7 @@ class Ui_MainWindow(object):
 
         self.video_slider = QSlider(self.horizontalFrame_2)
         self.video_slider.setObjectName(u"video_slider")
-        self.video_slider.setOrientation(Qt.Orientation.Horizontal)
+        self.video_slider.setOrientation(Qt.Horizontal)
 
         self.video_layout.addWidget(self.video_slider)
 
@@ -142,7 +142,7 @@ class Ui_MainWindow(object):
         font.setPointSize(10)
         font.setBold(True)
         self.tabWidget.setFont(font)
-        self.tabWidget.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.tabWidget.setLayoutDirection(Qt.LeftToRight)
         self.video_filters = QWidget()
         self.video_filters.setObjectName(u"video_filters")
         sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
@@ -179,7 +179,6 @@ class Ui_MainWindow(object):
         font1.setPointSize(8)
         font1.setBold(True)
         self.label_11.setFont(font1)
-        self.label_11.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.blur_grid.addWidget(self.label_11, 0, 0, 1, 1)
 
@@ -192,7 +191,7 @@ class Ui_MainWindow(object):
         self.blur_slider.setSizePolicy(sizePolicy4)
         self.blur_slider.setMinimum(1)
         self.blur_slider.setSingleStep(2)
-        self.blur_slider.setOrientation(Qt.Orientation.Horizontal)
+        self.blur_slider.setOrientation(Qt.Horizontal)
 
         self.blur_grid.addWidget(self.blur_slider, 3, 0, 1, 1)
 
@@ -207,7 +206,6 @@ class Ui_MainWindow(object):
         font2.setPointSize(8)
         font2.setBold(False)
         self.label_12.setFont(font2)
-        self.label_12.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.blur_grid.addWidget(self.label_12, 2, 0, 1, 2)
 
@@ -236,7 +234,7 @@ class Ui_MainWindow(object):
         sizePolicy4.setHeightForWidth(self.thresh_area_slider.sizePolicy().hasHeightForWidth())
         self.thresh_area_slider.setSizePolicy(sizePolicy4)
         self.thresh_area_slider.setMinimum(1)
-        self.thresh_area_slider.setOrientation(Qt.Orientation.Horizontal)
+        self.thresh_area_slider.setOrientation(Qt.Horizontal)
 
         self.thresh_grid.addWidget(self.thresh_area_slider, 3, 0, 1, 1)
 
@@ -245,7 +243,6 @@ class Ui_MainWindow(object):
         sizePolicy4.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
         self.label_3.setSizePolicy(sizePolicy4)
         self.label_3.setFont(font2)
-        self.label_3.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.thresh_grid.addWidget(self.label_3, 2, 0, 1, 2)
 
@@ -253,14 +250,17 @@ class Ui_MainWindow(object):
         self.thresh_const_slider.setObjectName(u"thresh_const_slider")
         sizePolicy4.setHeightForWidth(self.thresh_const_slider.sizePolicy().hasHeightForWidth())
         self.thresh_const_slider.setSizePolicy(sizePolicy4)
-        self.thresh_const_slider.setOrientation(Qt.Orientation.Horizontal)
+        self.thresh_const_slider.setOrientation(Qt.Horizontal)
 
         self.thresh_grid.addWidget(self.thresh_const_slider, 5, 0, 1, 1)
 
         self.line_6 = QFrame(self.video_filters)
         self.line_6.setObjectName(u"line_6")
-        sizePolicy5.setHeightForWidth(self.line_6.sizePolicy().hasHeightForWidth())
-        self.line_6.setSizePolicy(sizePolicy5)
+        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        sizePolicy6.setHorizontalStretch(0)
+        sizePolicy6.setVerticalStretch(0)
+        sizePolicy6.setHeightForWidth(self.line_6.sizePolicy().hasHeightForWidth())
+        self.line_6.setSizePolicy(sizePolicy6)
         self.line_6.setFrameShape(QFrame.Shape.HLine)
         self.line_6.setFrameShadow(QFrame.Shadow.Sunken)
 
@@ -269,7 +269,6 @@ class Ui_MainWindow(object):
         self.label_7 = QLabel(self.video_filters)
         self.label_7.setObjectName(u"label_7")
         self.label_7.setFont(font1)
-        self.label_7.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.thresh_grid.addWidget(self.label_7, 0, 0, 1, 1)
 
@@ -278,7 +277,6 @@ class Ui_MainWindow(object):
         sizePolicy4.setHeightForWidth(self.label_4.sizePolicy().hasHeightForWidth())
         self.label_4.setSizePolicy(sizePolicy4)
         self.label_4.setFont(font2)
-        self.label_4.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.thresh_grid.addWidget(self.label_4, 4, 0, 1, 2)
 
@@ -326,7 +324,6 @@ class Ui_MainWindow(object):
         self.label_6 = QLabel(self.video_filters)
         self.label_6.setObjectName(u"label_6")
         self.label_6.setFont(font1)
-        self.label_6.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.contour_grid.addWidget(self.label_6, 0, 0, 1, 1)
 
@@ -335,7 +332,6 @@ class Ui_MainWindow(object):
         sizePolicy4.setHeightForWidth(self.label_8.sizePolicy().hasHeightForWidth())
         self.label_8.setSizePolicy(sizePolicy4)
         self.label_8.setFont(font2)
-        self.label_8.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.contour_grid.addWidget(self.label_8, 4, 0, 1, 2)
 
@@ -344,7 +340,6 @@ class Ui_MainWindow(object):
         sizePolicy4.setHeightForWidth(self.label_5.sizePolicy().hasHeightForWidth())
         self.label_5.setSizePolicy(sizePolicy4)
         self.label_5.setFont(font2)
-        self.label_5.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.contour_grid.addWidget(self.label_5, 2, 0, 1, 2)
 
@@ -353,16 +348,10 @@ class Ui_MainWindow(object):
 
         self.contour_grid.addWidget(self.contour_checkbox, 0, 1, 1, 1)
 
-        self.contour_slider = QSlider(self.video_filters)
-        self.contour_slider.setObjectName(u"contour_slider")
-        sizePolicy4.setHeightForWidth(self.contour_slider.sizePolicy().hasHeightForWidth())
-        self.contour_slider.setSizePolicy(sizePolicy4)
-        self.contour_slider.setOrientation(Qt.Orientation.Horizontal)
-
-        self.contour_grid.addWidget(self.contour_slider, 3, 0, 1, 1)
-
         self.line_5 = QFrame(self.video_filters)
         self.line_5.setObjectName(u"line_5")
+        sizePolicy6.setHeightForWidth(self.line_5.sizePolicy().hasHeightForWidth())
+        self.line_5.setSizePolicy(sizePolicy6)
         font3 = QFont()
         font3.setPointSize(26)
         font3.setBold(True)
@@ -372,11 +361,13 @@ class Ui_MainWindow(object):
 
         self.contour_grid.addWidget(self.line_5, 1, 0, 1, 2)
 
-        self.circularity_slider = QSlider(self.video_filters)
-        self.circularity_slider.setObjectName(u"circularity_slider")
-        self.circularity_slider.setOrientation(Qt.Orientation.Horizontal)
+        self.contour_slider = QSlider(self.video_filters)
+        self.contour_slider.setObjectName(u"contour_slider")
+        sizePolicy4.setHeightForWidth(self.contour_slider.sizePolicy().hasHeightForWidth())
+        self.contour_slider.setSizePolicy(sizePolicy4)
+        self.contour_slider.setOrientation(Qt.Horizontal)
 
-        self.contour_grid.addWidget(self.circularity_slider, 5, 0, 1, 1)
+        self.contour_grid.addWidget(self.contour_slider, 3, 0, 1, 1)
 
         self.circularity_spinbox = QDoubleSpinBox(self.video_filters)
         self.circularity_spinbox.setObjectName(u"circularity_spinbox")
@@ -387,7 +378,7 @@ class Ui_MainWindow(object):
         self.circularity_spinbox.setMaximum(1.000000000000000)
         self.circularity_spinbox.setSingleStep(0.010000000000000)
 
-        self.contour_grid.addWidget(self.circularity_spinbox, 5, 1, 1, 1)
+        self.contour_grid.addWidget(self.circularity_spinbox, 5, 0, 1, 2)
 
         self.contour_grid.setColumnStretch(0, 3)
 
@@ -404,7 +395,6 @@ class Ui_MainWindow(object):
         sizePolicy4.setHeightForWidth(self.label_9.sizePolicy().hasHeightForWidth())
         self.label_9.setSizePolicy(sizePolicy4)
         self.label_9.setFont(font1)
-        self.label_9.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.tracking_grid.addWidget(self.label_9, 0, 0, 1, 1)
 
@@ -420,7 +410,6 @@ class Ui_MainWindow(object):
         sizePolicy4.setHeightForWidth(self.label_10.sizePolicy().hasHeightForWidth())
         self.label_10.setSizePolicy(sizePolicy4)
         self.label_10.setFont(font2)
-        self.label_10.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
 
         self.tracking_grid.addWidget(self.label_10, 2, 0, 1, 2)
 
@@ -428,12 +417,6 @@ class Ui_MainWindow(object):
         self.tracking_checkbox.setObjectName(u"tracking_checkbox")
 
         self.tracking_grid.addWidget(self.tracking_checkbox, 0, 1, 1, 1)
-
-        self.tracking_min_error_slider = QSlider(self.video_filters)
-        self.tracking_min_error_slider.setObjectName(u"tracking_min_error_slider")
-        self.tracking_min_error_slider.setOrientation(Qt.Orientation.Horizontal)
-
-        self.tracking_grid.addWidget(self.tracking_min_error_slider, 3, 0, 1, 1)
 
         self.tracking_min_error_spinbox = QDoubleSpinBox(self.video_filters)
         self.tracking_min_error_spinbox.setObjectName(u"tracking_min_error_spinbox")
@@ -444,7 +427,7 @@ class Ui_MainWindow(object):
         self.tracking_min_error_spinbox.setMaximum(99.000000000000000)
         self.tracking_min_error_spinbox.setSingleStep(0.500000000000000)
 
-        self.tracking_grid.addWidget(self.tracking_min_error_spinbox, 3, 1, 1, 1)
+        self.tracking_grid.addWidget(self.tracking_min_error_spinbox, 3, 0, 1, 2)
 
         self.tracking_grid.setColumnStretch(0, 3)
         self.tracking_grid.setColumnStretch(1, 1)
@@ -467,7 +450,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 902, 22))
+        self.menubar.setGeometry(QRect(0, 0, 902, 21))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuTools = QMenu(self.menubar)
