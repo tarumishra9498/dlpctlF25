@@ -1,6 +1,7 @@
 import sys
 
 from PySide6 import QtWidgets
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QImage, QImageReader, QPixmap
 from PySide6.QtWidgets import (
     QFileDialog,
@@ -10,7 +11,7 @@ from PySide6.QtWidgets import (
     QSpinBox,
 )
 
-import cv2
+import cv2 as cv
 
 import numpy as np
 
@@ -21,6 +22,7 @@ from video_write_thread import VideoWriteThread
 
 from dlp_thread import DlpThread
 
+from video_read_thread import VideoReadThread
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self) -> None:
@@ -99,6 +101,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.contour_checkbox.stateChanged.connect(self.checked_contour)
         self.tracking_checkbox.stateChanged.connect(self.checked_tracking)
 
+        self.actionOpen.triggered.connect(self.read_video)
+
     def connect_camera(self):
         if not self.camera.basler:
             if self.camera.open():
@@ -144,7 +148,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             ("Image Files (*.png *.jpg *.bmp"),
         )[0]
 
-        bitmask = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+        bitmask = cv.imread(filename, cv.IMREAD_GRAYSCALE)
         w = bitmask.shape[0]
         h = bitmask.shape[1]
         arr = bitmask.ravel().reshape(w, h, 1)
@@ -153,7 +157,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dlp.run()
 
     def update_display(self, data):
-        if self.camera:
+        # reading from file
+        if isinstance(data, np.ndarray):
+            rgb = cv.cvtColor(data, cv.COLOR_BGR2RGB)
+            h, w, ch = rgb.shape
+            q_img = QImage(
+                rgb.data,
+                w,
+                h,
+                ch * w,
+                QImage.Format.Format_RGB888
+            )
+            pixmap = QPixmap.fromImage(q_img)
+            pixmap = pixmap.scaled(
+                self.video_frame.size(),
+                Qt.KeepAspectRatio,
+                Qt.SmoothTransformation   
+            )
+            
+        # reading from camera
+        else:
             frame, current_fps, exposure, recording_state = data
             h, w = frame.shape
             channels = 1
@@ -161,7 +184,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 frame.data, w, h, channels * w, QImage.Format.Format_Grayscale8
             )
             pixmap = QPixmap.fromImage(q_img)
-            self.video_frame.setPixmap(pixmap)
+        
+        self.video_frame.setPixmap(pixmap)
 
     def checked_blur(self):
         if self.blur_checkbox.isChecked():
@@ -211,9 +235,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_min_pos_err(self, val):
         self.min_pos_err = val
 
-    def closeEvent(self, _):
+    def closeEvent(self, event):
         self.camera.stop_recording()
         self.video_writer.stop()
+
+        if hasattr(self, 'read_thread') and self.ReadThread.isRunning():
+            self.ReadThread.stop()
+        
+        super().closeEvent(event)
+
+    def read_video(self):
+        file_dialog = QFileDialog(self)
+        file_dialog.setWindowTitle("Open File")
+        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
+        file_dialog.setViewMode(QFileDialog.ViewMode.Detail)
+
+        if file_dialog.exec():
+            files = file_dialog.selectedFiles() 
+            print(files[0])
+            self.ReadThread = VideoReadThread(files[0])
+            self.ReadThread.FrameUpdate.connect(self.update_display)
+            self.ReadThread.start()
 
 
 if __name__ == "__main__":
