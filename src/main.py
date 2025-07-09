@@ -30,19 +30,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowTitle("DLP Control")
 
-        self.camera: CameraThread = CameraThread()
-        self.pushButton.clicked.connect(self.connect_camera)
-
-        self.video_writer: VideoWriteThread = VideoWriteThread()
-
-        self.dlp: DlpThread = DlpThread()
-        self.pushButton_2.clicked.connect(self.connect_dlp)
-
-        self.load_bitmask.setEnabled(False)
-        self.load_bitmask.pressed.connect(self.on_load_bitmask)
-        self.capture.setEnabled(False)
-        self.capture.pressed.connect(self.on_capture)
-
         self.blur = 5
         self.adapt_area = 61
         self.adapt_c = 13
@@ -54,10 +41,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.blur_on = True
         self.thresh_on = True
         self.contour_on = True
-        self.tracking_on = True
+        self.tracking_on = False
 
         self.settings_mutex = QMutex()
         self.circles_mutex = QMutex()
+        self.frame_pos_mutex = QMutex()
+        self.paused_mutex = QMutex()
         
         self.settings = {
             "filters_on" : self.filters_on,
@@ -72,13 +61,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "contour_on" : self.contour_on,
             "tracking_on" : self.tracking_on
         }
-        
+
+        self.frame_pos = 1
         self.circles = []
+        self.opened_files = []
+
+        self.camera: CameraThread = CameraThread()
+        self.pushButton.clicked.connect(self.connect_camera)
+
+        self.video_writer: VideoWriteThread = VideoWriteThread()
+
+        self.dlp: DlpThread = DlpThread()
+        self.pushButton_2.clicked.connect(self.connect_dlp)
+
+        self.load_bitmask.setEnabled(False)
+        self.load_bitmask.pressed.connect(self.on_load_bitmask)
+        self.capture.setEnabled(False)
+        self.capture.pressed.connect(self.on_capture)
 
         self.show_filters.setChecked(self.filters_on)
         self.show_filters.clicked.connect(self.checked_filters)
         
-
         self.blur_slider.setValue(self.blur)
         self.blur_spinbox.setValue(self.blur)
         self.blur_slider.valueChanged.connect(self.update_blur)
@@ -124,12 +127,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.thresh_checkbox.stateChanged.connect(self.checked_thresh)
         self.contour_checkbox.stateChanged.connect(self.checked_contour)
         self.tracking_checkbox.stateChanged.connect(self.checked_tracking)
-
-        self.play.clicked.connect(self.on_play)
-        self.pause.clicked.connect(self.on_pause)
-        self.replay.clicked.connect(self.on_replay)
-        self.capture.clicked.connect(self.on_capture)
-
 
         self.actionOpen.triggered.connect(self.read_video)
 
@@ -187,6 +184,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dlp.run()
 
     def update_display(self, data):
+
         # reading from file
         if isinstance(data, np.ndarray):
             rgb = cv.cvtColor(data, cv.COLOR_BGR2RGB)
@@ -214,7 +212,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 frame.data, w, h, channels * w, QImage.Format.Format_Grayscale8
             )
             pixmap = QPixmap.fromImage(q_img)
-        
         self.video_frame.setPixmap(pixmap)
 
     def update_settings(self, name, value):
@@ -256,20 +253,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_settings("circularity", val)
 
     def update_min_pos_err(self, val):
-
         self.update_settings("min_pos_err", val)
-
-    def on_play(self):
-        pass
-
-    def on_pause(self):
-        pass
-
-    def on_replay(self):
-        pass
-
-    def on_capture_image(self):
-        pass
 
     def closeEvent(self, event):
         self.camera.stop_recording()
@@ -288,7 +272,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if file_dialog.exec():
             files = file_dialog.selectedFiles()
-            self.ReadThread = VideoReadThread(files[0], self.settings, self.settings_mutex, self.circles, self.circles_mutex)
+            self.opened_files.append(files[0])
+            self.ReadThread = VideoReadThread (
+                self.opened_files[-1], 
+                self.settings, 
+                self.settings_mutex, 
+                self.circles, 
+                self.circles_mutex, 
+                self.frame_pos, 
+                self.frame_pos_mutex, 
+                )
+            self.play.clicked.connect(lambda: self.ReadThread.on_pause(False))
+            self.pause.clicked.connect(lambda: self.ReadThread.on_pause(True))
+            self.replay.clicked.connect(lambda: self.ReadThread.on_replay(True))
             self.ReadThread.FrameUpdate.connect(self.update_display)
             self.ReadThread.start()
 

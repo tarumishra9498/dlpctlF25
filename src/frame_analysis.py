@@ -70,8 +70,8 @@ def frame_analysis(frame, settings, circles, frame_pos):
                         subtracted_x = np.abs(circles_np[:, 0] - np.full(len(circles_np[:, 0]), x))
                         subtracted_y = np.abs(circles_np[:, 1] - np.full(len(circles_np[:, 1]), y))
                         
-                        closest_idx_x = np.where(subtracted_x < settings["min_pos_er"])
-                        closest_idx_y = np.where(subtracted_y < settings["min_pos_er"])
+                        closest_idx_x = np.where(subtracted_x < settings["min_pos_err"])
+                        closest_idx_y = np.where(subtracted_y < settings["min_pos_err"])
                         closest_idx = np.intersect1d(closest_idx_x, closest_idx_y)
                         
                         # no match found, need to create a new circle list
@@ -83,5 +83,4 @@ def frame_analysis(frame, settings, circles, frame_pos):
                         else:
                             # print(f"closest index: {closest_idx}")
                             circles[closest_idx[0]][2].append(frame_pos, r)
-    print(circles)
-    return return_frame, circles
+    return return_frame, circles, frame_pos
