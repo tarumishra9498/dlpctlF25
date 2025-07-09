@@ -1,7 +1,7 @@
 import sys
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QMutex, QMutexLocker, Qt
 from PySide6.QtGui import QImage, QImageReader, QPixmap
 from PySide6.QtWidgets import (
     QFileDialog,
@@ -44,16 +44,40 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.capture.pressed.connect(self.on_capture)
 
         self.blur = 5
-        self.adapt_area = 60
+        self.adapt_area = 61
         self.adapt_c = 13
         self.min_area = 25
         self.circularity = 0.7
         self.min_pos_err = 5
 
+        self.filters_on = True
         self.blur_on = True
         self.thresh_on = True
-        self.contours_on = True
+        self.contour_on = True
         self.tracking_on = True
+
+        self.settings_mutex = QMutex()
+        self.circles_mutex = QMutex()
+        
+        self.settings = {
+            "filters_on" : self.filters_on,
+            "blur" : self.blur,
+            "adapt_area" : self.adapt_area,
+            "adapt_c" : self.adapt_c,
+            "min_area" : self.min_area,
+            "circularity" : self.circularity, 
+            "min_pos_err" : self.min_pos_err,
+            "blur_on" : self.blur_on,
+            "thresh_on" : self.thresh_on,
+            "contour_on" : self.contour_on,
+            "tracking_on" : self.tracking_on
+        }
+        
+        self.circles = []
+
+        self.show_filters.setChecked(self.filters_on)
+        self.show_filters.clicked.connect(self.checked_filters)
+        
 
         self.blur_slider.setValue(self.blur)
         self.blur_spinbox.setValue(self.blur)
@@ -92,14 +116,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tracking_min_error_spinbox.setValue(self.min_pos_err)
         self.tracking_min_error_spinbox.valueChanged.connect(self.update_min_pos_err)
 
-        self.blur_checkbox.setChecked(True)
-        self.thresh_checkbox.setChecked(True)
-        self.contour_checkbox.setChecked(True)
-        self.tracking_checkbox.setChecked(True)
+        self.blur_checkbox.setChecked(self.blur_on)
+        self.thresh_checkbox.setChecked(self.thresh_on)
+        self.contour_checkbox.setChecked(self.contour_on)
+        self.tracking_checkbox.setChecked(self.tracking_on)
         self.blur_checkbox.stateChanged.connect(self.checked_blur)
         self.thresh_checkbox.stateChanged.connect(self.checked_thresh)
         self.contour_checkbox.stateChanged.connect(self.checked_contour)
         self.tracking_checkbox.stateChanged.connect(self.checked_tracking)
+
+        self.play.clicked.connect(self.on_play)
+        self.pause.clicked.connect(self.on_pause)
+        self.replay.clicked.connect(self.on_replay)
+        self.capture.clicked.connect(self.on_capture)
+
 
         self.actionOpen.triggered.connect(self.read_video)
 
@@ -187,53 +217,59 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.video_frame.setPixmap(pixmap)
 
+    def update_settings(self, name, value):
+        with QMutexLocker(self.settings_mutex):
+            self.settings[name] = value
+
+    def checked_filters(self):
+        self.update_settings("filters_on", self.show_filters.isChecked())
+
     def checked_blur(self):
-        if self.blur_checkbox.isChecked():
-            self.blur_on = True
-        else:
-            self.blur_on = False
+        self.update_settings("blur_on", self.blur_checkbox.isChecked())
 
     def checked_thresh(self):
-        if self.thresh_checkbox.isChecked():
-            self.thresh_on = True
-        else:
-            self.thresh_on = False
+        self.update_settings("thresh_on", self.thresh_checkbox.isChecked())
 
     def checked_contour(self):
-        if self.contour_checkbox.isChecked():
-            self.contours_on = True
-        else:
-            self.contours_on = False
+        self.update_settings("contour_on", self.contour_checkbox.isChecked())
 
     def checked_tracking(self):
-        if self.tracking_checkbox.isChecked():
-            self.tracking_on = True
-        else:
-            self.tracking_on = False
+        self.update_settings("tracking_on", self.tracking_checkbox.isChecked())
 
     def update_blur(self, val):
         if val % 2 == 0:
             val += 1
-        self.blur = val
+        self.update_settings("blur", val)
 
     def update_adapt_area(self, val):
         if val % 2 == 0:
             val += 1
-        self.adapt_area = val
+        self.update_settings("adapt_area", val)
 
     def update_adapt_c(self, val):
-        self.adapt_c = val
+        self.update_settings("adapt_c", val)
 
     def update_min_area(self, val):
-        self.min_area = val
+        self.update_settings("min_area", val)
 
     def update_circularity(self, val):
-        val = val / 100.0
-        self.circularity = val
-        print(val)
+        self.update_settings("circularity", val)
 
     def update_min_pos_err(self, val):
-        self.min_pos_err = val
+
+        self.update_settings("min_pos_err", val)
+
+    def on_play(self):
+        pass
+
+    def on_pause(self):
+        pass
+
+    def on_replay(self):
+        pass
+
+    def on_capture_image(self):
+        pass
 
     def closeEvent(self, event):
         self.camera.stop_recording()
@@ -251,9 +287,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         file_dialog.setViewMode(QFileDialog.ViewMode.Detail)
 
         if file_dialog.exec():
-            files = file_dialog.selectedFiles() 
-            print(files[0])
-            self.ReadThread = VideoReadThread(files[0])
+            files = file_dialog.selectedFiles()
+            self.ReadThread = VideoReadThread(files[0], self.settings, self.settings_mutex, self.circles, self.circles_mutex)
             self.ReadThread.FrameUpdate.connect(self.update_display)
             self.ReadThread.start()
 
