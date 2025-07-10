@@ -41,7 +41,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.blur_on = True
         self.thresh_on = True
         self.contour_on = True
-        self.tracking_on = False
+        self.tracking_on = True
 
         self.settings_mutex = QMutex()
         self.circles_mutex = QMutex()
@@ -62,7 +62,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "tracking_on" : self.tracking_on
         }
 
-        self.frame_pos = 1
+        self.frame_pos = 0
         self.circles = []
         self.opened_files = []
 
@@ -252,6 +252,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_circularity(self, val):
         self.update_settings("circularity", val)
 
+    def on_replay(self, val):
+        if val:
+            self.circles.clear()
+            self.ReadThread.stop()
+            self.ReadThread = VideoReadThread (
+                self.opened_files[-1], 
+                self.settings, 
+                self.settings_mutex, 
+                self.circles, 
+                self.circles_mutex, 
+                self.frame_pos, 
+                self.frame_pos_mutex, 
+                )
+            self.play.clicked.connect(lambda: self.ReadThread.on_pause(False))
+            self.pause.clicked.connect(lambda: self.ReadThread.on_pause(True))
+            self.ReadThread.FrameUpdate.connect(self.update_display)
+            self.ReadThread.start()
+
+
+
     def update_min_pos_err(self, val):
         self.update_settings("min_pos_err", val)
 
@@ -284,10 +304,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 )
             self.play.clicked.connect(lambda: self.ReadThread.on_pause(False))
             self.pause.clicked.connect(lambda: self.ReadThread.on_pause(True))
-            self.replay.clicked.connect(lambda: self.ReadThread.on_replay(True))
+            self.replay.clicked.connect(lambda: self.on_replay(True))
             self.ReadThread.FrameUpdate.connect(self.update_display)
             self.ReadThread.start()
-
+            
 
 if __name__ == "__main__":
     app = None
