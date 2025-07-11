@@ -127,20 +127,6 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton">
-             <property name="text">
-              <string>Connect Camera</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_2">
-             <property name="text">
-              <string>Connect DLP</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="load_bitmask">
              <property name="text">
               <string>Load Bitmask</string>
@@ -180,7 +166,7 @@
            <property name="currentIndex">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="video_filters">
+           <widget class="QWidget" name="video_filters_tab">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
               <horstretch>0</horstretch>
@@ -700,6 +686,33 @@
              </item>
             </layout>
            </widget>
+           <widget class="QWidget" name="devices_tab">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <attribute name="title">
+             <string>Devices</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <widget class="QPushButton" name="pushButton">
+               <property name="text">
+                <string>Connect Camera</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_2">
+               <property name="text">
+                <string>Connect DLP</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </item>
         </layout>
@@ -715,7 +728,7 @@
      <x>0</x>
      <y>0</y>
      <width>930</width>
-     <height>33</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

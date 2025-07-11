@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctl.ui'
+## Form generated from reading UI file 'dlpctldDoLdJ.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -107,16 +107,6 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addWidget(self.capture)
 
-        self.pushButton = QPushButton(self.horizontalFrame_2)
-        self.pushButton.setObjectName(u"pushButton")
-
-        self.horizontalLayout.addWidget(self.pushButton)
-
-        self.pushButton_2 = QPushButton(self.horizontalFrame_2)
-        self.pushButton_2.setObjectName(u"pushButton_2")
-
-        self.horizontalLayout.addWidget(self.pushButton_2)
-
         self.load_bitmask = QPushButton(self.horizontalFrame_2)
         self.load_bitmask.setObjectName(u"load_bitmask")
 
@@ -146,16 +136,16 @@ class Ui_MainWindow(object):
         font.setBold(True)
         self.tabWidget.setFont(font)
         self.tabWidget.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.video_filters = QWidget()
-        self.video_filters.setObjectName(u"video_filters")
+        self.video_filters_tab = QWidget()
+        self.video_filters_tab.setObjectName(u"video_filters_tab")
         sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.video_filters.sizePolicy().hasHeightForWidth())
-        self.video_filters.setSizePolicy(sizePolicy2)
-        self.verticalLayout_3 = QVBoxLayout(self.video_filters)
+        sizePolicy2.setHeightForWidth(self.video_filters_tab.sizePolicy().hasHeightForWidth())
+        self.video_filters_tab.setSizePolicy(sizePolicy2)
+        self.verticalLayout_3 = QVBoxLayout(self.video_filters_tab)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.show_filters = QPushButton(self.video_filters)
+        self.show_filters = QPushButton(self.video_filters_tab)
         self.show_filters.setObjectName(u"show_filters")
         self.show_filters.setCheckable(True)
         self.show_filters.setChecked(True)
@@ -164,7 +154,7 @@ class Ui_MainWindow(object):
 
         self.blur_grid = QGridLayout()
         self.blur_grid.setObjectName(u"blur_grid")
-        self.blur_spinbox = QSpinBox(self.video_filters)
+        self.blur_spinbox = QSpinBox(self.video_filters_tab)
         self.blur_spinbox.setObjectName(u"blur_spinbox")
         sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
@@ -179,7 +169,7 @@ class Ui_MainWindow(object):
 
         self.blur_grid.addWidget(self.blur_spinbox, 3, 1, 1, 1)
 
-        self.blur_checkbox = QCheckBox(self.video_filters)
+        self.blur_checkbox = QCheckBox(self.video_filters_tab)
         self.blur_checkbox.setObjectName(u"blur_checkbox")
         sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
         sizePolicy4.setHorizontalStretch(0)
@@ -189,7 +179,7 @@ class Ui_MainWindow(object):
 
         self.blur_grid.addWidget(self.blur_checkbox, 0, 1, 1, 1)
 
-        self.label_11 = QLabel(self.video_filters)
+        self.label_11 = QLabel(self.video_filters_tab)
         self.label_11.setObjectName(u"label_11")
         sizePolicy.setHeightForWidth(self.label_11.sizePolicy().hasHeightForWidth())
         self.label_11.setSizePolicy(sizePolicy)
@@ -200,7 +190,7 @@ class Ui_MainWindow(object):
 
         self.blur_grid.addWidget(self.label_11, 0, 0, 1, 1)
 
-        self.blur_slider = QSlider(self.video_filters)
+        self.blur_slider = QSlider(self.video_filters_tab)
         self.blur_slider.setObjectName(u"blur_slider")
         sizePolicy3.setHeightForWidth(self.blur_slider.sizePolicy().hasHeightForWidth())
         self.blur_slider.setSizePolicy(sizePolicy3)
@@ -210,7 +200,7 @@ class Ui_MainWindow(object):
 
         self.blur_grid.addWidget(self.blur_slider, 3, 0, 1, 1)
 
-        self.label_12 = QLabel(self.video_filters)
+        self.label_12 = QLabel(self.video_filters_tab)
         self.label_12.setObjectName(u"label_12")
         sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy5.setHorizontalStretch(0)
@@ -221,7 +211,7 @@ class Ui_MainWindow(object):
 
         self.blur_grid.addWidget(self.label_12, 2, 0, 1, 2)
 
-        self.line_8 = QFrame(self.video_filters)
+        self.line_8 = QFrame(self.video_filters_tab)
         self.line_8.setObjectName(u"line_8")
         self.line_8.setFrameShape(QFrame.Shape.HLine)
         self.line_8.setFrameShadow(QFrame.Shadow.Sunken)
@@ -238,7 +228,7 @@ class Ui_MainWindow(object):
 
         self.thresh_grid = QGridLayout()
         self.thresh_grid.setObjectName(u"thresh_grid")
-        self.thresh_area_slider = QSlider(self.video_filters)
+        self.thresh_area_slider = QSlider(self.video_filters_tab)
         self.thresh_area_slider.setObjectName(u"thresh_area_slider")
         sizePolicy3.setHeightForWidth(self.thresh_area_slider.sizePolicy().hasHeightForWidth())
         self.thresh_area_slider.setSizePolicy(sizePolicy3)
@@ -247,7 +237,7 @@ class Ui_MainWindow(object):
 
         self.thresh_grid.addWidget(self.thresh_area_slider, 3, 0, 1, 1)
 
-        self.label_3 = QLabel(self.video_filters)
+        self.label_3 = QLabel(self.video_filters_tab)
         self.label_3.setObjectName(u"label_3")
         sizePolicy3.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
         self.label_3.setSizePolicy(sizePolicy3)
@@ -255,7 +245,7 @@ class Ui_MainWindow(object):
 
         self.thresh_grid.addWidget(self.label_3, 2, 0, 1, 2)
 
-        self.thresh_const_slider = QSlider(self.video_filters)
+        self.thresh_const_slider = QSlider(self.video_filters_tab)
         self.thresh_const_slider.setObjectName(u"thresh_const_slider")
         sizePolicy3.setHeightForWidth(self.thresh_const_slider.sizePolicy().hasHeightForWidth())
         self.thresh_const_slider.setSizePolicy(sizePolicy3)
@@ -263,7 +253,7 @@ class Ui_MainWindow(object):
 
         self.thresh_grid.addWidget(self.thresh_const_slider, 5, 0, 1, 1)
 
-        self.line_6 = QFrame(self.video_filters)
+        self.line_6 = QFrame(self.video_filters_tab)
         self.line_6.setObjectName(u"line_6")
         sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         sizePolicy6.setHorizontalStretch(0)
@@ -275,13 +265,13 @@ class Ui_MainWindow(object):
 
         self.thresh_grid.addWidget(self.line_6, 1, 0, 1, 2)
 
-        self.label_7 = QLabel(self.video_filters)
+        self.label_7 = QLabel(self.video_filters_tab)
         self.label_7.setObjectName(u"label_7")
         self.label_7.setFont(font2)
 
         self.thresh_grid.addWidget(self.label_7, 0, 0, 1, 1)
 
-        self.label_4 = QLabel(self.video_filters)
+        self.label_4 = QLabel(self.video_filters_tab)
         self.label_4.setObjectName(u"label_4")
         sizePolicy3.setHeightForWidth(self.label_4.sizePolicy().hasHeightForWidth())
         self.label_4.setSizePolicy(sizePolicy3)
@@ -289,12 +279,12 @@ class Ui_MainWindow(object):
 
         self.thresh_grid.addWidget(self.label_4, 4, 0, 1, 2)
 
-        self.thresh_checkbox = QCheckBox(self.video_filters)
+        self.thresh_checkbox = QCheckBox(self.video_filters_tab)
         self.thresh_checkbox.setObjectName(u"thresh_checkbox")
 
         self.thresh_grid.addWidget(self.thresh_checkbox, 0, 1, 1, 1)
 
-        self.thresh_area_spinbox = QSpinBox(self.video_filters)
+        self.thresh_area_spinbox = QSpinBox(self.video_filters_tab)
         self.thresh_area_spinbox.setObjectName(u"thresh_area_spinbox")
         sizePolicy3.setHeightForWidth(self.thresh_area_spinbox.sizePolicy().hasHeightForWidth())
         self.thresh_area_spinbox.setSizePolicy(sizePolicy3)
@@ -303,7 +293,7 @@ class Ui_MainWindow(object):
 
         self.thresh_grid.addWidget(self.thresh_area_spinbox, 3, 1, 1, 1)
 
-        self.thresh_const_spinbox = QSpinBox(self.video_filters)
+        self.thresh_const_spinbox = QSpinBox(self.video_filters_tab)
         self.thresh_const_spinbox.setObjectName(u"thresh_const_spinbox")
         sizePolicy3.setHeightForWidth(self.thresh_const_spinbox.sizePolicy().hasHeightForWidth())
         self.thresh_const_spinbox.setSizePolicy(sizePolicy3)
@@ -322,7 +312,7 @@ class Ui_MainWindow(object):
 
         self.contour_grid = QGridLayout()
         self.contour_grid.setObjectName(u"contour_grid")
-        self.contour_spinbox = QSpinBox(self.video_filters)
+        self.contour_spinbox = QSpinBox(self.video_filters_tab)
         self.contour_spinbox.setObjectName(u"contour_spinbox")
         sizePolicy3.setHeightForWidth(self.contour_spinbox.sizePolicy().hasHeightForWidth())
         self.contour_spinbox.setSizePolicy(sizePolicy3)
@@ -330,13 +320,13 @@ class Ui_MainWindow(object):
 
         self.contour_grid.addWidget(self.contour_spinbox, 3, 1, 1, 1)
 
-        self.label_6 = QLabel(self.video_filters)
+        self.label_6 = QLabel(self.video_filters_tab)
         self.label_6.setObjectName(u"label_6")
         self.label_6.setFont(font2)
 
         self.contour_grid.addWidget(self.label_6, 0, 0, 1, 1)
 
-        self.label_8 = QLabel(self.video_filters)
+        self.label_8 = QLabel(self.video_filters_tab)
         self.label_8.setObjectName(u"label_8")
         sizePolicy3.setHeightForWidth(self.label_8.sizePolicy().hasHeightForWidth())
         self.label_8.setSizePolicy(sizePolicy3)
@@ -344,7 +334,7 @@ class Ui_MainWindow(object):
 
         self.contour_grid.addWidget(self.label_8, 4, 0, 1, 2)
 
-        self.label_5 = QLabel(self.video_filters)
+        self.label_5 = QLabel(self.video_filters_tab)
         self.label_5.setObjectName(u"label_5")
         sizePolicy3.setHeightForWidth(self.label_5.sizePolicy().hasHeightForWidth())
         self.label_5.setSizePolicy(sizePolicy3)
@@ -352,12 +342,12 @@ class Ui_MainWindow(object):
 
         self.contour_grid.addWidget(self.label_5, 2, 0, 1, 2)
 
-        self.contour_checkbox = QCheckBox(self.video_filters)
+        self.contour_checkbox = QCheckBox(self.video_filters_tab)
         self.contour_checkbox.setObjectName(u"contour_checkbox")
 
         self.contour_grid.addWidget(self.contour_checkbox, 0, 1, 1, 1)
 
-        self.line_5 = QFrame(self.video_filters)
+        self.line_5 = QFrame(self.video_filters_tab)
         self.line_5.setObjectName(u"line_5")
         sizePolicy6.setHeightForWidth(self.line_5.sizePolicy().hasHeightForWidth())
         self.line_5.setSizePolicy(sizePolicy6)
@@ -370,7 +360,7 @@ class Ui_MainWindow(object):
 
         self.contour_grid.addWidget(self.line_5, 1, 0, 1, 2)
 
-        self.contour_slider = QSlider(self.video_filters)
+        self.contour_slider = QSlider(self.video_filters_tab)
         self.contour_slider.setObjectName(u"contour_slider")
         sizePolicy3.setHeightForWidth(self.contour_slider.sizePolicy().hasHeightForWidth())
         self.contour_slider.setSizePolicy(sizePolicy3)
@@ -378,7 +368,7 @@ class Ui_MainWindow(object):
 
         self.contour_grid.addWidget(self.contour_slider, 3, 0, 1, 1)
 
-        self.circularity_spinbox = QDoubleSpinBox(self.video_filters)
+        self.circularity_spinbox = QDoubleSpinBox(self.video_filters_tab)
         self.circularity_spinbox.setObjectName(u"circularity_spinbox")
         sizePolicy3.setHeightForWidth(self.circularity_spinbox.sizePolicy().hasHeightForWidth())
         self.circularity_spinbox.setSizePolicy(sizePolicy3)
@@ -399,7 +389,7 @@ class Ui_MainWindow(object):
 
         self.tracking_grid = QGridLayout()
         self.tracking_grid.setObjectName(u"tracking_grid")
-        self.label_9 = QLabel(self.video_filters)
+        self.label_9 = QLabel(self.video_filters_tab)
         self.label_9.setObjectName(u"label_9")
         sizePolicy3.setHeightForWidth(self.label_9.sizePolicy().hasHeightForWidth())
         self.label_9.setSizePolicy(sizePolicy3)
@@ -407,14 +397,14 @@ class Ui_MainWindow(object):
 
         self.tracking_grid.addWidget(self.label_9, 0, 0, 1, 1)
 
-        self.line_7 = QFrame(self.video_filters)
+        self.line_7 = QFrame(self.video_filters_tab)
         self.line_7.setObjectName(u"line_7")
         self.line_7.setFrameShape(QFrame.Shape.HLine)
         self.line_7.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.tracking_grid.addWidget(self.line_7, 1, 0, 1, 2)
 
-        self.label_10 = QLabel(self.video_filters)
+        self.label_10 = QLabel(self.video_filters_tab)
         self.label_10.setObjectName(u"label_10")
         sizePolicy3.setHeightForWidth(self.label_10.sizePolicy().hasHeightForWidth())
         self.label_10.setSizePolicy(sizePolicy3)
@@ -422,12 +412,12 @@ class Ui_MainWindow(object):
 
         self.tracking_grid.addWidget(self.label_10, 2, 0, 1, 2)
 
-        self.tracking_checkbox = QCheckBox(self.video_filters)
+        self.tracking_checkbox = QCheckBox(self.video_filters_tab)
         self.tracking_checkbox.setObjectName(u"tracking_checkbox")
 
         self.tracking_grid.addWidget(self.tracking_checkbox, 0, 1, 1, 1)
 
-        self.tracking_min_error_spinbox = QDoubleSpinBox(self.video_filters)
+        self.tracking_min_error_spinbox = QDoubleSpinBox(self.video_filters_tab)
         self.tracking_min_error_spinbox.setObjectName(u"tracking_min_error_spinbox")
         sizePolicy5.setHeightForWidth(self.tracking_min_error_spinbox.sizePolicy().hasHeightForWidth())
         self.tracking_min_error_spinbox.setSizePolicy(sizePolicy5)
@@ -443,7 +433,24 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addLayout(self.tracking_grid)
 
-        self.tabWidget.addTab(self.video_filters, "")
+        self.tabWidget.addTab(self.video_filters_tab, "")
+        self.devices_tab = QWidget()
+        self.devices_tab.setObjectName(u"devices_tab")
+        sizePolicy2.setHeightForWidth(self.devices_tab.sizePolicy().hasHeightForWidth())
+        self.devices_tab.setSizePolicy(sizePolicy2)
+        self.verticalLayout_2 = QVBoxLayout(self.devices_tab)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.pushButton = QPushButton(self.devices_tab)
+        self.pushButton.setObjectName(u"pushButton")
+
+        self.verticalLayout_2.addWidget(self.pushButton)
+
+        self.pushButton_2 = QPushButton(self.devices_tab)
+        self.pushButton_2.setObjectName(u"pushButton_2")
+
+        self.verticalLayout_2.addWidget(self.pushButton_2)
+
+        self.tabWidget.addTab(self.devices_tab, "")
 
         self.tool_layout.addWidget(self.tabWidget)
 
@@ -459,7 +466,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 930, 33))
+        self.menubar.setGeometry(QRect(0, 0, 930, 22))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuTools = QMenu(self.menubar)
@@ -491,8 +498,6 @@ class Ui_MainWindow(object):
         self.pause.setText(QCoreApplication.translate("MainWindow", u"Pause", None))
         self.replay.setText(QCoreApplication.translate("MainWindow", u"Replay", None))
         self.capture.setText(QCoreApplication.translate("MainWindow", u"Capture", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Connect Camera", None))
-        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Connect DLP", None))
         self.load_bitmask.setText(QCoreApplication.translate("MainWindow", u"Load Bitmask", None))
         self.show_filters.setText(QCoreApplication.translate("MainWindow", u"Show Filters", None))
         self.blur_checkbox.setText("")
@@ -509,7 +514,10 @@ class Ui_MainWindow(object):
         self.label_9.setText(QCoreApplication.translate("MainWindow", u"Activate Bubble Tracking", None))
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"Min Position Error", None))
         self.tracking_checkbox.setText("")
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.video_filters), QCoreApplication.translate("MainWindow", u"Video Filters", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.video_filters_tab), QCoreApplication.translate("MainWindow", u"Video Filters", None))
+        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Connect Camera", None))
+        self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Connect DLP", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.devices_tab), QCoreApplication.translate("MainWindow", u"Devices", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuTools.setTitle(QCoreApplication.translate("MainWindow", u"Tools", None))
     # retranslateUi
