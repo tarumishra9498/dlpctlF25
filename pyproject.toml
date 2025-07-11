@@ -10,4 +10,5 @@ dependencies = [
     "opencv-python>=4.11.0.86",
     "pypylon>=4.2.0",
     "pyside6>=6.9.1",
+    "pyvisa-py>=0.8.0",
 ]
