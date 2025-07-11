@@ -69,6 +69,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "alp4lib" },
+    { name = "matplotlib" },
     { name = "numpy" },
     { name = "opencv-python" },
     { name = "pypylon" },
@@ -79,6 +80,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "alp4lib", specifier = ">=1.0.2" },
+    { name = "matplotlib", specifier = ">=3.10.3" },
     { name = "numpy", specifier = ">=2.2.6" },
     { name = "opencv-python", specifier = ">=4.11.0.86" },
     { name = "pypylon", specifier = ">=4.2.0" },
