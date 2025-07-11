@@ -2,12 +2,22 @@ from PySide6.QtCore import QMutexLocker, QThread, Signal, Slot
 import cv2 as cv
 import time
 
-from frame_analysis import frame_analysis, plotting
+from frame_analysis import frame_analysis
+
 
 class VideoReadThread(QThread):
     FrameUpdate = Signal(object)
 
-    def __init__(self, path, settings, settings_mutex, circles, circles_mutex, frame_start, frame_pos_mutex):
+    def __init__(
+        self,
+        path,
+        settings,
+        settings_mutex,
+        circles,
+        circles_mutex,
+        frame_start,
+        frame_pos_mutex,
+    ):
         super().__init__()
         self.path = path
         self.settings = settings
@@ -31,18 +41,22 @@ class VideoReadThread(QThread):
         frame_delay = 1 / fps
 
         while self.running:
-
             if self.paused:
                 continue
-            
+
             with QMutexLocker(self.settings_mutex):
                 local_settings = dict(self.settings)
             with QMutexLocker(self.circles_mutex):
                 local_circles = list(self.circles)
-            
+
             ret, frame = cap.read()
             if ret:
-                updated_frame, updated_circles, updated_frame_pos = frame_analysis(frame, local_settings, local_circles, cap.get(cv.CAP_PROP_POS_FRAMES))
+                updated_frame, updated_circles, updated_frame_pos = frame_analysis(
+                    frame,
+                    local_settings,
+                    local_circles,
+                    cap.get(cv.CAP_PROP_POS_FRAMES),
+                )
                 self.FrameUpdate.emit(updated_frame)
                 time.sleep(frame_delay)
                 self.update_circles(updated_circles)
@@ -52,7 +66,6 @@ class VideoReadThread(QThread):
 
         cap.release()
 
-    
     def update_circles(self, circles):
         with QMutexLocker(self.circles_mutex):
             self.circles.clear()
