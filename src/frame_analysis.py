@@ -2,7 +2,18 @@ import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
 
-def frame_analysis(frame, settings, circles, frame_pos):
+class BubbleKalman(cv.KalmanFilter):
+    def __init__(self, center, dt, process_noise=1e-2, measurement_noise=1e-1):
+        super().__init__(2,1)
+        self.transitionMatrix = np.array([[1, dt],[0, 1]], dtype=np.float32) # F
+        self.measurementMatrix = np.array([[1, 0]], dtype=np.float32) # H
+        self.processNoiseCov = process_noise * np.eye(2, dtype=np.float32) # Q
+        self.measurementNoiseCov = np.array([[measurement_noise]], dtype=np.float32) # R
+        self.statePost = np.zeros((2, 1), dtype=np.float32) # initial state estimate
+        self.errorCovPost = np.eye(2, dtype=np.float32) # initial state covariance
+        self.center = center
+
+def frame_analysis(frame, settings, circles, kalman_filters, frame_pos):
     t0 = 0
     scale_height = .55
     scale_width = .55
@@ -23,6 +34,7 @@ def frame_analysis(frame, settings, circles, frame_pos):
 
     if settings["contour_on"] and settings["thresh_on"] and settings["blur_on"]:
         contours, _ = cv.findContours(gray, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+        detected_idxs = list()
         for contour in contours:
 
             # Approximate the contour to a polygon
@@ -59,10 +71,13 @@ def frame_analysis(frame, settings, circles, frame_pos):
                     print('no countours found')
                     break
                     
-                # on first frame populate circles
+                # first frame, populate circles
                 elif len(circles) == 0:
                     circles.append([int(x), int(y), [(frame_pos, round(r, 2))]])
-                    
+                    kalman_filters.append(BubbleKalman(x, y, round(r, 2)))
+                    kalman_filters[-1].correct(np.array([[r]], dtype=np.float32))
+                    detected_idxs.append(len(circles) - 1)
+
                 # on all other frames, find matches
                 else:
                     if settings["tracking_on"]:
@@ -77,12 +92,26 @@ def frame_analysis(frame, settings, circles, frame_pos):
                         # no match found, need to create a new circle list
                         if closest_idx.size == 0:
                             circles.append([round(x), round(y), [(frame_pos, round(r, 2))]])
+                            kalman_filters.append(BubbleKalman(x, y, round(r, 2)))
+                            kalman_filters[-1].correct(np.array([[r]], dtype=np.float32))
+                            detected_idxs.append(len(circles) - 1)
 
                         # match found, update bucket
                         else:
-                            # print(f"closest index: {closest_idx}")
                             circles[closest_idx[0]][2].append((frame_pos, r))
-    return return_frame, circles, frame_pos
+                            kalman_filters[closest_idx[0]].correct(np.array([[r]], dtype=np.float32))
+                            detected_idxs.append(closest_idx[0])
+
+        # find circles that haven't been detected with contour detection
+        found_idxs = np.zeros(len(circles), dtype=bool)
+        found_idxs[detected_idxs] = True
+        missing_idxs = np.where(found_idxs == False)[0]
+        if missing_idxs.size > 0:
+            for i in missing_idxs:
+                prediction = kalman_filters[i].predict()[0][0]
+                circles[i][2].append((frame_pos, round(float(prediction), 2), "estimated"))
+
+    return return_frame, circles, kalman_filters, frame_pos
 
 # def plotting(circles):
 #     x_coords = [pair[0] for pair in circles[0][2]]

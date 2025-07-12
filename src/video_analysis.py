@@ -6,8 +6,42 @@ import time
 from time import perf_counter
 import os
 
+class BubbleKalman(cv.KalmanFilter):
+    def __init__(self, center, dt, process_noise=1e-2, measurement_noise=1e-1):
+        super().__init__(2,1)
+        # transition matrix F
+        self.transitionMatrix = np.array([[1, dt],[0, 1]], dtype=np.float32)
+
+        # measurement matrix H
+        self.measurementMatrix = np.array([[1, 0]], dtype=np.float32)
+
+        # process noise covariance Q
+        self.processNoiseCov = process_noise * np.eye(2, dtype=np.float32)
+
+        # measurement noise covariance R
+        self.measurementNoiseCov = np.array([[measurement_noise]], dtype=np.float32)
+
+        # initial state estimate
+        self.statePost = np.zeros((2, 1), dtype=np.float32)
+
+        # initial state covariance
+        self.errorCovPost = np.eye(2, dtype=np.float32)
+        self.center = center
+
+
+kf = BubbleKalman((100, 100), 10)
+# Initial prediction
+kf.correct(np.array([[12.3]], dtype=np.float32))
+kf.correct(np.array([[10]], dtype=np.float32))
+kf.correct(np.array([[9]], dtype=np.float32))
+
+# returns [[r]
+           #[dr]]
+
+
 
 circles = list()
+kalman_filters = list()
 
 video = cv.VideoCapture(os.path.join(os.path.dirname(__file__), '../static/sample_bubble_video.mp4'))
 #sample_bubble_video
@@ -32,8 +66,6 @@ h, w = frame.shape[:2]
 # start writing video
 fourcc = cv.VideoWriter_fourcc(*'XVID')
 out = cv.VideoWriter("output.avi", fourcc, fps, (w, h))
-
-
 
 video.set(cv.CAP_PROP_POS_FRAMES, frame_start)
 
@@ -72,22 +104,22 @@ while video.isOpened():
         print(f"min_area:{min_area}")
         video.set(cv.CAP_PROP_POS_FRAMES, frame_start)
 
+    detected_idxs = list()
 
     # skip “black” frames
     h, w = frame.shape[:2]
     if not np.array_equal(frame[h//2, w//2], [0,0,0]):
 
+
         # resize and recalc frame shape
         frame = cv.resize(frame, (0, 0), fx=scale_width, fy=scale_height)
+        # frame = frame[0:50, 600:650]
         h, w = frame.shape[:2]
 
         # contouring filters
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         gray = cv.GaussianBlur(gray, (blur, blur), 0)
         gray = cv.adaptiveThreshold(gray, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY_INV, adapt_area, adapt_c)
-
-        # kernel = np.ones((3, 3),np.uint8)
-        # closed = cv.morphologyEx(gray, cv.MORPH_CLOSE, kernel, iterations=2)
 
         # countour detection
         contours, _ = cv.findContours(gray, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
@@ -125,7 +157,12 @@ while video.isOpened():
                 
                 # on first frame populate circles
                 if video.get(cv.CAP_PROP_POS_FRAMES) == frame_start + 1:
-                    circles.append([x, y, [(video.get(cv.CAP_PROP_POS_FRAMES), round(r, 2))]])
+                    # print("FIRST FRAME")
+                    circles.append([x, y, [(video.get(cv.CAP_PROP_POS_FRAMES), round(r, 2))]])                    
+                    detected_idxs.append(len(circles) - 1)
+                    kalman_filters.append(BubbleKalman(x, y, round(r, 2)))
+                    kalman_filters[-1].correct(np.array([[r]], dtype=np.float32))
+
                 
                 # on all other frames, find matches
                 else:
@@ -140,14 +177,30 @@ while video.isOpened():
                     
                     # no match found, need to create a new circle list
                     if closest_idx.size == 0:
-                        # print("match not found")
+                        # print("MATCH NOT FOUND")
                         circles.append([round(x), round(y), [(video.get(cv.CAP_PROP_POS_FRAMES), round(r, 2))]])
+                        kalman_filters.append(BubbleKalman(x, y, round(r, 2)))
+                        kalman_filters[-1].correct(np.array([[r]], dtype=np.float32))
+                        detected_idxs.append(len(circles) - 1)
 
                     # match found, update bucket
                     else:
-                        # print(f"closest index: {closest_idx}")
+                        # print(f"MATCH FOUND, closest index: {closest_idx}")
                         circles[closest_idx[0]][2].append((video.get(cv.CAP_PROP_POS_FRAMES), r))
-        
+                        detected_idxs.append(closest_idx[0])
+                        kalman_filters[closest_idx[0]].correct(np.array([[r]], dtype=np.float32))
+
+
+        # find circles that haven't been recognized
+        found_idxs = np.zeros(len(circles), dtype=bool)
+        found_idxs[detected_idxs] = True
+        missing_idxs = np.where(found_idxs == False)[0]
+        # print(f"frame: {video.get(cv.CAP_PROP_POS_FRAMES)}, missing ids: {missing_idxs}")
+        if missing_idxs.size > 0:
+            for i in missing_idxs:
+                prediction = kalman_filters[i].predict()[0][0]
+                circles[i][2].append((video.get(cv.CAP_PROP_POS_FRAMES), round(float(prediction), 2), "estimated"))
+
         # calculate fps
         real_fps = 1/(perf_counter()-t0)
         fps_text = f"FPS: {int(real_fps)}"
@@ -164,21 +217,19 @@ while video.isOpened():
     #     break
 
 
-
 out.release() 
 cv.destroyAllWindows()
+print(circles[53])
 
 # graph coordinates for single circle
-x_coords = [pair[0] for pair in circles[0][2]]
-y_coords = [pair[1] for pair in circles[0][2]]
+# x_coords = [pair[0] for pair in circles[0][2]]
+# y_coords = [pair[1] for pair in circles[0][2]]
 
-print(circles[0][2])
-
-plt.plot(x_coords, y_coords, 'o')
-plt.title("Radius per Frame of Single Circle")
-plt.xlabel("Frame")
-plt.ylabel("Radius (pixels)")
-plt.show()
+# plt.plot(x_coords, y_coords, 'o')
+# plt.title("Radius per Frame of Single Circle")
+# plt.xlabel("Frame")
+# plt.ylabel("Radius (pixels)")
+# plt.show()
 
 
 # ability to select a bubble/multiple bubbles to track
