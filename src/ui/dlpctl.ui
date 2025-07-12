@@ -164,7 +164,7 @@
             <enum>Qt::LayoutDirection::LeftToRight</enum>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="video_filters_tab">
             <property name="sizePolicy">
@@ -694,7 +694,7 @@
              </sizepolicy>
             </property>
             <attribute name="title">
-             <string>Page</string>
+             <string>Devices</string>
             </attribute>
             <layout class="QVBoxLayout" name="verticalLayout_2">
              <item>
