@@ -13,12 +13,21 @@ class BubbleKalman(cv.KalmanFilter):
         self.errorCovPost = np.eye(2, dtype=np.float32) # initial state covariance
         self.center = center
 
+def closest_idx_finder(array2d, x, y, tolerance):
+
+    subtracted_x = np.abs(array2d[:, 0] - np.full(len(array2d[:, 0]), x))
+    subtracted_y = np.abs(array2d[:, 1] - np.full(len(array2d[:, 1]), y))
+    closest_idx_x = np.where(subtracted_x < tolerance)
+    closest_idx_y = np.where(subtracted_y < tolerance)
+    closest_idx = np.intersect1d(closest_idx_x, closest_idx_y)
+    return closest_idx
+
 def frame_analysis(frame, settings, circles, kalman_filters, frame_pos):
     t0 = 0
-    scale_height = .55
-    scale_width = .55
+    # scale_height = .75
+    # scale_width = .75
     return_frame = None
-    frame = cv.resize(frame, (0, 0), fx=scale_width, fy=scale_height)
+    # frame = cv.resize(frame, (0, 0), fx=scale_width, fy=scale_height)
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     
     if settings["blur_on"]:
@@ -57,6 +66,26 @@ def frame_analysis(frame, settings, circles, kalman_filters, frame_pos):
             else:
                 circularity = 0
             
+            if settings["selection_on"]:
+                # checks whether contour is selected based on radius and center point
+                selections_np = np.array(settings["selected_circles"], dtype=np.float32)
+                h, w = frame.shape[:2]
+
+                if selections_np.size > 0:
+                    scale_h = h / settings["pixmap_h"]
+                    scale_w = w / settings["pixmap_w"]
+                    
+                    selections_np[:, 0] *= scale_w
+                    selections_np[:, 1] *= scale_h
+
+                    # cv.circle(frame, (int(selections_np[0][0]), int(selections_np[0][1])), 2, (0, 255, 0), 1)
+                    # cv.imshow(";lkajsdfk;", frame)
+                    # cv.waitKey(0)
+                    # closest_idx = closest_idx_finder(selections_np, x, y, r)
+                    # if closest_idx.size > 0:
+                    #     print("circle selected")
+                    
+                
             # checks number of points in countour (approx) and circularity (good if close to 1)
             if len(approx) > 4 and circularity > 0.7:
                 
@@ -81,14 +110,9 @@ def frame_analysis(frame, settings, circles, kalman_filters, frame_pos):
                 # on all other frames, find matches
                 else:
                     if settings["tracking_on"]:
-                        circles_np = np.array(circles, dtype=object)
-                        subtracted_x = np.abs(circles_np[:, 0] - np.full(len(circles_np[:, 0]), x))
-                        subtracted_y = np.abs(circles_np[:, 1] - np.full(len(circles_np[:, 1]), y))
-                        
-                        closest_idx_x = np.where(subtracted_x < settings["min_pos_err"])
-                        closest_idx_y = np.where(subtracted_y < settings["min_pos_err"])
-                        closest_idx = np.intersect1d(closest_idx_x, closest_idx_y)
-                        
+                        circles_np = np.array(circles, dtype=object)                        
+                        closest_idx = closest_idx_finder(circles_np, x, y, settings["min_pos_err"])
+
                         # no match found, need to create a new circle list
                         if closest_idx.size == 0:
                             circles.append([round(x), round(y), [(frame_pos, round(r, 2))]])

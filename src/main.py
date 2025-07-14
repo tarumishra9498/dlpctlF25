@@ -24,6 +24,8 @@ from dlp_thread import DlpThread
 
 from video_read_thread import VideoReadThread
 
+from widgets import ClickableLabel
+
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self) -> None:
         super(MainWindow, self).__init__()
@@ -42,9 +44,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.thresh_on = True
         self.contour_on = True
         self.tracking_on = True
+        self.selection_on = True
 
         self.settings_mutex = QMutex()
         self.circles_mutex = QMutex()
+        self.clicked_circles_mutex = QMutex()
         self.frame_pos_mutex = QMutex()
         self.paused_mutex = QMutex()
         
@@ -59,11 +63,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "blur_on" : self.blur_on,
             "thresh_on" : self.thresh_on,
             "contour_on" : self.contour_on,
-            "tracking_on" : self.tracking_on
+            "tracking_on" : self.tracking_on,
+            "selection_on" : self.selection_on,
+            "selected_circles" : [],
+            "video_frame_h" : 0,
+            "video_frame_w" : 0,
+            "pixmap_h": 0,
+            "pixmap_w" : 0
+
+
         }
 
         self.frame_pos = 0
         self.circles = []
+        self.clicked_circles = []
         self.opened_files = []
 
         self.camera: CameraThread = CameraThread()
@@ -116,6 +129,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.circularity_spinbox.setValue(self.circularity)
         self.circularity_spinbox.valueChanged.connect(self.update_circularity)
+
         self.tracking_min_error_spinbox.setValue(self.min_pos_err)
         self.tracking_min_error_spinbox.valueChanged.connect(self.update_min_pos_err)
 
@@ -123,12 +137,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.thresh_checkbox.setChecked(self.thresh_on)
         self.contour_checkbox.setChecked(self.contour_on)
         self.tracking_checkbox.setChecked(self.tracking_on)
+        self.selection_checkbox.setChecked(self.selection_on)
+
         self.blur_checkbox.stateChanged.connect(self.checked_blur)
         self.thresh_checkbox.stateChanged.connect(self.checked_thresh)
         self.contour_checkbox.stateChanged.connect(self.checked_contour)
         self.tracking_checkbox.stateChanged.connect(self.checked_tracking)
+        self.selection_checkbox.stateChanged.connect(self.checked_selection)
+
+        self.clear_all.pressed.connect(self.clear_all_bubbles)
+        self.show_all.pressed.connect(self.show_all_bubbles)
 
         self.actionOpen.triggered.connect(self.read_video)
+
+        self.setMouseTracking(True)
+        self.centralWidget().setMouseTracking(True)
+        self.video_frame.setMouseTracking(True)
+        self.video_frame.clicked.connect(self.on_video_click)
 
     def connect_camera(self):
         if not self.camera.basler:
@@ -213,6 +238,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             )
             pixmap = QPixmap.fromImage(q_img)
         self.video_frame.setPixmap(pixmap)
+        self.update_settings("pixmap_w", pixmap.width())
+        self.update_settings("pixmap_h", pixmap.height())
 
     def update_settings(self, name, value):
         with QMutexLocker(self.settings_mutex):
@@ -233,6 +260,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def checked_tracking(self):
         self.update_settings("tracking_on", self.tracking_checkbox.isChecked())
 
+    def checked_selection(self):
+        self.update_settings("selection_on", self.selection_checkbox.isChecked())
+        print(self.settings["selection_on"])
+    
     def update_blur(self, val):
         if val % 2 == 0:
             val += 1
@@ -270,19 +301,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.ReadThread.FrameUpdate.connect(self.update_display)
             self.ReadThread.start()
 
-
-
     def update_min_pos_err(self, val):
         self.update_settings("min_pos_err", val)
+    
+    def clear_all_bubbles(self):
+        self.update_settings("selected_circles", [])
 
-    def closeEvent(self, event):
-        self.camera.stop_recording()
-        self.video_writer.stop()
-
-        if hasattr(self, 'read_thread') and self.ReadThread.isRunning():
-            self.ReadThread.stop()
-        
-        super().closeEvent(event)
+    def show_all_bubbles(self):
+        self.update_settings("selected_circles", [[x, y] for x, y, _ in self.circles])
 
     def read_video(self):
         file_dialog = QFileDialog(self)
@@ -293,6 +319,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if file_dialog.exec():
             files = file_dialog.selectedFiles()
             self.opened_files.append(files[0])
+            self.update_settings("selected_circles", [])
             self.ReadThread = VideoReadThread (
                 self.opened_files[-1], 
                 self.settings, 
@@ -308,6 +335,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.ReadThread.FrameUpdate.connect(self.update_display)
             self.ReadThread.start()
             
+    def showEvent(self, event):
+        self.update_settings("video_frame_w", self.video_frame.width())
+        self.update_settings("video_frame_h", self.video_frame.height())
+
+    def closeEvent(self, event):
+        self.camera.stop_recording()
+        self.video_writer.stop()
+
+        if hasattr(self, 'read_thread') and self.ReadThread.isRunning():
+            self.ReadThread.stop()
+        
+        super().closeEvent(event)
+    
+    def on_video_click(self, x, y):
+        with QMutexLocker(self.settings_mutex):
+            x -= ((self.settings["video_frame_w"] - self.settings["pixmap_w"]) // 2)
+            y -= ((self.settings["video_frame_h"] - self.settings["pixmap_h"]) // 2)
+            self.settings['selected_circles'].append([x, y])
+            print(f"selected circles: {self.settings["selected_circles"]}")
 
 if __name__ == "__main__":
     app = None

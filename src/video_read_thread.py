@@ -9,7 +9,7 @@ from frame_analysis import frame_analysis
 class VideoReadThread(QThread):
     FrameUpdate = Signal(object)
 
-    def __init__(
+    def __init__ (
         self,
         path,
         settings,
@@ -69,12 +69,11 @@ class VideoReadThread(QThread):
                 break
 
         cap.release()
-        print(self.circles[49])
 
     def update_circles(self, circles):
         with QMutexLocker(self.circles_mutex):
             self.circles.clear()
-            self.circles = circles
+            self.circles.extend(circles)
 
     @Slot(bool)
     def on_pause(self, do_pause):
