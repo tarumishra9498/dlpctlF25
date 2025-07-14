@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlSCsNHx.ui'
+## Form generated from reading UI file 'dlpctlXHbRtj.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -22,19 +22,21 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QDoubleSpinBox, QFrame,
     QSlider, QSpacerItem, QSpinBox, QStatusBar,
     QTabWidget, QVBoxLayout, QWidget)
 
+from widgets import ClickableLabel
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(930, 700)
+        MainWindow.resize(1000, 763)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
         MainWindow.setMinimumSize(QSize(0, 0))
-        MainWindow.setMaximumSize(QSize(930, 700))
+        MainWindow.setMaximumSize(QSize(999999, 999999))
         MainWindow.setIconSize(QSize(30, 30))
         self.actionOpen = QAction(MainWindow)
         self.actionOpen.setObjectName(u"actionOpen")
@@ -54,30 +56,19 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.video_layout = QVBoxLayout()
         self.video_layout.setObjectName(u"video_layout")
-        self.video_frame = QLabel(self.horizontalFrame_2)
+        self.video_frame = ClickableLabel(self.horizontalFrame_2)
         self.video_frame.setObjectName(u"video_frame")
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.video_frame.sizePolicy().hasHeightForWidth())
         self.video_frame.setSizePolicy(sizePolicy1)
+        self.video_frame.setMinimumSize(QSize(0, 0))
+        self.video_frame.setMouseTracking(False)
+        self.video_frame.setScaledContents(False)
         self.video_frame.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.video_layout.addWidget(self.video_frame)
-
-        self.line_2 = QFrame(self.horizontalFrame_2)
-        self.line_2.setObjectName(u"line_2")
-        self.line_2.setFrameShape(QFrame.Shape.VLine)
-        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.video_layout.addWidget(self.line_2)
-
-        self.line_3 = QFrame(self.horizontalFrame_2)
-        self.line_3.setObjectName(u"line_3")
-        self.line_3.setFrameShape(QFrame.Shape.VLine)
-        self.line_3.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.video_layout.addWidget(self.line_3)
 
         self.video_slider = QSlider(self.horizontalFrame_2)
         self.video_slider.setObjectName(u"video_slider")
@@ -517,7 +508,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 930, 33))
+        self.menubar.setGeometry(QRect(0, 0, 1000, 33))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuTools = QMenu(self.menubar)
