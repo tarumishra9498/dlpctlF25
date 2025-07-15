@@ -44,8 +44,8 @@ class VideoReadThread(QThread):
         frame_delay = 1 / fps
 
         while self.running:
-            if self.paused:
-                continue
+            while self.paused and self.running:
+                time.sleep(0.01)
 
             with QMutexLocker(self.settings_mutex):
                 local_settings = dict(self.settings)
