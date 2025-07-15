@@ -14,7 +14,6 @@ class BubbleKalman(cv.KalmanFilter):
         self.center = center
 
 def closest_idx_finder(array2d, x, y, tolerance):
-
     subtracted_x = np.abs(array2d[:, 0] - np.full(len(array2d[:, 0]), x))
     subtracted_y = np.abs(array2d[:, 1] - np.full(len(array2d[:, 1]), y))
     closest_idx_x = np.where(subtracted_x < tolerance)
@@ -71,21 +70,22 @@ def frame_analysis(frame, settings, circles, kalman_filters, frame_pos):
                 selections_np = np.array(settings["selected_circles"], dtype=np.float32)
                 h, w = frame.shape[:2]
 
-                if selections_np.size > 0:
+                if len(settings["selected_circles"]) > 0:
                     scale_h = h / settings["pixmap_h"]
                     scale_w = w / settings["pixmap_w"]
                     
                     selections_np[:, 0] *= scale_w
                     selections_np[:, 1] *= scale_h
 
-                    # cv.circle(frame, (int(selections_np[0][0]), int(selections_np[0][1])), 2, (0, 255, 0), 1)
-                    # cv.imshow(";lkajsdfk;", frame)
-                    # cv.waitKey(0)
-                    # closest_idx = closest_idx_finder(selections_np, x, y, r)
-                    # if closest_idx.size > 0:
-                    #     print("circle selected")
-                    
-                
+                    closest_idx = closest_idx_finder(selections_np, x, y, r)
+
+                    # if circle is selected twice, don't show it 
+                    if closest_idx.size % 2 == 0:
+                        continue
+
+                # no selections, dont display anything
+                else:
+                    continue
             # checks number of points in countour (approx) and circularity (good if close to 1)
             if len(approx) > 4 and circularity > 0.7:
                 
@@ -93,7 +93,7 @@ def frame_analysis(frame, settings, circles, kalman_filters, frame_pos):
                 # y = round(y)
                 center = (int(x), int(y))
                 r = round(r, 2)
-                cv.circle(return_frame, center, int(r), (255, 0, 255), 1)
+                cv.circle(return_frame, center, int(r), (173, 216, 230), 2)
                 cv.circle(return_frame, center, 2, (0, 255, 0), 1)
 
                 if len(contours) == 0:
@@ -133,7 +133,12 @@ def frame_analysis(frame, settings, circles, kalman_filters, frame_pos):
         if missing_idxs.size > 0:
             for i in missing_idxs:
                 prediction = kalman_filters[i].predict()[0][0]
-                circles[i][2].append((frame_pos, round(float(prediction), 2), "estimated"))
+                # will never do two back to back predictions or an empty prediction
+                if len(circles[i][2][-1]) != 3 and prediction > 0:
+                    circles[i][2].append((frame_pos, round(float(prediction)), "estimated"))
+                    center = (circles[i][0], circles[i][1])
+                    cv.circle(return_frame, center, int(prediction), (173, 216, 230), 2)
+                    cv.circle(return_frame, center, 2, (0, 255, 0), 1)
 
     return return_frame, circles, kalman_filters, frame_pos
 
