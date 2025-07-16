@@ -69,7 +69,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "video_frame_h" : 0,
             "video_frame_w" : 0,
             "pixmap_h": 0,
-            "pixmap_w" : 0
+            "pixmap_w" : 0,
+            "fps" : 0
 
 
         }
@@ -150,6 +151,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.actionOpen.triggered.connect(self.read_video)
         self.ReadThread = VideoReadThread(None, None, None, None, None, None, None)
+        self.play.clicked.connect(lambda: self.ReadThread.on_pause(False))
+        self.pause.clicked.connect(lambda: self.ReadThread.on_pause(True))
+        self.replay.clicked.connect(lambda: self.on_replay(True))
+    
 
         self.setMouseTracking(True)
         self.centralWidget().setMouseTracking(True)
@@ -293,7 +298,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if val:
             if self.ReadThread and self.ReadThread.isRunning():
                 self.ReadThread.stop()
-                self.ReadThread.wait()
+                self.ReadThread.wait() # try removing these calls 
 
             with QMutexLocker(self.circles_mutex):
                 self.circles.clear()
@@ -308,8 +313,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.frame_pos, 
                 self.frame_pos_mutex, 
                 )
-            self.play.clicked.connect(lambda: self.ReadThread.on_pause(False))
-            self.pause.clicked.connect(lambda: self.ReadThread.on_pause(True))
             self.ReadThread.FrameUpdate.connect(self.update_display)
             self.ReadThread.start()
 
@@ -321,6 +324,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def show_all_bubbles(self):
         self.update_settings("selected_circles", [])
+        # FIX THIS 
 
     def read_video(self):
         file_dialog = QFileDialog(self)
@@ -350,9 +354,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.frame_pos_mutex, 
                 )
 
-            self.play.clicked.connect(lambda: self.ReadThread.on_pause(False))
-            self.pause.clicked.connect(lambda: self.ReadThread.on_pause(True))
-            self.replay.clicked.connect(lambda: self.on_replay(True))
             self.ReadThread.FrameUpdate.connect(self.update_display)
             self.ReadThread.start()
             
@@ -366,14 +367,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if hasattr(self, 'read_thread') and self.ReadThread.isRunning():
             self.ReadThread.stop()
+            self.ReadThread.wait()
         
         super().closeEvent(event)
     
     def on_video_click(self, x, y):
         with QMutexLocker(self.settings_mutex):
+            if self.settings["selected_circles"] == [False]:
+                self.settings["selected_circles"] = []
             x -= ((self.settings["video_frame_w"] - self.settings["pixmap_w"]) // 2)
             y -= ((self.settings["video_frame_h"] - self.settings["pixmap_h"]) // 2)
-            self.settings['selected_circles'].append([x, y])
+            self.settings["selected_circles"].append([x, y])
+            print(self.settings["selected_circles"])
 
 if __name__ == "__main__":
     app = None
@@ -387,3 +392,5 @@ if __name__ == "__main__":
     window.show()
     if app:
         app.exec()
+
+
