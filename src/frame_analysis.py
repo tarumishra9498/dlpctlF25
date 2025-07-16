@@ -22,19 +22,13 @@ def closest_idx_finder(array2d, x, y, tolerance):
     return closest_idx
 
 def frame_analysis(frame, settings, circles, kalman_filters, frame_pos):
-    t0 = 0
-    # scale_height = .75
-    # scale_width = .75
     return_frame = None
-    # frame = cv.resize(frame, (0, 0), fx=scale_width, fy=scale_height)
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     
     if settings["blur_on"]:
-        gray = cv.GaussianBlur(gray, (settings["blur"], settings["blur"]), 0)
-    
+        gray = cv.GaussianBlur(gray, (settings["blur"], settings["blur"]), 0) 
     if settings["thresh_on"]:
         gray = cv.adaptiveThreshold(gray, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY_INV, settings["adapt_area"], settings["adapt_c"])
-
     if settings["filters_on"]: 
         return_frame = gray
     else:
@@ -64,8 +58,12 @@ def frame_analysis(frame, settings, circles, kalman_filters, frame_pos):
                 circularity = area/circle_area
             else:
                 circularity = 0
-            
+        
             if settings["selection_on"]:
+                # setting to show all bubbles that are being detected
+                # hovering 
+
+
                 # checks whether contour is selected based on radius and center point
                 selections_np = np.array(settings["selected_circles"], dtype=np.float32)
                 h, w = frame.shape[:2]
@@ -86,6 +84,7 @@ def frame_analysis(frame, settings, circles, kalman_filters, frame_pos):
                 # no selections, dont display anything
                 else:
                     continue
+
             # checks number of points in countour (approx) and circularity (good if close to 1)
             if len(approx) > 4 and circularity > 0.7:
                 
@@ -140,13 +139,14 @@ def frame_analysis(frame, settings, circles, kalman_filters, frame_pos):
                     cv.circle(return_frame, center, int(prediction), (173, 216, 230), 2)
                     cv.circle(return_frame, center, 2, (0, 255, 0), 1)
 
+    cv.putText(return_frame, f"FPS: {int(settings["fps"])}", (10, 30), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv.LINE_AA)
     return return_frame, circles, kalman_filters, frame_pos
 
-# def plotting(circles):
-#     x_coords = [pair[0] for pair in circles[0][2]]
-#     y_coords = [pair[1] for pair in circles[0][2]]
-#     plt.plot(x_coords, y_coords, 'o')
-#     plt.title("Radius per Frame of Single Circle")
-#     plt.xlabel("Frame")
-#     plt.ylabel("Radius (pixels)")
-#     plt.show()
+def plotting(circles):
+    x_coords = [pair[0] for pair in circles[0][2]]
+    y_coords = [pair[1] for pair in circles[0][2]]
+    plt.plot(x_coords, y_coords, 'o')
+    plt.title("Radius per Frame of Single Circle")
+    plt.xlabel("Frame")
+    plt.ylabel("Radius (pixels)")
+    plt.show()
