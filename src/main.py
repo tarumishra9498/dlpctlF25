@@ -32,7 +32,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowTitle("DLP Control")
 
-        self.blur = 5
+        self.blur = 7
         self.adapt_area = 61
         self.adapt_c = 13
         self.min_area = 25
@@ -48,7 +48,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.settings_mutex = QMutex()
         self.circles_mutex = QMutex()
-        self.clicked_circles_mutex = QMutex()
+        self.selected_circles_mutex = QMutex()
         self.frame_pos_mutex = QMutex()
         self.paused_mutex = QMutex()
         
@@ -65,19 +65,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "contour_on" : self.contour_on,
             "tracking_on" : self.tracking_on,
             "selection_on" : self.selection_on,
-            "selected_circles" : [],
             "video_frame_h" : 0,
             "video_frame_w" : 0,
             "pixmap_h": 0,
             "pixmap_w" : 0,
-            "fps" : 0
-
-
+            "fps" : 0,
+            "video_iteration" : 0
         }
 
         self.frame_pos = 0
         self.circles = []
-        self.clicked_circles = []
+        self.selected_circles = []
         self.opened_files = []
 
         self.camera: CameraThread = CameraThread()
@@ -150,11 +148,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.show_all.pressed.connect(self.show_all_bubbles)
 
         self.actionOpen.triggered.connect(self.read_video)
-        self.ReadThread = VideoReadThread(None, None, None, None, None, None, None)
+        self.ReadThread = VideoReadThread(None, None, None, None, None, None, None, None, None)
         self.play.clicked.connect(lambda: self.ReadThread.on_pause(False))
         self.pause.clicked.connect(lambda: self.ReadThread.on_pause(True))
         self.replay.clicked.connect(lambda: self.on_replay(True))
-    
 
         self.setMouseTracking(True)
         self.centralWidget().setMouseTracking(True)
@@ -250,6 +247,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_settings(self, name, value):
         with QMutexLocker(self.settings_mutex):
             self.settings[name] = value
+    
+    def update_selected_circles(self, value):
+        with QMutexLocker(self.selected_circles_mutex):
+            self.selected_circles = value
 
     def checked_filters(self):
         self.update_settings("filters_on", self.show_filters.isChecked())
@@ -302,14 +303,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             with QMutexLocker(self.circles_mutex):
                 self.circles.clear()
-            self.update_settings("selected_circles", [])
 
             self.ReadThread = VideoReadThread (
                 self.opened_files[-1], 
                 self.settings, 
                 self.settings_mutex, 
                 self.circles, 
-                self.circles_mutex, 
+                self.circles_mutex,
+                self.selected_circles,
+                self.selected_circles_mutex,
                 self.frame_pos, 
                 self.frame_pos_mutex, 
                 )
@@ -320,7 +322,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_settings("min_pos_err", val)
     
     def clear_all_bubbles(self):
-        self.update_settings("selected_circles", [])
+        with QMutexLocker(self.selected_circles_mutex):
+            self.selected_circles.clear()
 
     def show_all_bubbles(self):
         self.update_settings("selected_circles", [])
@@ -340,16 +343,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.ReadThread.stop()
                 self.ReadThread.wait()
 
-            with QMutexLocker(self.circles_mutex):
-                self.circles.clear()
-            self.update_settings("selected_circles", [])
-
             self.ReadThread = VideoReadThread (
                 self.opened_files[-1], 
                 self.settings, 
                 self.settings_mutex, 
                 self.circles, 
-                self.circles_mutex, 
+                self.circles_mutex,
+                self.selected_circles,
+                self.selected_circles_mutex, 
                 self.frame_pos, 
                 self.frame_pos_mutex, 
                 )
@@ -372,13 +373,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().closeEvent(event)
     
     def on_video_click(self, x, y):
-        with QMutexLocker(self.settings_mutex):
-            if self.settings["selected_circles"] == [False]:
-                self.settings["selected_circles"] = []
-            x -= ((self.settings["video_frame_w"] - self.settings["pixmap_w"]) // 2)
-            y -= ((self.settings["video_frame_h"] - self.settings["pixmap_h"]) // 2)
-            self.settings["selected_circles"].append([x, y])
-            print(self.settings["selected_circles"])
+        x -= ((self.settings["video_frame_w"] - self.settings["pixmap_w"]) // 2)
+        y -= ((self.settings["video_frame_h"] - self.settings["pixmap_h"]) // 2)
+        with QMutexLocker(self.selected_circles_mutex):
+            if self.selected_circles_mutex == [False]:
+                self.selected_circles = []
+            self.selected_circles.append([x, y])
 
 if __name__ == "__main__":
     app = None
