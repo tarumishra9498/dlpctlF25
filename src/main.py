@@ -12,16 +12,14 @@ from PySide6.QtWidgets import (
 )
 
 import cv2 as cv
-
 import numpy as np
+import time
 
 from ui.ui_dlpctl import Ui_MainWindow
 
 from camera_thread import CameraThread
 from video_write_thread import VideoWriteThread
-
 from dlp_thread import DlpThread
-
 from video_read_thread import VideoReadThread
 
 from widgets import ClickableLabel
@@ -145,7 +143,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.selection_checkbox.stateChanged.connect(self.checked_selection)
 
         self.clear_all.pressed.connect(self.clear_all_bubbles)
-        self.show_all.pressed.connect(self.show_all_bubbles)
 
         self.actionOpen.triggered.connect(self.read_video)
         self.ReadThread = VideoReadThread(None, None, None, None, None, None, None, None, None)
@@ -248,10 +245,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         with QMutexLocker(self.settings_mutex):
             self.settings[name] = value
     
-    def update_selected_circles(self, value):
-        with QMutexLocker(self.selected_circles_mutex):
-            self.selected_circles = value
-
     def checked_filters(self):
         self.update_settings("filters_on", self.show_filters.isChecked())
 
@@ -324,10 +317,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def clear_all_bubbles(self):
         with QMutexLocker(self.selected_circles_mutex):
             self.selected_circles.clear()
-
-    def show_all_bubbles(self):
-        self.update_settings("selected_circles", [])
-        # FIX THIS 
 
     def read_video(self):
         file_dialog = QFileDialog(self)

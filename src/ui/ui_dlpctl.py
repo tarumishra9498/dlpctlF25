@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlXHbRtj.ui'
+## Form generated from reading UI file 'dlpctlnsfHCg.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -438,19 +438,6 @@ class Ui_MainWindow(object):
 
         self.selection_grid = QGridLayout()
         self.selection_grid.setObjectName(u"selection_grid")
-        self.label = QLabel(self.video_filters_tab)
-        self.label.setObjectName(u"label")
-        self.label.setFont(font2)
-
-        self.selection_grid.addWidget(self.label, 0, 0, 1, 1)
-
-        self.selection_checkbox = QCheckBox(self.video_filters_tab)
-        self.selection_checkbox.setObjectName(u"selection_checkbox")
-        sizePolicy6.setHeightForWidth(self.selection_checkbox.sizePolicy().hasHeightForWidth())
-        self.selection_checkbox.setSizePolicy(sizePolicy6)
-
-        self.selection_grid.addWidget(self.selection_checkbox, 0, 1, 1, 1, Qt.AlignmentFlag.AlignRight)
-
         self.line_4 = QFrame(self.video_filters_tab)
         self.line_4.setObjectName(u"line_4")
         self.line_4.setFrameShape(QFrame.Shape.HLine)
@@ -464,14 +451,20 @@ class Ui_MainWindow(object):
 
         self.selection_grid.addWidget(self.clear_all, 2, 0, 1, 2)
 
-        self.show_all = QPushButton(self.video_filters_tab)
-        self.show_all.setObjectName(u"show_all")
-        self.show_all.setFont(font2)
+        self.label = QLabel(self.video_filters_tab)
+        self.label.setObjectName(u"label")
+        self.label.setFont(font2)
 
-        self.selection_grid.addWidget(self.show_all, 3, 0, 1, 2)
+        self.selection_grid.addWidget(self.label, 0, 0, 1, 1)
+
+        self.selection_checkbox = QCheckBox(self.video_filters_tab)
+        self.selection_checkbox.setObjectName(u"selection_checkbox")
+        sizePolicy6.setHeightForWidth(self.selection_checkbox.sizePolicy().hasHeightForWidth())
+        self.selection_checkbox.setSizePolicy(sizePolicy6)
+
+        self.selection_grid.addWidget(self.selection_checkbox, 0, 1, 1, 1, Qt.AlignmentFlag.AlignRight)
 
         self.selection_grid.setColumnStretch(0, 2)
-        self.selection_grid.setColumnStretch(1, 1)
 
         self.verticalLayout_3.addLayout(self.selection_grid)
 
@@ -556,10 +549,9 @@ class Ui_MainWindow(object):
         self.label_9.setText(QCoreApplication.translate("MainWindow", u"Activate Bubble Tracking", None))
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"Min Position Error", None))
         self.tracking_checkbox.setText("")
+        self.clear_all.setText(QCoreApplication.translate("MainWindow", u"Clear All Bubbles", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Activate Bubble Selection", None))
         self.selection_checkbox.setText("")
-        self.clear_all.setText(QCoreApplication.translate("MainWindow", u"Clear All Bubbles", None))
-        self.show_all.setText(QCoreApplication.translate("MainWindow", u"Show All Bubbles", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.video_filters_tab), QCoreApplication.translate("MainWindow", u"Video Filters", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Connect Camera", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Connect DLP", None))
