@@ -33,10 +33,9 @@ class VideoReadThread(QThread):
         self.running = True
         self.frame_start = frame_start
         self.frame_pos_mutex = frame_pos_mutex
-        self.local_kalman_filters = dict()
         self.paused = False
         self.display_fps = 30.0
-
+        self.bubble_counter_start = 1
 
     def run(self):
         cap = cv.VideoCapture(self.path)
@@ -60,23 +59,20 @@ class VideoReadThread(QThread):
         with QMutexLocker(self.selected_circles_mutex):
             self.selected_circles.clear()
         
-        self.local_kalman_filters.clear()
-        
+        self.bubble_counter = 0
         while self.running:
             while self.paused and self.running:
                 time.sleep(0.01)
             start_tick = cv.getTickCount()
             ret, frame = cap.read()
             if not ret:
-
                 break
 
                 with QMutexLocker(self.circles_mutex):
                     self.circles.clear()
-                self.local_kalman_filters.clear()
                 with QMutexLocker(self.settings_mutex):
                     local_settings = self.settings.copy()
-                
+                self.bubble_counter = 0
                 cap.set(cv.CAP_PROP_POS_FRAMES, self.frame_start)
                 time.sleep(.01)
                 video_iteration += 1
@@ -109,21 +105,20 @@ class VideoReadThread(QThread):
                 self.frame_start = cap.get(cv.CAP_PROP_POS_FRAMES)
 
             try:
-                updated_frame, updated_circles, updated_kfs = frame_analysis(
+                updated_frame, updated_circles = frame_analysis(
                     frame,
                     local_settings,
                     local_circles,
                     local_selected_circles,
-                    self.local_kalman_filters,
                     cap.get(cv.CAP_PROP_POS_FRAMES),
                     self.frame_start,
+                    self.bubble_counter_start
                 )
 
                 self.FrameUpdate.emit(updated_frame)
                 with QMutexLocker(self.circles_mutex):
                     self.circles.clear()
-                    self.circles.extend(updated_circles)
-                self.local_kalman_filters = updated_kfs
+                    self.circles.update(updated_circles)
 
             except Exception as e:
                 print(f"Frame analysis failed: {e}")
@@ -136,7 +131,7 @@ class VideoReadThread(QThread):
             time.sleep(max(display_time - proc_secs, 0))
 
         cap.release()
-        print(self.circles[60:65])
+        print(len(self.circles))
     @Slot(bool)
     def on_pause(self, do_pause):
         self.paused = do_pause

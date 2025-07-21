@@ -43,6 +43,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.contour_on = True
         self.tracking_on = True
         self.selection_on = False
+        self.pid_on = True
 
         self.settings_mutex = QMutex()
         self.circles_mutex = QMutex()
@@ -63,6 +64,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "contour_on" : self.contour_on,
             "tracking_on" : self.tracking_on,
             "selection_on" : self.selection_on,
+            "pid_on" : self.pid_on,
             "video_frame_h" : 0,
             "video_frame_w" : 0,
             "pixmap_h": 0,
@@ -72,7 +74,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         }
 
         self.frame_pos = 0
-        self.circles = []
+        self.circles = {}
         self.selected_circles = []
         self.opened_files = []
 
@@ -135,6 +137,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.contour_checkbox.setChecked(self.contour_on)
         self.tracking_checkbox.setChecked(self.tracking_on)
         self.selection_checkbox.setChecked(self.selection_on)
+        self.pid_checkbox.setChecked(self.pid_on)
 
         self.blur_checkbox.stateChanged.connect(self.checked_blur)
         self.thresh_checkbox.stateChanged.connect(self.checked_thresh)
@@ -269,6 +272,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             update = [False]
         self.update_settings("selected_circles", update)
+    
+    def checked_pid(self):
+        self.update_settings("pid_on", self.pid_checkbox.isChecked())
     
     def update_blur(self, val):
         if val % 2 == 0:
