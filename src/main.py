@@ -328,7 +328,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             files = file_dialog.selectedFiles()
             self.opened_files.append(files[0])
 
-            if self.ReadThread != None and self.ReadThread.isRunning():
+            if self.ReadThread is not None and self.ReadThread.isRunning():
                 self.ReadThread.stop()
                 self.ReadThread.wait()
 
