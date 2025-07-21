@@ -265,10 +265,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             update = [False]
         self.update_settings("selected_circles", update)
-    
+
     def checked_pid(self):
         self.update_settings("pid_on", self.pid_checkbox.isChecked())
-    
+
     def update_blur(self, val):
         if val % 2 == 0:
             val += 1
@@ -332,11 +332,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.ReadThread.stop()
                 self.ReadThread.wait()
 
-            self.ReadThread = VideoReadThread (
-                self.opened_files[-1], 
-                self.settings, 
-                self.settings_mutex, 
-                self.circles, 
+            self.ReadThread = VideoReadThread(
+                self.opened_files[-1],
+                self.settings,
+                self.settings_mutex,
+                self.circles,
                 self.circles_mutex,
                 self.selected_circles,
                 self.selected_circles_mutex,

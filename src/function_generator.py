@@ -21,11 +21,9 @@ class FunctionGenerator:
         for resource in self.rm.list_resources():
             try:
                 with self.rm.open_resource(resource) as instrument:
-                    # linters will complain about using a `Resource` as a `SerialInstrument`
-                    # so we assert that it is a SerialInstrument
-                    assert instrument is SerialInstrument
-                    idn = instrument.query("*IDN?").strip()
-                    devices[resource] = idn
+                    if instrument is SerialInstrument:
+                        idn = instrument.query("*IDN?").strip()
+                        devices[resource] = idn
 
             except Exception:
                 devices[resource] = "VISA Device (No IDN)"
@@ -42,7 +40,52 @@ class FunctionGenerator:
         instrument = self.rm.open_resource(self.devices[idn])
         assert instrument is SerialInstrument
         self.instrument = instrument
+        self.set_voltage()
+        self.set_frequency()
+        self.set_function()
+
+    def set_voltage(self, voltage: float) -> None:
+        if self.instrument:
+            try:
+                self.instrument.write("VOLT:UNIT VPP")
+                self.instrument.write("VOLT:OFFS 0V")
+                self.instrument.write("OUTP:LOAD INF")
+                self.instrument.write(f"VOLT {voltage}")
+                volt_read = np.float64(self.instrument.query("VOLT?").strip())
+                volt_unit = self.instrument.query("VOLT:UNIT?").strip()
+                print(f"Current voltage: {volt_read:.4f} {volt_unit}")
+            except pyvisa.errors.Error as e:
+                print(f"Error setting voltage: {e}")
+        else:
+            print("Function generator not selected!")
+
+    def set_frequency(self, frequency) -> None:
+        if self.instrument:
+            try:
+                self.instrument.write(f"FREQ {frequency}")
+                print(
+                    f"Current frequency: {np.float64(self.instrument.query('FREQ?')):.4f} Hz"
+                )
+            except pyvisa.errors.Error as e:
+                print(f"Error setting frequency: {e}")
+        else:
+            print("Function generator not selected!")
+
+    def set_function(self, function) -> None:
+        if self.instrument:
+            try:
+                self.instrument.write(f"FUNC {function}")
+                print(f"Current function: {self.instrument.query('FUNC?').strip()}")
+            except pyvisa.errors.Error as e:
+                print(f"Error setting function: {e}")
+        else:
+            print("Function generator not selected!")
 
     def __del__(self) -> None:
         if self.instrument:
             self.instrument.close()
+
+
+#            1000-3000 ; 1500 frequency
+#            -5v offset
+#            peak to peak voltage 12volts or 10v
