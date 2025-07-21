@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlmuoNrv.ui'
+## Form generated from reading UI file 'dlpctliYjMAM.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -439,6 +439,13 @@ class Ui_MainWindow(object):
 
         self.selection_grid.addWidget(self.line_4, 1, 0, 1, 2)
 
+        self.selection_checkbox = QCheckBox(self.video_filters_tab)
+        self.selection_checkbox.setObjectName(u"selection_checkbox")
+        sizePolicy6.setHeightForWidth(self.selection_checkbox.sizePolicy().hasHeightForWidth())
+        self.selection_checkbox.setSizePolicy(sizePolicy6)
+
+        self.selection_grid.addWidget(self.selection_checkbox, 0, 1, 1, 1, Qt.AlignmentFlag.AlignRight)
+
         self.clear_all = QPushButton(self.video_filters_tab)
         self.clear_all.setObjectName(u"clear_all")
         self.clear_all.setFont(font2)
@@ -451,16 +458,18 @@ class Ui_MainWindow(object):
 
         self.selection_grid.addWidget(self.label, 0, 0, 1, 1)
 
-        self.selection_checkbox = QCheckBox(self.video_filters_tab)
-        self.selection_checkbox.setObjectName(u"selection_checkbox")
-        sizePolicy6.setHeightForWidth(self.selection_checkbox.sizePolicy().hasHeightForWidth())
-        self.selection_checkbox.setSizePolicy(sizePolicy6)
-
-        self.selection_grid.addWidget(self.selection_checkbox, 0, 1, 1, 1, Qt.AlignmentFlag.AlignRight)
-
         self.selection_grid.setColumnStretch(0, 2)
 
         self.verticalLayout_3.addLayout(self.selection_grid)
+
+        self.mouse_pos = QLabel(self.video_filters_tab)
+        self.mouse_pos.setObjectName(u"mouse_pos")
+        sizePolicy4.setHeightForWidth(self.mouse_pos.sizePolicy().hasHeightForWidth())
+        self.mouse_pos.setSizePolicy(sizePolicy4)
+        self.mouse_pos.setFont(font2)
+        self.mouse_pos.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout_3.addWidget(self.mouse_pos)
 
         self.tabWidget.addTab(self.video_filters_tab, "")
         self.devices_tab = QWidget()
@@ -543,9 +552,10 @@ class Ui_MainWindow(object):
         self.label_9.setText(QCoreApplication.translate("MainWindow", u"Activate Bubble Tracking", None))
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"Min Position Error", None))
         self.tracking_checkbox.setText("")
+        self.selection_checkbox.setText("")
         self.clear_all.setText(QCoreApplication.translate("MainWindow", u"Clear All Bubbles", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Activate Bubble Selection", None))
-        self.selection_checkbox.setText("")
+        self.mouse_pos.setText(QCoreApplication.translate("MainWindow", u"Frame Position (X, Y): ", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.video_filters_tab), QCoreApplication.translate("MainWindow", u"Video Filters", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Connect Camera", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Connect DLP", None))

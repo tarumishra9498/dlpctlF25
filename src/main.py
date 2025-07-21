@@ -33,7 +33,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.blur = 7
         self.adapt_area = 61
         self.adapt_c = 13
-        self.min_area = 25
+        self.min_area = 70
         self.circularity = 0.7
         self.min_pos_err = 5
 
@@ -42,7 +42,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.thresh_on = True
         self.contour_on = True
         self.tracking_on = True
-        self.selection_on = True
+        self.selection_on = False
 
         self.settings_mutex = QMutex()
         self.circles_mutex = QMutex()
@@ -154,6 +154,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.centralWidget().setMouseTracking(True)
         self.video_frame.setMouseTracking(True)
         self.video_frame.clicked.connect(self.on_video_click)
+        self.video_frame.moved.connect(self.on_mouse_move)
 
     def connect_camera(self):
         if not self.camera.basler:
@@ -368,6 +369,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if self.selected_circles_mutex == [False]:
                 self.selected_circles = []
             self.selected_circles.append([x, y])
+
+    def on_mouse_move(self, x, y):
+        x -= ((self.settings["video_frame_w"] - self.settings["pixmap_w"]) // 2)
+        y -= ((self.settings["video_frame_h"] - self.settings["pixmap_h"]) // 2)
+        self.mouse_pos.setText(f"Frame Position (x, y): {x}, {y}")
 
 if __name__ == "__main__":
     app = None
