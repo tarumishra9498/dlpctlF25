@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlHavsOy.ui'
+## Form generated from reading UI file 'dlpctlrfdOzb.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -29,7 +29,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(1130, 806)
+        MainWindow.resize(1130, 814)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -402,8 +402,8 @@ class Ui_MainWindow(object):
 
         self.tracking_checkbox = QCheckBox(self.video_filters_tab)
         self.tracking_checkbox.setObjectName(u"tracking_checkbox")
-        sizePolicy3.setHeightForWidth(self.tracking_checkbox.sizePolicy().hasHeightForWidth())
-        self.tracking_checkbox.setSizePolicy(sizePolicy3)
+        sizePolicy5.setHeightForWidth(self.tracking_checkbox.sizePolicy().hasHeightForWidth())
+        self.tracking_checkbox.setSizePolicy(sizePolicy5)
 
         self.tracking_grid.addWidget(self.tracking_checkbox, 0, 1, 1, 1, Qt.AlignmentFlag.AlignRight)
 
@@ -441,8 +441,8 @@ class Ui_MainWindow(object):
 
         self.selection_checkbox = QCheckBox(self.video_filters_tab)
         self.selection_checkbox.setObjectName(u"selection_checkbox")
-        sizePolicy6.setHeightForWidth(self.selection_checkbox.sizePolicy().hasHeightForWidth())
-        self.selection_checkbox.setSizePolicy(sizePolicy6)
+        sizePolicy5.setHeightForWidth(self.selection_checkbox.sizePolicy().hasHeightForWidth())
+        self.selection_checkbox.setSizePolicy(sizePolicy5)
 
         self.selection_grid.addWidget(self.selection_checkbox, 0, 1, 1, 1, Qt.AlignmentFlag.AlignRight)
 
@@ -474,13 +474,13 @@ class Ui_MainWindow(object):
 
         self.pid_grid.addWidget(self.label_2, 0, 0, 1, 1)
 
-        self.checkBox = QCheckBox(self.video_filters_tab)
-        self.checkBox.setObjectName(u"checkBox")
-        sizePolicy5.setHeightForWidth(self.checkBox.sizePolicy().hasHeightForWidth())
-        self.checkBox.setSizePolicy(sizePolicy5)
-        self.checkBox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.pid_checkbox = QCheckBox(self.video_filters_tab)
+        self.pid_checkbox.setObjectName(u"pid_checkbox")
+        sizePolicy5.setHeightForWidth(self.pid_checkbox.sizePolicy().hasHeightForWidth())
+        self.pid_checkbox.setSizePolicy(sizePolicy5)
+        self.pid_checkbox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
-        self.pid_grid.addWidget(self.checkBox, 0, 1, 1, 1)
+        self.pid_grid.addWidget(self.pid_checkbox, 0, 1, 1, 1)
 
         self.line_2 = QFrame(self.video_filters_tab)
         self.line_2.setObjectName(u"line_2")
@@ -590,7 +590,7 @@ class Ui_MainWindow(object):
         self.clear_all.setText(QCoreApplication.translate("MainWindow", u"Clear All Bubbles", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Activate Bubble Selection", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Activate PID Control", None))
-        self.checkBox.setText("")
+        self.pid_checkbox.setText("")
         self.mouse_pos.setText(QCoreApplication.translate("MainWindow", u"Frame Position (X, Y): ", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.video_filters_tab), QCoreApplication.translate("MainWindow", u"Video Filters", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Connect Camera", None))
