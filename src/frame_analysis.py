@@ -3,21 +3,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class BubbleKalman:
-    try:
-        def __init__(self, x, y, r, dt=1, process_noise=1e-2, measurement_noise=1e-1):
-            self.kf = cv.KalmanFilter(2, 1)
-            self.kf.transitionMatrix = np.array([[1, dt], [0, 1]], dtype=np.float32)
-            self.kf.measurementMatrix = np.array([[1, 0]], dtype=np.float32)
-            self.kf.processNoiseCov = process_noise * np.eye(2, dtype=np.float32)
-            self.kf.measurementNoiseCov = np.array([[measurement_noise]], dtype=np.float32)
-            self.kf.statePost = np.array([[r], [0]], dtype=np.float32)
-            self.kf.errorCovPost = np.eye(2, dtype=np.float32)
-            self.center = (x, y)
-    except Exception as e:
-        print(e)
+    def __init__(self, x, y, r2, r1, dt, q_process_noise=1e-1, r_measurement_noise=1e-2):
+        self.kf = cv.KalmanFilter(2, 1)
+        self.kf.transitionMatrix = np.array([[1, dt], [0, 1]], dtype=np.float32)
+        self.kf.measurementMatrix = np.array([[1, 0]], dtype=np.float32)
+        self.kf.processNoiseCov = q_process_noise * np.eye(2, dtype=np.float32)
+        self.kf.measurementNoiseCov = np.array([[r_measurement_noise]], dtype=np.float32)
+        # self.kf.statePost = np.array([[r2], [(r2-r1)/dt]], dtype=np.float32)
+        self.kf.statePost = np.array([[r2], [dt]], dtype=np.float32)
+        self.kf.errorCovPost = np.eye(2, dtype=np.float32)
+        self.center = (x, y)
 
     def correct(self, measurement):
-        return self.kf.correct(measurement)
+        self.kf.correct(measurement)
 
     def predict(self):
         return self.kf.predict()
@@ -37,7 +35,6 @@ def closest_idx_finder(array2d, x, y, tolerance):
             print(f"closest index finder {e}")
             return np.array([])
 
-
 def frame_analysis(frame, settings, circles, selected_circles, kalman_filters, frame_pos, frame_start):
     return_frame = None
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
@@ -51,7 +48,7 @@ def frame_analysis(frame, settings, circles, selected_circles, kalman_filters, f
     else:
         return_frame = frame
     
-    # print(f"iteration: {settings["video_iteration"]}, frame: {frame_pos}")
+    print(f"iteration: {settings["video_iteration"]}, frame: {frame_pos}")
 
     if settings["contour_on"] and settings["thresh_on"] and settings["blur_on"]:
         contours, _ = cv.findContours(gray, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
@@ -108,9 +105,8 @@ def frame_analysis(frame, settings, circles, selected_circles, kalman_filters, f
                 elif int(frame_pos) == frame_start or (settings["selection_on"] and len(circles) == 0):
                     try:
                         if settings["tracking_on"]:
-                            circles.append([int(x), int(y), [(frame_pos, r)]])
-                            kalman_filters.append(BubbleKalman(x, y, r))
-                            kalman_filters[-1].correct(np.array([[r]], dtype=np.float32))
+                            circles.append([int(x), int(y), [[frame_pos, r]]])
+                            kalman_filters[len(circles) - 1] = None
                             detected_idxs.append(len(circles) - 1)
 
                     except Exception as e:
@@ -122,17 +118,26 @@ def frame_analysis(frame, settings, circles, selected_circles, kalman_filters, f
                         try:
                             circles_np = np.array(circles, dtype=object)
                             closest_idx = closest_idx_finder(circles_np, x, y, settings["min_pos_err"])
+
                             # no match found, need to create a new circle list
                             if closest_idx.size == 0:
-                                circles.append([round(x), round(y), [(frame_pos, r)]])
-                                kalman_filters.append(BubbleKalman(x, y, r))
-                                kalman_filters[-1].correct(np.array([[r]], dtype=np.float32))
+                                circles.append([round(x), round(y), [[frame_pos, r]]])
+                                kalman_filters[len(circles) - 1] = None
                                 detected_idxs.append(len(circles) - 1)
 
                             # match found, update bucket
                             else:
-                                circles[closest_idx[0]][2].append((frame_pos, r))
-                                kalman_filters[closest_idx[0]].correct(np.array([[r]], dtype=np.float32))
+                                # FIX FIX FIFX
+                                circles[closest_idx[0]][2].append([frame_pos, r])
+                                if kalman_filters[closest_idx[0]] is None:
+                                    r2 = circles[closest_idx[0]][2][-1][1]
+                                    r1 = circles[closest_idx[0]][2][-2][1]
+                                    kalman_filters[closest_idx[0]] = BubbleKalman(x, y, r2, r1, 1/settings["fps"])
+                                    pred = kalman_filters[closest_idx[0]].predict()
+                                    kalman_filters[closest_idx[0]].correct(np.array([[r]], dtype=np.float32))
+                                else:
+                                    pred = kalman_filters[closest_idx[0]].predict()
+                                    kalman_filters[closest_idx[0]].correct(np.array([[r]], dtype=np.float32))
                                 detected_idxs.append(closest_idx[0])
 
                         except Exception as e:
@@ -144,15 +149,15 @@ def frame_analysis(frame, settings, circles, selected_circles, kalman_filters, f
         missing_idxs = np.where(found_idxs == False)[0]
         if missing_idxs.size > 0:
             for i in missing_idxs:
-                prediction = kalman_filters[i].predict()[0][0]
-                # will never do two back to back predictions or an empty prediction
-                if len(circles[i][2][-1]) != 3 and prediction > 0:
-                    circles[i][2].append((frame_pos, round(float(prediction)), "estimated"))
-                    center = (circles[i][0], circles[i][1])
-                    print("kalman circle")
-                    cv.circle(return_frame, center, int(prediction), (173, 216, 230), 2)
-                    cv.circle(return_frame, center, 2, (0, 255, 0), 1)
-
+                if len(circles[i][2]) > 2 and kalman_filters[i] is not None:
+                    prediction = kalman_filters[i].predict()[0][0]
+                    print(f"prediction {prediction}, index {i}")
+                    if len(circles[i][2][-1]) != 3 and len(circles[i][2][-2]) != 3 and prediction > 0:
+                        circles[i][2].append([frame_pos, round(float(prediction), 2), "estimate"])
+                        center = (circles[i][0], circles[i][1])
+                        cv.circle(return_frame, center, int(prediction), (173, 216, 230), 2)
+                        cv.circle(return_frame, center, 2, (0, 255, 0), 1)
+        
                 
     cv.putText(return_frame, f"FPS: {int(settings["fps"])}", (10, 30), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv.LINE_AA)
     return return_frame, circles, kalman_filters

@@ -33,7 +33,7 @@ class VideoReadThread(QThread):
         self.running = True
         self.frame_start = frame_start
         self.frame_pos_mutex = frame_pos_mutex
-        self.local_kalman_filters = []
+        self.local_kalman_filters = dict()
         self.paused = False
         self.display_fps = 30.0
 
@@ -60,12 +60,16 @@ class VideoReadThread(QThread):
         with QMutexLocker(self.selected_circles_mutex):
             self.selected_circles.clear()
         
+        self.local_kalman_filters.clear()
+        
         while self.running:
             while self.paused and self.running:
                 time.sleep(0.01)
             start_tick = cv.getTickCount()
             ret, frame = cap.read()
             if not ret:
+
+                break
 
                 with QMutexLocker(self.circles_mutex):
                     self.circles.clear()
@@ -84,68 +88,55 @@ class VideoReadThread(QThread):
                 fps_tick = current_tick
             if last_tick == 0:
                 last_tick = current_tick
-            delta = current_tick - last_tick
 
+            delta = current_tick - last_tick
             fps = tick_freq / delta if delta > 0 else 0.0
             last_tick = current_tick
+            fps_tick = current_tick
 
-            if (current_tick - fps_tick) / tick_freq >= display_time:
-                fps_tick = current_tick
+            with QMutexLocker(self.settings_mutex):
+                local_settings = self.settings.copy()
+            local_settings["video_iteration"] = video_iteration
+            local_settings["fps"] = fps
 
-                with QMutexLocker(self.settings_mutex):
-                    local_settings = self.settings.copy()
-                local_settings["video_iteration"] = video_iteration
+            with QMutexLocker(self.circles_mutex):
+                local_circles = self.circles.copy()
 
+            with QMutexLocker(self.selected_circles_mutex):
+                local_selected_circles = self.selected_circles.copy()
+
+            if frame_analysis_iteration == 1:
+                self.frame_start = cap.get(cv.CAP_PROP_POS_FRAMES)
+
+            try:
+                updated_frame, updated_circles, updated_kfs = frame_analysis(
+                    frame,
+                    local_settings,
+                    local_circles,
+                    local_selected_circles,
+                    self.local_kalman_filters,
+                    cap.get(cv.CAP_PROP_POS_FRAMES),
+                    self.frame_start,
+                )
+
+                self.FrameUpdate.emit(updated_frame)
                 with QMutexLocker(self.circles_mutex):
-                    local_circles = self.circles.copy()
+                    self.circles.clear()
+                    self.circles.extend(updated_circles)
+                self.local_kalman_filters = updated_kfs
 
-                with QMutexLocker(self.selected_circles_mutex):
-                    local_selected_circles = self.selected_circles.copy()
+            except Exception as e:
+                print(f"Frame analysis failed: {e}")
+                break
 
-                local_settings["fps"] = fps
-
-                if frame_analysis_iteration == 1:
-                    self.frame_start = cap.get(cv.CAP_PROP_POS_FRAMES)
-                    # print(f"starting frame {self.frame_start}")
-
-                try:
-                    updated_frame, updated_circles, updated_kfs, = frame_analysis(
-                        frame,
-                        local_settings,
-                        local_circles,
-                        local_selected_circles,
-                        self.local_kalman_filters,
-                        cap.get(cv.CAP_PROP_POS_FRAMES),
-                        self.frame_start,
-                    )
-
-                    # print("Frame analysis succeeded")
-
-                    self.FrameUpdate.emit(updated_frame)
-
-                    # print("Frame emit succeeded")
-
-                    self.update_circles(updated_circles)
-                    self.local_kalman_filters = updated_kfs
-                    
-                    
-                except Exception as e:
-                    print(f"Frame analysis failed: {e}")
-                    break
-                
-                frame_analysis_iteration += 1
+            frame_analysis_iteration += 1
 
             proc_ticks = cv.getTickCount() - start_tick
-            proc_secs  = proc_ticks / tick_freq
-            time.sleep(max(frame_time - proc_secs, 0))
+            proc_secs = proc_ticks / tick_freq
+            time.sleep(max(display_time - proc_secs, 0))
 
         cap.release()
-
-    def update_circles(self, circles):
-        with QMutexLocker(self.circles_mutex):
-            self.circles.clear()
-            self.circles.extend(circles)
-
+        print(self.circles[60:65])
     @Slot(bool)
     def on_pause(self, do_pause):
         self.paused = do_pause
