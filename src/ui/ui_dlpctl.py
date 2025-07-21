@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctliYjMAM.ui'
+## Form generated from reading UI file 'dlpctlHavsOy.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -29,7 +29,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(1000, 763)
+        MainWindow.resize(1130, 806)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -123,7 +123,7 @@ class Ui_MainWindow(object):
         self.tabWidget.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.video_filters_tab = QWidget()
         self.video_filters_tab.setObjectName(u"video_filters_tab")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.video_filters_tab.sizePolicy().hasHeightForWidth())
@@ -379,8 +379,8 @@ class Ui_MainWindow(object):
         self.tracking_grid.setObjectName(u"tracking_grid")
         self.label_9 = QLabel(self.video_filters_tab)
         self.label_9.setObjectName(u"label_9")
-        sizePolicy5.setHeightForWidth(self.label_9.sizePolicy().hasHeightForWidth())
-        self.label_9.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.label_9.sizePolicy().hasHeightForWidth())
+        self.label_9.setSizePolicy(sizePolicy4)
         self.label_9.setFont(font2)
 
         self.tracking_grid.addWidget(self.label_9, 0, 0, 1, 1)
@@ -462,6 +462,37 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addLayout(self.selection_grid)
 
+        self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.verticalLayout_3.addItem(self.horizontalSpacer_5)
+
+        self.pid_grid = QGridLayout()
+        self.pid_grid.setObjectName(u"pid_grid")
+        self.label_2 = QLabel(self.video_filters_tab)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setFont(font2)
+
+        self.pid_grid.addWidget(self.label_2, 0, 0, 1, 1)
+
+        self.checkBox = QCheckBox(self.video_filters_tab)
+        self.checkBox.setObjectName(u"checkBox")
+        sizePolicy5.setHeightForWidth(self.checkBox.sizePolicy().hasHeightForWidth())
+        self.checkBox.setSizePolicy(sizePolicy5)
+        self.checkBox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        self.pid_grid.addWidget(self.checkBox, 0, 1, 1, 1)
+
+        self.line_2 = QFrame(self.video_filters_tab)
+        self.line_2.setObjectName(u"line_2")
+        self.line_2.setFrameShape(QFrame.Shape.HLine)
+        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.pid_grid.addWidget(self.line_2, 1, 0, 1, 2)
+
+        self.pid_grid.setColumnStretch(0, 2)
+
+        self.verticalLayout_3.addLayout(self.pid_grid)
+
         self.mouse_pos = QLabel(self.video_filters_tab)
         self.mouse_pos.setObjectName(u"mouse_pos")
         sizePolicy4.setHeightForWidth(self.mouse_pos.sizePolicy().hasHeightForWidth())
@@ -474,8 +505,11 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.video_filters_tab, "")
         self.devices_tab = QWidget()
         self.devices_tab.setObjectName(u"devices_tab")
-        sizePolicy2.setHeightForWidth(self.devices_tab.sizePolicy().hasHeightForWidth())
-        self.devices_tab.setSizePolicy(sizePolicy2)
+        sizePolicy7 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        sizePolicy7.setHorizontalStretch(0)
+        sizePolicy7.setVerticalStretch(0)
+        sizePolicy7.setHeightForWidth(self.devices_tab.sizePolicy().hasHeightForWidth())
+        self.devices_tab.setSizePolicy(sizePolicy7)
         self.verticalLayout_2 = QVBoxLayout(self.devices_tab)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.pushButton = QPushButton(self.devices_tab)
@@ -504,7 +538,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1000, 33))
+        self.menubar.setGeometry(QRect(0, 0, 1130, 33))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuTools = QMenu(self.menubar)
@@ -555,6 +589,8 @@ class Ui_MainWindow(object):
         self.selection_checkbox.setText("")
         self.clear_all.setText(QCoreApplication.translate("MainWindow", u"Clear All Bubbles", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Activate Bubble Selection", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Activate PID Control", None))
+        self.checkBox.setText("")
         self.mouse_pos.setText(QCoreApplication.translate("MainWindow", u"Frame Position (X, Y): ", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.video_filters_tab), QCoreApplication.translate("MainWindow", u"Video Filters", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Connect Camera", None))
