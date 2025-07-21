@@ -27,7 +27,6 @@ class CircleKalman:
 
     def predict(self):
         return self.kf.predict()
-    
 
 def closest_idx_finder(array2d, x, y, tolerance):
     if len(array2d) == 0:
@@ -43,6 +42,15 @@ def closest_idx_finder(array2d, x, y, tolerance):
         except Exception as e:
             print(f"closest index finder {e}")
             return np.array([])
+
+# def plotting(circles):
+#     x_coords = [pair[0] for pair in circles[0][2]]
+#     y_coords = [pair[1] for pair in circles[0][2]]
+#     plt.plot(x_coords, y_coords, 'o')
+#     plt.title("Radius per Frame of Single Circle")
+#     plt.xlabel("Frame")
+#     plt.ylabel("Radius (pixels)")
+#     plt.show()
 
 def frame_analysis(frame, settings, circles, selected_circles, frame_pos, frame_start, bubble_counter):
     return_frame = None
@@ -80,6 +88,7 @@ def frame_analysis(frame, settings, circles, selected_circles, frame_pos, frame_
                 circularity = 0
 
             if settings["selection_on"]:
+
                 # add hovering
                 h, w = frame.shape[:2]
                 if len(selected_circles) > 0:
@@ -161,22 +170,16 @@ def frame_analysis(frame, settings, circles, selected_circles, frame_pos, frame_
             for i in missing_idxs:
                 if i != 0 and len(circles[i].history) > 2 and circles[i].kalman is not None:
                     prediction = circles[i].kalman.predict()[0][0]
-                    print(f"prediction {prediction}, index {i}")
                     if len(circles[i].history[-1]) != 4 and len(circles[i].history[-2]) != 4 and prediction > 0:
 
+
+
+
+
                         # fix the x val and y val issue
-                        circles[i].history.append[frame_pos, "x val", "y val", prediction, "estimate"]
+                        circles[i].history.append[frame_pos, circles[i].center(0), circles[i].center(1), prediction, "estimate"]
                         cv.circle(return_frame, circles[i].center, int(prediction), (173, 216, 230), 2)
                         cv.circle(return_frame, circles[i].center, 2, (0, 255, 0), 1)
                 
     cv.putText(return_frame, f"FPS: {int(settings["fps"])}", (10, 30), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv.LINE_AA)
     return return_frame, circles
-
-def plotting(circles):
-    x_coords = [pair[0] for pair in circles[0][2]]
-    y_coords = [pair[1] for pair in circles[0][2]]
-    plt.plot(x_coords, y_coords, 'o')
-    plt.title("Radius per Frame of Single Circle")
-    plt.xlabel("Frame")
-    plt.ylabel("Radius (pixels)")
-    plt.show()
