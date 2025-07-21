@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlnsfHCg.ui'
+## Form generated from reading UI file 'dlpctlmuoNrv.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -69,12 +69,6 @@ class Ui_MainWindow(object):
         self.video_frame.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.video_layout.addWidget(self.video_frame)
-
-        self.video_slider = QSlider(self.horizontalFrame_2)
-        self.video_slider.setObjectName(u"video_slider")
-        self.video_slider.setOrientation(Qt.Orientation.Horizontal)
-
-        self.video_layout.addWidget(self.video_slider)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")

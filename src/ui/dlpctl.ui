@@ -58,7 +58,7 @@
         <number>5</number>
        </property>
        <item>
-        <layout class="QVBoxLayout" name="video_layout" stretch="0,0,0">
+        <layout class="QVBoxLayout" name="video_layout" stretch="0,0">
          <item>
           <widget class="ClickableLabel" name="video_frame">
            <property name="sizePolicy">
@@ -84,13 +84,6 @@
            </property>
            <property name="alignment">
             <set>Qt::AlignmentFlag::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSlider" name="video_slider">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
