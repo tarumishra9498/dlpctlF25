@@ -1,20 +1,28 @@
 # dlpctl
 
+## About
+
+This program helps us run our microbubble experiments by allowing someone to view a camera feed while controlling a DLP and function generator.
+
 ## Peripherals
 
-This program helps us run our microbubble experiments by allowing someone to view a camera feed while controlling a DLP and function generator. The following specific peripherals are used:
+The following specific peripherals are used:
 
 ### Basler Camera
 
-- The exact model used is a Basler `acA1300-200um`
-- The [pypylon](https://github.com/basler/pypylon) library provided by Basler allows controlling and reading from the camera with the Python programming language.
+- The exact model used is a Basler `acA1300-200um`.
+- The [pypylon](https://github.com/basler/pypylon) library provided by Basler allows controlling and reading from the camera with the Python programming language. The [pylon driver](https://www.baslerweb.com/en/downloads/software/3032421996/) also appears to be required despite `pypylon`'s README stating otherwise.
 - The camera is connected to the computer using a USB cable.
 
-### ViaLUX DLP
+### Texas Instruments / ViALUX DLP kit
+
+- The exact model of development kit used is Texas Instruments' `DLP Discovery 4100`.
+- [ALP4lib](https://github.com/wavefrontshaping/ALP4lib/tree/master) library allows controlling the DLP with Python. The required file `alp41.dll` is provided by the [ViALUX ALP-4.1 Driver](https://www.vialux.de/transfer/Marketing/ViALUX-Download/download.html)
+- The DLP development kit is connected to the computer using a USB cable.
 
 ### Agilent Function Generator
 
-- The exact model used is an Agilent 20MHz Function / Arbitrary Waveform Generator `33220A`
+- The exact model used is an Agilent 20MHz Function / Arbitrary Waveform Generator `33220A`.
 - The [PyVISA](https://github.com/pyvisa/pyvisa) library allows controlling equipment conforming to the [VISA](https://en.wikipedia.org/wiki/Virtual_instrument_software_architecture) communication protocol using Python. The function generator can be used by this library, but requires the additional installation of National Instruments' proprietary [NI-VISA](https://www.ni.com/en/support/downloads/drivers/download.ni-visa.html) drivers.
 - The function generator is connected to the computer using a USB cable.
 
