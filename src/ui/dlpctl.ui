@@ -167,7 +167,17 @@
             <attribute name="title">
              <string>Video Filters</string>
             </attribute>
-            <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0">
+            <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0">
+             <item>
+              <widget class="QPushButton" name="start_button">
+               <property name="text">
+                <string>Start Analysis</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
              <item>
               <widget class="QPushButton" name="show_filters">
                <property name="text">

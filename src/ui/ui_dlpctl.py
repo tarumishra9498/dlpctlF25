@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlrfdOzb.ui'
+## Form generated from reading UI file 'dlpctltydyAf.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -130,6 +130,12 @@ class Ui_MainWindow(object):
         self.video_filters_tab.setSizePolicy(sizePolicy2)
         self.verticalLayout_3 = QVBoxLayout(self.video_filters_tab)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.start_button = QPushButton(self.video_filters_tab)
+        self.start_button.setObjectName(u"start_button")
+        self.start_button.setCheckable(True)
+
+        self.verticalLayout_3.addWidget(self.start_button)
+
         self.show_filters = QPushButton(self.video_filters_tab)
         self.show_filters.setObjectName(u"show_filters")
         self.show_filters.setCheckable(True)
@@ -571,6 +577,7 @@ class Ui_MainWindow(object):
         self.replay.setText(QCoreApplication.translate("MainWindow", u"Replay", None))
         self.capture.setText(QCoreApplication.translate("MainWindow", u"Capture", None))
         self.load_bitmask.setText(QCoreApplication.translate("MainWindow", u"Load Bitmask", None))
+        self.start_button.setText(QCoreApplication.translate("MainWindow", u"Start Analysis", None))
         self.show_filters.setText(QCoreApplication.translate("MainWindow", u"Show Filters", None))
         self.blur_checkbox.setText("")
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"Activate Gaussian Blur", None))
