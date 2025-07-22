@@ -17,10 +17,11 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QDoubleSpinBox, QFrame,
-    QGridLayout, QHBoxLayout, QLabel, QMainWindow,
-    QMenu, QMenuBar, QPushButton, QSizePolicy,
-    QSlider, QSpacerItem, QSpinBox, QStatusBar,
-    QTabWidget, QVBoxLayout, QWidget)
+    QGridLayout, QHBoxLayout, QLabel, QListWidget,
+    QListWidgetItem, QMainWindow, QMenu, QMenuBar,
+    QPushButton, QSizePolicy, QSlider, QSpacerItem,
+    QSpinBox, QStatusBar, QTabWidget, QVBoxLayout,
+    QWidget)
 
 from widgets import ClickableLabel
 
@@ -528,6 +529,11 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.pushButton_2)
 
+        self.pyvisa_instrument_list = QListWidget(self.devices_tab)
+        self.pyvisa_instrument_list.setObjectName(u"pyvisa_instrument_list")
+
+        self.verticalLayout_2.addWidget(self.pyvisa_instrument_list)
+
         self.tabWidget.addTab(self.devices_tab, "")
 
         self.tool_layout.addWidget(self.tabWidget)
@@ -544,7 +550,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1130, 33))
+        self.menubar.setGeometry(QRect(0, 0, 1130, 22))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuTools = QMenu(self.menubar)
@@ -561,7 +567,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)

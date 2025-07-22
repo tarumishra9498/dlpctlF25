@@ -24,6 +24,7 @@ from video_read_thread import VideoReadThread
 
 from widgets import ClickableLabel
 
+
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self) -> None:
         super(MainWindow, self).__init__()
@@ -55,7 +56,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.selected_circles_mutex = QMutex()
         self.frame_pos_mutex = QMutex()
         self.paused_mutex = QMutex()
-        
+
         self.settings = {
             "source" : self.source,
             "analysis_on" : self.analysis_on,
@@ -75,9 +76,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "video_frame_h" : 0,
             "video_frame_w" : 0,
             "pixmap_h": 0,
-            "pixmap_w" : 0,
-            "fps" : 0,
-            "video_iteration" : 0
+            "pixmap_w": 0,
+            "fps": 0,
+            "video_iteration": 0,
         }
 
         self.frame_pos = 0
@@ -103,7 +104,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.show_filters.setChecked(self.filters_on)
         self.show_filters.clicked.connect(self.checked_filters)
-        
+
         self.blur_slider.setValue(self.blur)
         self.blur_spinbox.setValue(self.blur)
         self.blur_slider.valueChanged.connect(self.update_blur)
@@ -224,25 +225,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dlp.run()
 
     def update_display(self, data):
-
+        q_img = None
         # reading from file
         if isinstance(data, np.ndarray):
             rgb = cv.cvtColor(data, cv.COLOR_BGR2RGB)
             h, w, ch = rgb.shape
-            q_img = QImage(
-                rgb.data,
-                w,
-                h,
-                ch * w,
-                QImage.Format.Format_RGB888
-            )
-            pixmap = QPixmap.fromImage(q_img)
-            pixmap = pixmap.scaled(
-                self.video_frame.size(),
-                Qt.KeepAspectRatio,
-                Qt.SmoothTransformation   
-            )
-            
+            q_img = QImage(rgb.data, w, h, ch * w, QImage.Format.Format_RGB888)
         # reading from camera
         # this should be deleted since video_read_thread will always output a numpy array
         else:
@@ -252,7 +240,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             q_img = QImage(
                 frame.data, w, h, channels * w, QImage.Format.Format_Grayscale8
             )
-            pixmap = QPixmap.fromImage(q_img)
+        pixmap = QPixmap.fromImage(q_img).scaled(
+            self.video_frame.size(),
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation,
+        )
         self.video_frame.setPixmap(pixmap)
         self.update_settings("pixmap_w", pixmap.width())
         self.update_settings("pixmap_h", pixmap.height())
@@ -287,10 +279,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             update = [False]
         self.update_settings("selected_circles", update)
-    
+
     def checked_pid(self):
         self.update_settings("pid_on", self.pid_checkbox.isChecked())
-    
+
     def update_blur(self, val):
         if val % 2 == 0:
             val += 1
@@ -314,7 +306,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if val:
             if self.ReadThread and self.ReadThread.isRunning():
                 self.ReadThread.stop()
-                self.ReadThread.wait() # try removing these calls 
+                self.ReadThread.wait()  # try removing these calls
 
             with QMutexLocker(self.circles_mutex):
                 self.circles.clear()
@@ -329,15 +321,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.circles_mutex,
                 self.selected_circles,
                 self.selected_circles_mutex,
-                self.frame_pos, 
-                self.frame_pos_mutex, 
-                )
+                self.frame_pos,
+                self.frame_pos_mutex,
+            )
             self.ReadThread.FrameUpdate.connect(self.update_display)
             self.ReadThread.start()
 
     def update_min_pos_err(self, val):
         self.update_settings("min_pos_err", val)
-    
+
     def clear_all_bubbles(self):
         with QMutexLocker(self.selected_circles_mutex):
             self.selected_circles.clear()
@@ -364,7 +356,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.update_settings("source", "video")
             self.video_frame.setText("Video Opened - Click Start Analysis")
             
-        if self.ReadThread != None and self.ReadThread.isRunning():
+        if self.ReadThread is not None and self.ReadThread.isRunning():
             self.ReadThread.stop()
             self.ReadThread.wait()
 
@@ -393,24 +385,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.camera.stop_recording()
         self.video_writer.stop()
 
-        if hasattr(self, 'read_thread') and self.ReadThread.isRunning():
+        if hasattr(self, "read_thread") and self.ReadThread.isRunning():
             self.ReadThread.stop()
             self.ReadThread.wait()
-        
+
         super().closeEvent(event)
-    
+
     def on_video_click(self, x, y):
-        x -= ((self.settings["video_frame_w"] - self.settings["pixmap_w"]) // 2)
-        y -= ((self.settings["video_frame_h"] - self.settings["pixmap_h"]) // 2)
+        x -= (self.settings["video_frame_w"] - self.settings["pixmap_w"]) // 2
+        y -= (self.settings["video_frame_h"] - self.settings["pixmap_h"]) // 2
         with QMutexLocker(self.selected_circles_mutex):
             if self.selected_circles_mutex == [False]:
                 self.selected_circles = []
             self.selected_circles.append([x, y])
 
     def on_mouse_move(self, x, y):
-        x -= ((self.settings["video_frame_w"] - self.settings["pixmap_w"]) // 2)
-        y -= ((self.settings["video_frame_h"] - self.settings["pixmap_h"]) // 2)
+        x -= (self.settings["video_frame_w"] - self.settings["pixmap_w"]) // 2
+        y -= (self.settings["video_frame_h"] - self.settings["pixmap_h"]) // 2
         self.mouse_pos.setText(f"Frame Position (x, y): {x}, {y}")
+
 
 if __name__ == "__main__":
 
@@ -425,5 +418,3 @@ if __name__ == "__main__":
     window.show()
     if app:
         app.exec()
-
-
