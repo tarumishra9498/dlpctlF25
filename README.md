@@ -1,5 +1,23 @@
 # dlpctl
 
+## Peripherals
+
+This program helps us run our microbubble experiments by allowing someone to view a camera feed while controlling a DLP and function generator. The following specific peripherals are used:
+
+### Basler Camera
+
+- The exact model used is a Basler `acA1300-200um`
+- The [pypylon](https://github.com/basler/pypylon) library provided by Basler allows controlling and reading from the camera with the Python programming language.
+- The camera is connected to the computer using a USB cable.
+
+### ViaLUX DLP
+
+### Agilent Function Generator
+
+- The exact model used is an Agilent 20MHz Function / Arbitrary Waveform Generator `33220A`
+- The [PyVISA](https://github.com/pyvisa/pyvisa) library allows controlling equipment conforming to the [VISA](https://en.wikipedia.org/wiki/Virtual_instrument_software_architecture) communication protocol using Python. The function generator can be used by this library, but requires the additional installation of National Instruments' proprietary [NI-VISA](https://www.ni.com/en/support/downloads/drivers/download.ni-visa.html) drivers.
+- The function generator is connected to the computer using a USB cable.
+
 ## Setup
 
 This program must run on Windows and is tested on Windows 11 Home as well as Windows 11 IoT LTSC in a virtual machine with USB devices passed through.
