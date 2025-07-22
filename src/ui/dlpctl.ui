@@ -884,7 +884,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QListWidget" name="pyvisa_instrument_list"/>
+              <widget class="QListWidget" name="device_list"/>
              </item>
              <item>
               <widget class="QPushButton" name="refresh_devices">

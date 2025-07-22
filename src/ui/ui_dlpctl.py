@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlIQnvUs.ui'
+## Form generated from reading UI file 'dlpctlFPJbCB.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -539,10 +539,10 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.pushButton_2)
 
-        self.pyvisa_instrument_list = QListWidget(self.devices_tab)
-        self.pyvisa_instrument_list.setObjectName(u"pyvisa_instrument_list")
+        self.device_list = QListWidget(self.devices_tab)
+        self.device_list.setObjectName(u"device_list")
 
-        self.verticalLayout_2.addWidget(self.pyvisa_instrument_list)
+        self.verticalLayout_2.addWidget(self.device_list)
 
         self.refresh_devices = QPushButton(self.devices_tab)
         self.refresh_devices.setObjectName(u"refresh_devices")

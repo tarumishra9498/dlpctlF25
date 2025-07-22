@@ -2,18 +2,19 @@ import sys
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import QMutex, QMutexLocker, Qt
-from PySide6.QtGui import QImage, QImageReader, QPixmap
+from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import (
     QFileDialog,
+    QListWidgetItem,
     QMainWindow,
-    QCheckBox,
-    QDoubleSpinBox,
-    QSpinBox,
+    QPushButton,
 )
 
 import cv2 as cv
 import numpy as np
-import time
+
+from pyvisa import ResourceManager
+from pyvisa.resources import SerialInstrument
 
 from function_generator import FunctionGenerator
 from ui.ui_dlpctl import Ui_MainWindow
@@ -22,8 +23,6 @@ from camera_thread import CameraThread
 from video_write_thread import VideoWriteThread
 from dlp_thread import DlpThread
 from video_read_thread import VideoReadThread
-
-from widgets import ClickableLabel
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -95,8 +94,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dlp: DlpThread = DlpThread()
         self.pushButton_2.clicked.connect(self.connect_dlp)
 
-        self.function_generator: FunctionGenerator = FunctionGenerator()
-        self.refresh_devices.clicked.connect(self.function_generator.get_instruments)
+        # self.function_generator: FunctionGenerator = FunctionGenerator()
+
+        self.rm = ResourceManager()
+        self.refresh_devices.clicked.connect(self.refresh_devices_clicked)
+        # key: resource name, value: (idn, list_item, list_widget)
+        self.visa_insts: dict[
+            str, tuple[str, QListWidgetItem | None, QPushButton | None]
+        ] = {}
 
         self.load_bitmask.setEnabled(False)
         self.load_bitmask.pressed.connect(self.on_load_bitmask)
@@ -175,6 +180,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.video_frame.setMouseTracking(True)
         self.video_frame.clicked.connect(self.on_video_click)
         self.video_frame.moved.connect(self.on_mouse_move)
+
+    def refresh_devices_clicked(self):
+        self.visa_insts = {}
+        print("Refreshing device list")
+        resources = self.rm.list_resources()
+        for i, resource in enumerate(resources):
+            try:
+                with self.rm.open_resource(resource) as instrument:
+                    print(f"instrument {i} detected of type {type(instrument)}")
+                    if isinstance(instrument, SerialInstrument):
+                        print("Houston, we have a serial instrument")
+                        idn = instrument.query("*IDN?").strip()
+                        list_item = QListWidgetItem()
+                        list_button = QPushButton()
+                        self.visa_insts[resource] = (idn, list_item, list_button)
+                        self.device_list.addItem(list_item)
+                        self.device_list.setItemWidget(list_item, list_button)
+
+            except Exception as e:
+                print(e)
+                self.visa_insts[resource] = ("VISA Device (No IDN)", None, None)
+        print(f"VISA devices detected: {self.visa_insts}")
+
+    def connect_function_generator(self):
+        pass
 
     def connect_camera(self):
         if not self.camera.basler:
