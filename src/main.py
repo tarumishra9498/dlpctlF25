@@ -36,7 +36,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.min_area = 70
         self.circularity = 0.7
         self.min_pos_err = 5
-
+        
+        self.source = None
+        self.analysis_on = False
         self.filters_on = False
         self.blur_on = True
         self.thresh_on = True
@@ -45,6 +47,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.selection_on = False
         self.pid_on = True
 
+        self.camera_frame = None
+
+        self.camera_frame_mutex = QMutex()
         self.settings_mutex = QMutex()
         self.circles_mutex = QMutex()
         self.selected_circles_mutex = QMutex()
@@ -52,6 +57,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.paused_mutex = QMutex()
         
         self.settings = {
+            "source" : self.source,
+            "analysis_on" : self.analysis_on,
             "filters_on" : self.filters_on,
             "blur" : self.blur,
             "adapt_area" : self.adapt_area,
@@ -90,6 +97,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.load_bitmask.pressed.connect(self.on_load_bitmask)
         self.capture.setEnabled(False)
         self.capture.pressed.connect(self.on_capture)
+
+        self.start_button.setChecked(self.analysis_on)
+        self.start_button.clicked.connect(self.checked_analysis)
 
         self.show_filters.setChecked(self.filters_on)
         self.show_filters.clicked.connect(self.checked_filters)
@@ -148,7 +158,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.clear_all.pressed.connect(self.clear_all_bubbles)
 
         self.actionOpen.triggered.connect(self.read_video)
-        self.ReadThread = VideoReadThread(None, None, None, None, None, None, None, None, None)
+        self.ReadThread = VideoReadThread(None, None, None, None, None, None, None, None, None, None, None)
         self.play.clicked.connect(lambda: self.ReadThread.on_pause(False))
         self.pause.clicked.connect(lambda: self.ReadThread.on_pause(True))
         self.replay.clicked.connect(lambda: self.on_replay(True))
@@ -167,6 +177,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.pushButton.setStyleSheet("color: green;")
                 self.camera.frame_out.connect(self.video_writer.save_frame)
                 self.camera.display_out.connect(self.update_display)
+                self.update_settings("source", "camera")
             else:
                 self.capture.setEnabled(False)
                 self.pushButton.setStyleSheet("")
@@ -233,6 +244,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             )
             
         # reading from camera
+        # this should be deleted since video_read_thread will always output a numpy array
         else:
             frame, current_fps, exposure, recording_state = data
             h, w = frame.shape
@@ -248,6 +260,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_settings(self, name, value):
         with QMutexLocker(self.settings_mutex):
             self.settings[name] = value
+
+    def checked_analysis(self):
+        self.update_settings("analysis_on", self.start_button.isChecked())
     
     def checked_filters(self):
         self.update_settings("filters_on", self.show_filters.isChecked())
@@ -306,6 +321,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.ReadThread = VideoReadThread (
                 self.opened_files[-1], 
+                self.camera_frame,
+                self.camera_frame_mutex,
                 self.settings, 
                 self.settings_mutex, 
                 self.circles, 
@@ -325,34 +342,48 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         with QMutexLocker(self.selected_circles_mutex):
             self.selected_circles.clear()
 
-    def read_video(self):
-        file_dialog = QFileDialog(self)
-        file_dialog.setWindowTitle("Open File")
-        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
-        file_dialog.setViewMode(QFileDialog.ViewMode.Detail)
+    def read_video(self, data):
+        file = None
 
-        if file_dialog.exec():
-            files = file_dialog.selectedFiles()
-            self.opened_files.append(files[0])
+        # video source = camera
+        if self.settings["source"] == "camera" and data:
+            with QMutexLocker(self.camera_frame_mutex):
+                self.camera_frame = data
+            
+        # video source = video
+        else:
+            file_dialog = QFileDialog(self)
+            file_dialog.setWindowTitle("Open File")
+            file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
+            file_dialog.setViewMode(QFileDialog.ViewMode.Detail)
 
-            if self.ReadThread != None and self.ReadThread.isRunning():
-                self.ReadThread.stop()
-                self.ReadThread.wait()
+            if file_dialog.exec():
+                files = file_dialog.selectedFiles()
+                self.opened_files.append(files[0])
+                file = self.opened_files[-1]
+            self.update_settings("source", "video")
+            self.video_frame.setText("Video Opened - Click Start Analysis")
+            
+        if self.ReadThread != None and self.ReadThread.isRunning():
+            self.ReadThread.stop()
+            self.ReadThread.wait()
 
-            self.ReadThread = VideoReadThread (
-                self.opened_files[-1], 
-                self.settings, 
-                self.settings_mutex, 
-                self.circles, 
-                self.circles_mutex,
-                self.selected_circles,
-                self.selected_circles_mutex, 
-                self.frame_pos, 
-                self.frame_pos_mutex, 
-                )
+        self.ReadThread = VideoReadThread(
+            file, 
+            self.camera_frame,
+            self.camera_frame_mutex,
+            self.settings, 
+            self.settings_mutex, 
+            self.circles, 
+            self.circles_mutex,
+            self.selected_circles,
+            self.selected_circles_mutex, 
+            self.frame_pos, 
+            self.frame_pos_mutex, 
+            )
 
-            self.ReadThread.FrameUpdate.connect(self.update_display)
-            self.ReadThread.start()
+        self.ReadThread.FrameUpdate.connect(self.update_display)
+        self.ReadThread.start()
             
     def showEvent(self, event):
         self.update_settings("video_frame_w", self.video_frame.width())
@@ -382,6 +413,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.mouse_pos.setText(f"Frame Position (x, y): {x}, {y}")
 
 if __name__ == "__main__":
+
     app = None
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
