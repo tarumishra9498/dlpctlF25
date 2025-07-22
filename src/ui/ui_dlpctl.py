@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctltydyAf.ui'
+## Form generated from reading UI file 'dlpctlIQnvUs.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -30,7 +30,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(1130, 814)
+        MainWindow.resize(1130, 840)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -75,26 +75,36 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.play = QPushButton(self.horizontalFrame_2)
         self.play.setObjectName(u"play")
+        icon = QIcon(QIcon.fromTheme(u"media-playback-start"))
+        self.play.setIcon(icon)
 
         self.horizontalLayout.addWidget(self.play)
 
         self.pause = QPushButton(self.horizontalFrame_2)
         self.pause.setObjectName(u"pause")
+        icon1 = QIcon(QIcon.fromTheme(u"media-playback-pause"))
+        self.pause.setIcon(icon1)
 
         self.horizontalLayout.addWidget(self.pause)
 
         self.replay = QPushButton(self.horizontalFrame_2)
         self.replay.setObjectName(u"replay")
+        icon2 = QIcon(QIcon.fromTheme(u"media-playlist-repeat"))
+        self.replay.setIcon(icon2)
 
         self.horizontalLayout.addWidget(self.replay)
 
         self.capture = QPushButton(self.horizontalFrame_2)
         self.capture.setObjectName(u"capture")
+        icon3 = QIcon(QIcon.fromTheme(u"media-record"))
+        self.capture.setIcon(icon3)
 
         self.horizontalLayout.addWidget(self.capture)
 
         self.load_bitmask = QPushButton(self.horizontalFrame_2)
         self.load_bitmask.setObjectName(u"load_bitmask")
+        icon4 = QIcon(QIcon.fromTheme(u"document-open"))
+        self.load_bitmask.setIcon(icon4)
 
         self.horizontalLayout.addWidget(self.load_bitmask)
 
@@ -534,6 +544,13 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.pyvisa_instrument_list)
 
+        self.refresh_devices = QPushButton(self.devices_tab)
+        self.refresh_devices.setObjectName(u"refresh_devices")
+        icon5 = QIcon(QIcon.fromTheme(u"system-reboot"))
+        self.refresh_devices.setIcon(icon5)
+
+        self.verticalLayout_2.addWidget(self.refresh_devices)
+
         self.tabWidget.addTab(self.devices_tab, "")
 
         self.tool_layout.addWidget(self.tabWidget)
@@ -608,6 +625,7 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.video_filters_tab), QCoreApplication.translate("MainWindow", u"Video Filters", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Connect Camera", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Connect DLP", None))
+        self.refresh_devices.setText(QCoreApplication.translate("MainWindow", u"Refresh Device List", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.devices_tab), QCoreApplication.translate("MainWindow", u"Devices", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuTools.setTitle(QCoreApplication.translate("MainWindow", u"Tools", None))
