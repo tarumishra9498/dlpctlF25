@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlZxhZvt.ui'
+## Form generated from reading UI file 'dlpctlTwflCX.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -70,6 +70,23 @@ class Ui_MainWindow(object):
         self.video_frame.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.video_layout.addWidget(self.video_frame)
+
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalLayout_3.setContentsMargins(0, 0, -1, -1)
+        self.exposure_slider = QSlider(self.horizontalFrame_2)
+        self.exposure_slider.setObjectName(u"exposure_slider")
+        self.exposure_slider.setOrientation(Qt.Orientation.Horizontal)
+
+        self.horizontalLayout_3.addWidget(self.exposure_slider)
+
+        self.exposure_spinbox = QSpinBox(self.horizontalFrame_2)
+        self.exposure_spinbox.setObjectName(u"exposure_spinbox")
+
+        self.horizontalLayout_3.addWidget(self.exposure_spinbox)
+
+
+        self.video_layout.addLayout(self.horizontalLayout_3)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
@@ -599,6 +616,12 @@ class Ui_MainWindow(object):
         self.actionOpen.setText(QCoreApplication.translate("MainWindow", u"Open", None))
         self.actionSave_As.setText(QCoreApplication.translate("MainWindow", u"Save As", None))
         self.video_frame.setText(QCoreApplication.translate("MainWindow", u"Video", None))
+#if QT_CONFIG(tooltip)
+        self.exposure_slider.setToolTip(QCoreApplication.translate("MainWindow", u"Exposure", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
+        self.exposure_spinbox.setToolTip(QCoreApplication.translate("MainWindow", u"Exposure", None))
+#endif // QT_CONFIG(tooltip)
         self.play.setText(QCoreApplication.translate("MainWindow", u"Play", None))
         self.pause.setText(QCoreApplication.translate("MainWindow", u"Pause", None))
         self.replay.setText(QCoreApplication.translate("MainWindow", u"Replay", None))
