@@ -181,7 +181,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.video_frame.moved.connect(self.on_mouse_move)
 
     def refresh_devices_clicked(self):
-        self.visa_insts = {}
+        # Clear out visa instruments from list
+        for inst in self.visa_insts.values():
+            li = inst[1]  # list item
+            lw = inst[2]  # list widget
+            if li and lw:
+                row = self.device_list.row(li)
+                self.device_list.takeItem(row)
+                del li
+                lw.close()
+
         print("Refreshing device list")
         resources = self.rm.list_resources()
         for i, resource in enumerate(resources):
