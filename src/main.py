@@ -190,10 +190,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 with self.rm.open_resource(resource) as instrument:
                     print(f"instrument {i} detected of type {type(instrument)}")
                     if isinstance(instrument, SerialInstrument):
-                        print("Houston, we have a serial instrument")
                         idn = instrument.query("*IDN?").strip()
-                        list_item = QListWidgetItem()
-                        list_button = QPushButton()
+                        list_item = QListWidgetItem(self.device_list)
+                        list_button = QPushButton(f"{instrument.resource_name}")
                         self.visa_insts[resource] = (idn, list_item, list_button)
                         self.device_list.addItem(list_item)
                         self.device_list.setItemWidget(list_item, list_button)
