@@ -7,10 +7,11 @@ class Circle:
         self.center = (x1, y1)
         self.history = []
         self.kalman = None
+        self.pid = None
     
     def add_circle(self, frame_pos, x, y, r):
         self.history.append([frame_pos, int(x), int(y), round(r, 2)])
-
+    
 class CircleKalman:
     def __init__(self, x, y, r, dt, q_process_noise=1e-1, r_measurement_noise=1e-2):
         self.kf = cv.KalmanFilter(2, 1)
@@ -27,6 +28,29 @@ class CircleKalman:
 
     def predict(self):
         return self.kf.predict()
+
+class CirclePID: 
+    def __init__(self, setpoint, init_r, dt):
+        self.setpoint = setpoint
+        self.pv = init_r
+        self.kp = 0.6
+        self.ki = 0.3
+        self.kd = 0.1
+        self.error = 0
+        self.prev_error = 0
+        self.integral = 0
+        self.derivative = 0
+        self.dt = dt
+        self.control_signal = 0
+
+    def update(self, measurement):
+        self.pv = measurement
+        self.error = self.pv - self.setpoint
+        self.integral += self.error * self.dt
+        self.derivative = (self.error - self.prev_error) / self.dt if self.dt > 0 else 0.0
+        self.control_signal = self.kp * self.error + self.ki * self.integral + self.kd * self.derivative
+        self.prev_error = self.error
+        return self.control_signal
 
 def closest_idx_finder(array2d, x, y, tolerance):
     if len(array2d) == 0:
@@ -115,6 +139,7 @@ def frame_analysis(frame, settings, circles, selected_circles, frame_pos, frame_
                 r = round(r, 2)
                 cv.circle(return_frame, center, int(r), (173, 216, 230), 2)
                 cv.circle(return_frame, center, 2, (0, 255, 0), 1)
+                dt = 1/settings["fps"]
 
                 if len(contours) == 0:
                     print('no countours found')
@@ -127,7 +152,12 @@ def frame_analysis(frame, settings, circles, selected_circles, frame_pos, frame_
                             circles[bubble_counter] = Circle(x, y ,r)
                             circles[bubble_counter].add_circle(frame_pos, x, y, r)
                             detected_idxs.append(bubble_counter)
+                            if settings["pid_on"]:
+                                # change setpoint
+                                circles[bubble_counter].pid = CirclePID(0, r, dt)
+                                # circles[bubble_counter].pid.update(r, dt)
                             bubble_counter += 1
+                            
 
                     except Exception as e:
                         print(f"first frame error: {e}")
@@ -143,6 +173,10 @@ def frame_analysis(frame, settings, circles, selected_circles, frame_pos, frame_
                             if idx.size == 0:
                                 circles[bubble_counter] = Circle(x, y ,r)
                                 circles[bubble_counter].add_circle(frame_pos, x, y, r)
+                                if settings["pid_on"]:
+                                    # change setpoint
+                                    circles[bubble_counter].pid = CirclePID(0, r, dt)
+                                    # circles[bubble_counter].pid.update(r, dt)
                                 detected_idxs.append(bubble_counter)
                                 bubble_counter += 1
 
@@ -151,12 +185,14 @@ def frame_analysis(frame, settings, circles, selected_circles, frame_pos, frame_
                                 closest_idx = keys[idx[0]]
                                 circles[closest_idx].add_circle(frame_pos, x, y, r)
                                 if circles[closest_idx].kalman is None:
-                                    circles[closest_idx].kalman = CircleKalman(x, y, r, 1/settings["fps"])
+                                    circles[closest_idx].kalman = CircleKalman(x, y, r, dt)
                                     pred = circles[closest_idx].kalman.predict()
                                     circles[closest_idx].kalman.correct(np.array([[r]], dtype=np.float32))
                                 else:
                                     pred = circles[closest_idx].kalman.predict()
                                     circles[closest_idx].kalman.correct(np.array([[r]], dtype=np.float32))
+                                if settings["pid_on"]:
+                                    # circles[closest_idx].pid.update(r, dt)
                                 detected_idxs.append(closest_idx)
 
                         except Exception as e:
@@ -171,12 +207,6 @@ def frame_analysis(frame, settings, circles, selected_circles, frame_pos, frame_
                 if i != 0 and len(circles[i].history) > 2 and circles[i].kalman is not None:
                     prediction = circles[i].kalman.predict()[0][0]
                     if len(circles[i].history[-1]) != 4 and len(circles[i].history[-2]) != 4 and prediction > 0:
-
-
-
-
-
-                        # fix the x val and y val issue
                         circles[i].history.append[frame_pos, circles[i].center(0), circles[i].center(1), prediction, "estimate"]
                         cv.circle(return_frame, circles[i].center, int(prediction), (173, 216, 230), 2)
                         cv.circle(return_frame, circles[i].center, 2, (0, 255, 0), 1)
