@@ -874,12 +874,18 @@
                <property name="text">
                 <string>Connect Camera</string>
                </property>
+               <property name="icon">
+                <iconset theme="camera-photo"/>
+               </property>
               </widget>
              </item>
              <item>
               <widget class="QPushButton" name="pushButton_2">
                <property name="text">
                 <string>Connect DLP</string>
+               </property>
+               <property name="icon">
+                <iconset theme="camera-video"/>
                </property>
               </widget>
              </item>

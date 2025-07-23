@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlFPJbCB.ui'
+## Form generated from reading UI file 'dlpctlZxhZvt.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -531,11 +531,15 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.pushButton = QPushButton(self.devices_tab)
         self.pushButton.setObjectName(u"pushButton")
+        icon5 = QIcon(QIcon.fromTheme(u"camera-photo"))
+        self.pushButton.setIcon(icon5)
 
         self.verticalLayout_2.addWidget(self.pushButton)
 
         self.pushButton_2 = QPushButton(self.devices_tab)
         self.pushButton_2.setObjectName(u"pushButton_2")
+        icon6 = QIcon(QIcon.fromTheme(u"camera-video"))
+        self.pushButton_2.setIcon(icon6)
 
         self.verticalLayout_2.addWidget(self.pushButton_2)
 
@@ -546,8 +550,8 @@ class Ui_MainWindow(object):
 
         self.refresh_devices = QPushButton(self.devices_tab)
         self.refresh_devices.setObjectName(u"refresh_devices")
-        icon5 = QIcon(QIcon.fromTheme(u"system-reboot"))
-        self.refresh_devices.setIcon(icon5)
+        icon7 = QIcon(QIcon.fromTheme(u"system-reboot"))
+        self.refresh_devices.setIcon(icon7)
 
         self.verticalLayout_2.addWidget(self.refresh_devices)
 
