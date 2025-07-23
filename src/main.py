@@ -201,9 +201,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         idn = instrument.query("*IDN?").strip()
                         list_item = QListWidgetItem(self.device_list)
                         list_button = QPushButton(f"{instrument.model_name}")
+                        list_button.setCheckable(True)
+
                         self.visa_insts[resource] = (idn, list_item, list_button)
                         self.device_list.addItem(list_item)
                         self.device_list.setItemWidget(list_item, list_button)
+
+                        if "Waveform Generator" in instrument.model_name:
+                            list_button.clicked.connect("connect_function_generator")
 
             except Exception as e:
                 print(e)
