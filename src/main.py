@@ -191,7 +191,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     if isinstance(instrument, USBInstrument):
                         idn = instrument.query("*IDN?").strip()
                         list_item = QListWidgetItem(self.device_list)
-                        list_button = QPushButton(f"{instrument.resource_name}")
+                        list_button = QPushButton(f"{instrument.model_name}")
                         self.visa_insts[resource] = (idn, list_item, list_button)
                         self.device_list.addItem(list_item)
                         self.device_list.setItemWidget(list_item, list_button)
