@@ -1,4 +1,5 @@
 import sys
+from functools import partial
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import QMutex, QMutexLocker, Qt
@@ -16,6 +17,7 @@ import numpy as np
 from pyvisa import ResourceManager
 from pyvisa.resources import USBInstrument
 
+from function_generator import FunctionGenerator
 from ui.ui_dlpctl import Ui_MainWindow
 
 from camera_thread import CameraThread
@@ -93,7 +95,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dlp: DlpThread = DlpThread()
         self.pushButton_2.clicked.connect(self.connect_dlp)
 
-        # self.function_generator: FunctionGenerator = FunctionGenerator()
+        self.function_generator: FunctionGenerator = FunctionGenerator()
 
         self.rm = ResourceManager()
         self.refresh_devices.clicked.connect(self.refresh_devices_clicked)
@@ -201,22 +203,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         idn = instrument.query("*IDN?").strip()
                         list_item = QListWidgetItem(self.device_list)
                         list_button = QPushButton(f"{instrument.model_name}")
-                        list_button.setCheckable(True)
 
                         self.visa_insts[resource] = (idn, list_item, list_button)
                         self.device_list.addItem(list_item)
                         self.device_list.setItemWidget(list_item, list_button)
 
                         if "Waveform Generator" in instrument.model_name:
-                            list_button.clicked.connect("connect_function_generator")
+                            list_button.clicked.connect(
+                                partial(self.connect_function_generator_clicked, idn)
+                            )
 
             except Exception as e:
                 print(e)
                 self.visa_insts[resource] = ("VISA Device (No IDN)", None, None)
         print(f"VISA devices detected: {self.visa_insts}")
 
-    def connect_function_generator(self):
-        pass
+    def connect_function_generator_clicked(self, idn: str):
+        self.function_generator.select_instrument(self.rm, idn)
 
     def connect_camera(self):
         if not self.camera.basler:

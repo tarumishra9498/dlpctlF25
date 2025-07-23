@@ -1,6 +1,6 @@
 import pyvisa
 import numpy as np
-from pyvisa.resources.serial import SerialInstrument
+from pyvisa.resources import USBInstrument
 
 
 class FunctionGenerator:
@@ -9,12 +9,11 @@ class FunctionGenerator:
     """
 
     def __init__(self) -> None:
-        self.instrument: SerialInstrument | None = None
+        self.instrument: USBInstrument | None = None
         self.rm = pyvisa.ResourceManager()
+        self.PEAK_TO_PEAK = 10  # volts
 
-    def select_instrument(
-        self, rm: pyvisa.ResourceManager, device: SerialInstrument
-    ) -> None:
+    def select_instrument(self, rm: pyvisa.ResourceManager, idn) -> None:
         """
         Used to connect instrument with name `idn`
         """
@@ -23,17 +22,17 @@ class FunctionGenerator:
             self.instrument.close()
 
         instrument = rm.open_resource(idn)
-        assert instrument is SerialInstrument
+        assert instrument is USBInstrument
         self.instrument = instrument
-        self.set_voltage()
-        self.set_frequency()
-        self.set_function()
+        self.set_voltage(0)
+        self.set_frequency(1500)
+        self.set_function("SIN")
 
     def set_voltage(self, voltage: float) -> None:
         if self.instrument:
             try:
                 self.instrument.write("VOLT:UNIT VPP")
-                self.instrument.write("VOLT:OFFS 0V")
+                self.instrument.write("VOLT:OFFS -5V")
                 self.instrument.write("OUTP:LOAD INF")
                 self.instrument.write(f"VOLT {voltage}")
                 volt_read = np.float64(self.instrument.query("VOLT?").strip())
@@ -44,7 +43,7 @@ class FunctionGenerator:
         else:
             print("Function generator not selected!")
 
-    def set_frequency(self, frequency) -> None:
+    def set_frequency(self, frequency: int) -> None:
         if self.instrument:
             try:
                 self.instrument.write(f"FREQ {frequency}")
@@ -56,7 +55,8 @@ class FunctionGenerator:
         else:
             print("Function generator not selected!")
 
-    def set_function(self, function) -> None:
+    def set_function(self, function: str) -> None:
+        # function can be something like SQU or SIN
         if self.instrument:
             try:
                 self.instrument.write(f"FUNC {function}")
@@ -72,5 +72,4 @@ class FunctionGenerator:
 
 
 #            1000-3000 ; 1500 frequency
-#            -5v offset
 #            peak to peak voltage 12volts or 10v
