@@ -14,9 +14,8 @@ import cv2 as cv
 import numpy as np
 
 from pyvisa import ResourceManager
-from pyvisa.resources import SerialInstrument
+from pyvisa.resources import USBInstrument
 
-from function_generator import FunctionGenerator
 from ui.ui_dlpctl import Ui_MainWindow
 
 from camera_thread import CameraThread
@@ -189,7 +188,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 with self.rm.open_resource(resource) as instrument:
                     print(f"instrument {i} detected of type {type(instrument)}")
-                    if isinstance(instrument, SerialInstrument):
+                    if isinstance(instrument, USBInstrument):
                         idn = instrument.query("*IDN?").strip()
                         list_item = QListWidgetItem(self.device_list)
                         list_button = QPushButton(f"{instrument.resource_name}")
