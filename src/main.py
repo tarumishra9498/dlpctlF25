@@ -2,7 +2,7 @@ import sys
 from functools import partial
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import QMutex, QMutexLocker, Qt
+from PySide6.QtCore import QMutex, QMutexLocker, Qt, Slot
 from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import (
     QFileDialog,
@@ -49,9 +49,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.selection_on = False
         self.pid_on = True
 
-        self.camera_frame = None
+        self.camera_data = []
 
-        self.camera_frame_mutex = QMutex()
+        self.camera_data_mutex = QMutex()
         self.settings_mutex = QMutex()
         self.circles_mutex = QMutex()
         self.selected_circles_mutex = QMutex()
@@ -89,6 +89,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.camera: CameraThread = CameraThread()
         self.pushButton.clicked.connect(self.connect_camera)
+        self.pushButton.clicked.connect(self.read_video)
 
         self.video_writer: VideoWriteThread = VideoWriteThread()
 
@@ -182,6 +183,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.video_frame.clicked.connect(self.on_video_click)
         self.video_frame.moved.connect(self.on_mouse_move)
 
+    @Slot(object)
+    def on_camera_frame(self, data):
+        self.ReadThread.update_camera_frame(data)
+        print(data)
+
     def refresh_devices_clicked(self):
         # Clear out visa instruments from list
         for inst in self.visa_insts.values():
@@ -229,6 +235,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.pushButton.setStyleSheet("color: green;")
                 self.camera.frame_out.connect(self.video_writer.save_frame)
                 self.camera.display_out.connect(self.update_display)
+                self.camera.display_out.connect(self.on_camera_frame)
                 self.update_settings("source", "camera")
             else:
                 self.capture.setEnabled(False)
@@ -277,11 +284,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def update_display(self, data):
         q_img = None
+
         # reading from file
         if isinstance(data, np.ndarray):
             rgb = cv.cvtColor(data, cv.COLOR_BGR2RGB)
             h, w, ch = rgb.shape
             q_img = QImage(rgb.data, w, h, ch * w, QImage.Format.Format_RGB888)
+
         # reading from camera
         # this should be deleted since video_read_thread will always output a numpy array
         else:
@@ -299,6 +308,106 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.video_frame.setPixmap(pixmap)
         self.update_settings("pixmap_w", pixmap.width())
         self.update_settings("pixmap_h", pixmap.height())
+
+    def on_replay(self, val):
+        if val:
+            if self.ReadThread and self.ReadThread.isRunning():
+                self.ReadThread.stop()
+                self.ReadThread.wait()  # try removing these calls
+
+            with QMutexLocker(self.circles_mutex):
+                self.circles.clear()
+            
+            self.ReadThread = VideoReadThread(
+                self.opened_files[-1],
+                self.camera_data,
+                self.camera_data_mutex,
+                self.settings,
+                self.settings_mutex,
+                self.circles,
+                self.circles_mutex,
+                self.selected_circles,
+                self.selected_circles_mutex,
+                self.frame_pos,
+                self.frame_pos_mutex,
+            )
+            self.ReadThread.FrameUpdate.connect(self.update_display)
+            # look into this 
+
+            # self.ReadThread.FrameUpdate.connect(self.video_writer.save_frame)
+            self.ReadThread.start()
+
+    def update_min_pos_err(self, val):
+        self.update_settings("min_pos_err", val)
+
+    def clear_all_bubbles(self):
+        with QMutexLocker(self.selected_circles_mutex):
+            self.selected_circles.clear()
+
+    def read_video(self):
+        file = None
+        if self.settings["source"] == "video":
+            file_dialog = QFileDialog(self)
+            file_dialog.setWindowTitle("Open File")
+            file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
+            file_dialog.setViewMode(QFileDialog.ViewMode.Detail)
+
+            if file_dialog.exec():
+                files = file_dialog.selectedFiles()
+                self.opened_files.append(files[0])
+                file = self.opened_files[-1]
+            self.update_settings("source", "video")
+            self.video_frame.setText("Video Opened - Click Start Analysis")
+
+        if self.ReadThread is not None and self.ReadThread.isRunning():
+            self.ReadThread.stop()
+            self.ReadThread.wait()
+
+        print("video thread activated")
+        self.ReadThread = VideoReadThread(
+            file,
+            self.camera_data,
+            self.camera_data_mutex,
+            self.settings,
+            self.settings_mutex,
+            self.circles,
+            self.circles_mutex,
+            self.selected_circles,
+            self.selected_circles_mutex,
+            self.frame_pos,
+            self.frame_pos_mutex,
+        )
+
+        self.ReadThread.FrameUpdate.connect(self.update_display)
+        self.ReadThread.start()
+
+    def showEvent(self, event):
+        self.update_settings("video_frame_w", self.video_frame.width())
+        self.update_settings("video_frame_h", self.video_frame.height())
+
+    def closeEvent(self, event):
+        self.camera.stop_recording()
+        self.video_writer.stop()
+
+        if hasattr(self, "read_thread") and self.ReadThread.isRunning():
+            self.ReadThread.stop()
+            self.ReadThread.wait()
+
+        super().closeEvent(event)
+
+    def on_video_click(self, x, y):
+        x -= (self.settings["video_frame_w"] - self.settings["pixmap_w"]) // 2
+        y -= (self.settings["video_frame_h"] - self.settings["pixmap_h"]) // 2
+        with QMutexLocker(self.selected_circles_mutex):
+            if self.selected_circles_mutex == [False]:
+                self.selected_circles = []
+            self.selected_circles.append([x, y])
+
+    def on_mouse_move(self, x, y):
+        x -= (self.settings["video_frame_w"] - self.settings["pixmap_w"]) // 2
+        y -= (self.settings["video_frame_h"] - self.settings["pixmap_h"]) // 2
+        self.mouse_pos.setText(f"Frame Position (x, y): {x}, {y}")
+
 
     def update_settings(self, name, value):
         with QMutexLocker(self.settings_mutex):
@@ -352,109 +461,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def update_circularity(self, val):
         self.update_settings("circularity", val)
-
-    def on_replay(self, val):
-        if val:
-            if self.ReadThread and self.ReadThread.isRunning():
-                self.ReadThread.stop()
-                self.ReadThread.wait()  # try removing these calls
-
-            with QMutexLocker(self.circles_mutex):
-                self.circles.clear()
-
-            self.ReadThread = VideoReadThread(
-                self.opened_files[-1],
-                self.camera_frame,
-                self.camera_frame_mutex,
-                self.settings,
-                self.settings_mutex,
-                self.circles,
-                self.circles_mutex,
-                self.selected_circles,
-                self.selected_circles_mutex,
-                self.frame_pos,
-                self.frame_pos_mutex,
-            )
-            self.ReadThread.FrameUpdate.connect(self.update_display)
-            self.ReadThread.start()
-
-    def update_min_pos_err(self, val):
-        self.update_settings("min_pos_err", val)
-
-    def clear_all_bubbles(self):
-        with QMutexLocker(self.selected_circles_mutex):
-            self.selected_circles.clear()
-
-    def read_video(self, data):
-        file = None
-
-        # video source = camera
-        if self.settings["source"] == "camera" and data:
-            with QMutexLocker(self.camera_frame_mutex):
-                self.camera_frame = data
-
-        # video source = video
-        else:
-            file_dialog = QFileDialog(self)
-            file_dialog.setWindowTitle("Open File")
-            file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
-            file_dialog.setViewMode(QFileDialog.ViewMode.Detail)
-
-            if file_dialog.exec():
-                files = file_dialog.selectedFiles()
-                self.opened_files.append(files[0])
-                file = self.opened_files[-1]
-            self.update_settings("source", "video")
-            self.video_frame.setText("Video Opened - Click Start Analysis")
-
-        if self.ReadThread is not None and self.ReadThread.isRunning():
-            self.ReadThread.stop()
-            self.ReadThread.wait()
-
-        self.ReadThread = VideoReadThread(
-            file,
-            self.camera_frame,
-            self.camera_frame_mutex,
-            self.settings,
-            self.settings_mutex,
-            self.circles,
-            self.circles_mutex,
-            self.selected_circles,
-            self.selected_circles_mutex,
-            self.frame_pos,
-            self.frame_pos_mutex,
-        )
-
-        self.ReadThread.FrameUpdate.connect(self.update_display)
-        self.ReadThread.start()
-
-    def showEvent(self, event):
-        self.update_settings("video_frame_w", self.video_frame.width())
-        self.update_settings("video_frame_h", self.video_frame.height())
-
-    def closeEvent(self, event):
-        self.camera.stop_recording()
-        self.video_writer.stop()
-
-        if hasattr(self, "read_thread") and self.ReadThread.isRunning():
-            self.ReadThread.stop()
-            self.ReadThread.wait()
-
-        super().closeEvent(event)
-
-    def on_video_click(self, x, y):
-        x -= (self.settings["video_frame_w"] - self.settings["pixmap_w"]) // 2
-        y -= (self.settings["video_frame_h"] - self.settings["pixmap_h"]) // 2
-        with QMutexLocker(self.selected_circles_mutex):
-            if self.selected_circles_mutex == [False]:
-                self.selected_circles = []
-            self.selected_circles.append([x, y])
-
-    def on_mouse_move(self, x, y):
-        x -= (self.settings["video_frame_w"] - self.settings["pixmap_w"]) // 2
-        y -= (self.settings["video_frame_h"] - self.settings["pixmap_h"]) // 2
-        self.mouse_pos.setText(f"Frame Position (x, y): {x}, {y}")
-
 
 if __name__ == "__main__":
     app = None

@@ -13,8 +13,8 @@ class VideoReadThread(QThread):
     def __init__ (
         self,
         path,
-        camera_frame,
-        camera_frame_mutex,
+        camera_data,
+        camera_data_mutex,
         settings,
         settings_mutex,
         circles,
@@ -26,8 +26,8 @@ class VideoReadThread(QThread):
     ):
         super().__init__()
         self.path = path
-        self.camera_frame = camera_frame
-        self.camera_frame_mutex = camera_frame_mutex
+        self.camera_data = []
+        self.camera_data_mutex = camera_data_mutex
         self.settings = settings
         self.circles = circles
         self.settings_mutex = settings_mutex
@@ -66,11 +66,9 @@ class VideoReadThread(QThread):
         if self.settings["source"] == "video":
             cap = cv.VideoCapture(self.path)
             if not cap.isOpened():
-                print("could not open video file; check the path & codec support")
+                print("Could not open video file; check the path & codec support")
                 return
             cap.set(cv.CAP_PROP_POS_FRAMES, self.frame_start)
-            frame_time = 1.0 / cap.get(cv.CAP_PROP_FPS)
-        
         
         while self.running:
             while self.paused and self.running:
@@ -91,18 +89,17 @@ class VideoReadThread(QThread):
                     frame_analysis_iteration += 1
                     continue
                     
-
                 if frame_analysis_iteration == 1:
                     self.frame_start = cap.get(cv.CAP_PROP_POS_FRAMES)
                 frame_pos = cap.get(cv.CAP_PROP_POS_FRAMES)
             
             # if the camera is the source, get the camera frame
             elif self.settings["source"] == "camera":
-                with QMutexLocker(self.camera_frame_mutex):
-                    frame = self.camera_frame
-                frame_time = None ## CHANGE CHANGE CHANGE
+                with QMutexLocker(self.camera_data_mutex):
+                    frame, camera_fps, exposure, recording_state = self.camera_data
                 # don't change frame_start
                 frame_pos += 1
+                print("camera frame grabbed")
 
             else:
                 print("Source not found")
@@ -119,10 +116,16 @@ class VideoReadThread(QThread):
             last_tick = current_tick
             fps_tick = current_tick
 
+
             with QMutexLocker(self.settings_mutex):
                 local_settings = self.settings.copy()
             local_settings["video_iteration"] = video_iteration
-            local_settings["fps"] = fps
+
+            if self.settings["source"] == "video":
+                local_settings["fps"] = fps
+            else:
+                local_settings["fps"] = camera_fps
+
             with QMutexLocker(self.circles_mutex):
                 local_circles = self.circles.copy()
             with QMutexLocker(self.selected_circles_mutex):
@@ -159,6 +162,11 @@ class VideoReadThread(QThread):
     @Slot(bool)
     def on_pause(self, do_pause):
         self.paused = do_pause
+    
+    def update_camera_frame(self, data):
+        with QMutexLocker(self.camera_data_mutex):
+            self.camera_data = data
+            print(f"data in readthread {self.camera_data}")
 
     def stop(self):
         self.running = False
