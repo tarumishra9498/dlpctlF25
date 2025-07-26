@@ -2,7 +2,7 @@ from PySide6.QtCore import QMutexLocker, QThread, Signal, Slot
 import cv2 as cv
 import time
 import numpy as np
-import copy
+import traceback
 
 from frame_analysis import frame_analysis
 
@@ -76,6 +76,9 @@ class VideoReadThread(QThread):
 
             start_tick = cv.getTickCount()
             
+            with QMutexLocker(self.settings_mutex):
+                local_settings = self.settings.copy()
+
             # if the video is the source, read the frame
             if self.settings["source"] == "video" and cap:
                 ret, frame = cap.read()
@@ -91,8 +94,15 @@ class VideoReadThread(QThread):
                     
                 if frame_analysis_iteration == 1:
                     self.frame_start = cap.get(cv.CAP_PROP_POS_FRAMES)
+                    h, w = frame.shape[:2]
+                    self.out = cv.VideoWriter("filtered_output.mp4",
+                    cv.VideoWriter.fourcc(*'mp4v'),
+                    30,
+                    (w, h),
+                    isColor=False,
+                    )
                 frame_pos = cap.get(cv.CAP_PROP_POS_FRAMES)
-            
+                
             # if the camera is the source, get the camera frame
             elif self.settings["source"] == "camera":
                 frame, camera_fps, exposure, recording_state = self.camera_data
@@ -142,12 +152,15 @@ class VideoReadThread(QThread):
                 )
 
                 self.FrameUpdate.emit(updated_frame)
+                self.out.write(updated_frame)
+
                 with QMutexLocker(self.circles_mutex):
                     self.circles.clear()
                     self.circles.update(updated_circles)
 
             except Exception as e:
                 print(f"Frame analysis failed: {e}")
+                traceback.print_exc()
                 break
 
             frame_analysis_iteration += 1
@@ -157,6 +170,8 @@ class VideoReadThread(QThread):
 
         if cap:
             cap.release()
+        if self.out:
+            self.out.release()
 
     @Slot(bool)
     def on_pause(self, do_pause):

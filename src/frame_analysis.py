@@ -49,17 +49,19 @@ class CirclePID:
         self.control_signal = 0
 
     def update(self, measurement):
-        self.pv = measurement
-        self.error = self.pv - self.setpoint
-        self.integral += self.error * self.dt
-        self.derivative = (
-            (self.error - self.prev_error) / self.dt if self.dt > 0 else 0.0
-        )
-        self.control_signal = (
-            self.kp * self.error + self.ki * self.integral + self.kd * self.derivative
-        )
-        self.prev_error = self.error
-        return self.control_signal
+        
+        pass
+        # self.pv = measurement
+        # self.error = self.pv - self.setpoint
+        # self.integral += self.error * self.dt
+        # self.derivative = (
+        #     (self.error - self.prev_error) / self.dt if self.dt > 0 else 0.0
+        # )
+        # self.control_signal = (
+        #     self.kp * self.error + self.ki * self.integral + self.kd * self.derivative
+        # )
+        # self.prev_error = self.error
+        # return self.control_signal
 
 
 def closest_idx_finder(array2d, x, y, tolerance):
@@ -159,7 +161,10 @@ def frame_analysis(
                 r = round(r, 2)
                 cv.circle(return_frame, center, int(r), (173, 216, 230), 2)
                 cv.circle(return_frame, center, 2, (0, 255, 0), 1)
-                dt = 1 / settings["fps"]
+                if settings["fps"] > 0:
+                    dt = 1 / settings["fps"]
+                else:
+                    dt = None
 
                 if len(contours) == 0:
                     print("no countours found")

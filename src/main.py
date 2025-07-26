@@ -39,7 +39,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.circularity = 0.7
         self.min_pos_err = 5
 
-        self.source = None
+        self.source = "video"
         self.analysis_on = False
         self.filters_on = False
         self.blur_on = True
@@ -183,7 +183,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.video_frame.clicked.connect(self.on_video_click)
         self.video_frame.moved.connect(self.on_mouse_move)
 
-    @Slot(object)
     def on_camera_frame(self, data):
         self.ReadThread.update_camera_frame(data)
 
@@ -387,6 +386,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def closeEvent(self, event):
         self.camera.stop_recording()
         self.video_writer.stop()
+        self.ReadThread.out.release()
 
         if hasattr(self, "read_thread") and self.ReadThread.isRunning():
             self.ReadThread.stop()

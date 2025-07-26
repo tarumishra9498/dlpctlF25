@@ -49,7 +49,7 @@ class CameraThread(QThread):
         self.start_time = time.time()
         if self.basler:
             fourcc = cv2.VideoWriter.fourcc(*"mp4v")
-            output_filename = "output.mp4"
+            output_filename = "unfiltered_output.mp4"
             self.out = cv2.VideoWriter(
                 output_filename,
                 fourcc,
