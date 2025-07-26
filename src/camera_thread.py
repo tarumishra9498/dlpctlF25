@@ -98,7 +98,7 @@ class CameraThread(QThread):
 
                     if self.recording and self.out and self.out.isOpened():
                         try:
-                            self.frame_out.emit(frame, self.out])
+                            self.frame_out.emit([frame, self.out])
                         except Exception as e:
                             print(f"Error emitting write frame: {e}")
                         self.timestamp.emit(time.time() - self.start_time)
