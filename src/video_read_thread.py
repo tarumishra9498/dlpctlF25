@@ -95,8 +95,7 @@ class VideoReadThread(QThread):
             
             # if the camera is the source, get the camera frame
             elif self.settings["source"] == "camera":
-                with QMutexLocker(self.camera_data_mutex):
-                    frame, camera_fps, exposure, recording_state = self.camera_data
+                frame, camera_fps, exposure, recording_state = self.camera_data
                 # don't change frame_start
                 frame_pos += 1
                 print("camera frame grabbed")
@@ -166,7 +165,7 @@ class VideoReadThread(QThread):
     def update_camera_frame(self, data):
         with QMutexLocker(self.camera_data_mutex):
             self.camera_data = data
-            print(f"data in readthread {self.camera_data}")
+            # print(f"data in readthread {self.camera_data}")
 
     def stop(self):
         self.running = False

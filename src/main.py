@@ -186,7 +186,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @Slot(object)
     def on_camera_frame(self, data):
         self.ReadThread.update_camera_frame(data)
-        print(data)
 
     def refresh_devices_clicked(self):
         # Clear out visa instruments from list
