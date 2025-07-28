@@ -35,7 +35,9 @@ class CircleKalman:
 
 
 class CirclePID:
-    def __init__(self, setpoint, init_r, dt):
+    def __init__(self, x, y, setpoint, init_r, dt):
+        self.x = x
+        self.y = y
         self.setpoint = setpoint
         self.pv = init_r
         self.kp = 0.6
@@ -49,19 +51,17 @@ class CirclePID:
         self.control_signal = 0
 
     def update(self, measurement):
-        
-        pass
-        # self.pv = measurement
-        # self.error = self.pv - self.setpoint
-        # self.integral += self.error * self.dt
-        # self.derivative = (
-        #     (self.error - self.prev_error) / self.dt if self.dt > 0 else 0.0
-        # )
-        # self.control_signal = (
-        #     self.kp * self.error + self.ki * self.integral + self.kd * self.derivative
-        # )
-        # self.prev_error = self.error
-        # return self.control_signal
+        self.pv = measurement
+        self.error = self.pv - self.setpoint
+        self.integral += self.error * self.dt
+        self.derivative = (
+            (self.error - self.prev_error) / self.dt if self.dt > 0 else 0.0
+        )
+        self.control_signal = (
+            self.kp * self.error + self.ki * self.integral + self.kd * self.derivative
+        )
+        self.prev_error = self.error
+        return (self.x, self.y, self.control_signal)
 
 
 def closest_idx_finder(array2d, x, y, tolerance):
@@ -181,8 +181,8 @@ def frame_analysis(
                             detected_idxs.append(bubble_counter)
                             if settings["pid_on"]:
                                 # change setpoint
-                                circles[bubble_counter].pid = CirclePID(0, r, dt)
-                                # circles[bubble_counter].pid.update(r, dt)
+                                circles[bubble_counter].pid = CirclePID(x, y, 0, r, dt)
+                                circles[bubble_counter].pid.update(r, dt)
                             bubble_counter += 1
 
                     except Exception as e:
@@ -205,8 +205,8 @@ def frame_analysis(
                                 circles[bubble_counter].add_circle(frame_pos, x, y, r)
                                 if settings["pid_on"]:
                                     # change setpoint
-                                    circles[bubble_counter].pid = CirclePID(0, r, dt)
-                                    # circles[bubble_counter].pid.update(r, dt)
+                                    circles[bubble_counter].pid = CirclePID(x, y, 0, r, dt)
+                                    circles[bubble_counter].pid.update(r, dt)
                                 detected_idxs.append(bubble_counter)
                                 bubble_counter += 1
 
@@ -228,7 +228,7 @@ def frame_analysis(
                                         np.array([[r]], dtype=np.float32)
                                     )
                                 if settings["pid_on"]:
-                                    # circles[closest_idx].pid.update(r, dt)
+                                    circles[closest_idx].pid.update(r, dt)
                                     pass
                                 detected_idxs.append(closest_idx)
 
