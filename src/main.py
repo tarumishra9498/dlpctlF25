@@ -96,6 +96,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dlp: DlpThread = DlpThread()
         self.pushButton_2.clicked.connect(self.connect_dlp)
 
+        self.exposure_slider.valueChanged.connect(self.exposure_slider_changed)
+        self.exposure_spinbox.editingFinished.connect(self.exposure_slider.setValue)
+
         self.function_generator: FunctionGenerator = FunctionGenerator()
 
         self.rm = ResourceManager()
@@ -222,6 +225,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.visa_insts[resource] = ("VISA Device (No IDN)", None, None)
         print(f"VISA devices detected: {self.visa_insts}")
 
+    def exposure_slider_changed(self, value: int) -> None:
+        self.camera.set_exposure(value)
+        self.exposure_spinbox.setValue(value)
+
     def connect_function_generator_clicked(self, idn: str):
         self.function_generator.select_instrument(self.rm, idn)
 
@@ -315,7 +322,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             with QMutexLocker(self.circles_mutex):
                 self.circles.clear()
-            
+
             self.ReadThread = VideoReadThread(
                 self.opened_files[-1],
                 self.camera_data,
@@ -330,7 +337,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.frame_pos_mutex,
             )
             self.ReadThread.FrameUpdate.connect(self.update_display)
-            # look into this 
+            # look into this
 
             # self.ReadThread.FrameUpdate.connect(self.video_writer.save_frame)
             self.ReadThread.start()
@@ -407,7 +414,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         y -= (self.settings["video_frame_h"] - self.settings["pixmap_h"]) // 2
         self.mouse_pos.setText(f"Frame Position (x, y): {x}, {y}")
 
-
     def update_settings(self, name, value):
         with QMutexLocker(self.settings_mutex):
             self.settings[name] = value
@@ -460,6 +466,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def update_circularity(self, val):
         self.update_settings("circularity", val)
+
 
 if __name__ == "__main__":
     app = None

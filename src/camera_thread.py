@@ -173,6 +173,16 @@ class CameraThread(QThread):
             self.basler = None
             return False
 
+    def set_exposure(self, value: int) -> None:
+        if self.basler:
+            old_exposure = self.exposure
+            try:
+                self.exposure = value
+                self.basler.ExposureTime.Value = self.exposure
+            except RuntimeException as e:
+                print("RuntimeException from pylon: {e}")
+                self.exposure = old_exposure
+
     def close(self) -> None:
         """
         Close connection to Basler camera
