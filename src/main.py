@@ -96,8 +96,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dlp: DlpThread = DlpThread()
         self.pushButton_2.clicked.connect(self.connect_dlp)
 
-        self.exposure_slider.valueChanged.connect(self.exposure_slider_changed)
-        self.exposure_spinbox.editingFinished.connect(self.exposure_slider.setValue)
+        self.exposure_slider.sliderReleased.connect(self.exposure_slider_changed)
+        self.exposure_spinbox.valueChanged.connect(self.exposure_slider.setValue)
 
         self.function_generator: FunctionGenerator = FunctionGenerator()
 
@@ -225,9 +225,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.visa_insts[resource] = ("VISA Device (No IDN)", None, None)
         print(f"VISA devices detected: {self.visa_insts}")
 
-    def exposure_slider_changed(self, value: int) -> None:
-        self.camera.set_exposure(value)
-        self.exposure_spinbox.setValue(value)
+    def exposure_slider_changed(self):
+        self.camera.set_exposure(self.exposure_slider.value())
+        self.exposure_spinbox.setValue(self.exposure_slider.value())
 
     def connect_function_generator_clicked(self, idn: str):
         self.function_generator.select_instrument(self.rm, idn)

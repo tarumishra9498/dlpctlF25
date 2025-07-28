@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlTwflCX.ui'
+## Form generated from reading UI file 'dlpctlJwHDYl.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -30,7 +30,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(1130, 840)
+        MainWindow.resize(1130, 841)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -76,12 +76,19 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.setContentsMargins(0, 0, -1, -1)
         self.exposure_slider = QSlider(self.horizontalFrame_2)
         self.exposure_slider.setObjectName(u"exposure_slider")
+        self.exposure_slider.setMinimum(100)
+        self.exposure_slider.setMaximum(100000)
+        self.exposure_slider.setSingleStep(0)
         self.exposure_slider.setOrientation(Qt.Orientation.Horizontal)
 
         self.horizontalLayout_3.addWidget(self.exposure_slider)
 
         self.exposure_spinbox = QSpinBox(self.horizontalFrame_2)
         self.exposure_spinbox.setObjectName(u"exposure_spinbox")
+        self.exposure_spinbox.setMinimum(100)
+        self.exposure_spinbox.setMaximum(100000)
+        self.exposure_spinbox.setSingleStep(50)
+        self.exposure_spinbox.setValue(1000)
 
         self.horizontalLayout_3.addWidget(self.exposure_spinbox)
 
@@ -588,7 +595,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1130, 22))
+        self.menubar.setGeometry(QRect(0, 0, 1130, 33))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         self.menuTools = QMenu(self.menubar)
