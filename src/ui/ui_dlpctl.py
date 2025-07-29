@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlTWcpgS.ui'
+## Form generated from reading UI file 'dlpctlpVzuiJ.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -16,12 +16,12 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QDoubleSpinBox, QFrame,
-    QGridLayout, QHBoxLayout, QLabel, QListWidget,
-    QListWidgetItem, QMainWindow, QMenu, QMenuBar,
-    QPushButton, QScrollArea, QSizePolicy, QSlider,
-    QSpacerItem, QSpinBox, QStatusBar, QTabWidget,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDoubleSpinBox,
+    QFrame, QGridLayout, QHBoxLayout, QLabel,
+    QListWidget, QListWidgetItem, QMainWindow, QMenu,
+    QMenuBar, QPushButton, QScrollArea, QSizePolicy,
+    QSlider, QSpacerItem, QSpinBox, QStatusBar,
+    QTabWidget, QVBoxLayout, QWidget)
 
 from widgets import ClickableLabel
 
@@ -30,7 +30,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(1130, 845)
+        MainWindow.resize(976, 845)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -596,6 +596,130 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.refresh_devices)
 
         self.tabWidget.addTab(self.devices_tab, "")
+        self.afg_tab = QWidget()
+        self.afg_tab.setObjectName(u"afg_tab")
+        self.verticalLayout_4 = QVBoxLayout(self.afg_tab)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.pushButton_3 = QPushButton(self.afg_tab)
+        self.pushButton_3.setObjectName(u"pushButton_3")
+        icon8 = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.Computer))
+        self.pushButton_3.setIcon(icon8)
+
+        self.verticalLayout_4.addWidget(self.pushButton_3)
+
+        self.scrollArea = QScrollArea(self.afg_tab)
+        self.scrollArea.setObjectName(u"scrollArea")
+        sizePolicy8 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        sizePolicy8.setHorizontalStretch(0)
+        sizePolicy8.setVerticalStretch(0)
+        sizePolicy8.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
+        self.scrollArea.setSizePolicy(sizePolicy8)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollAreaWidgetContents = QWidget()
+        self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 237, 225))
+        sizePolicy4.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
+        self.scrollAreaWidgetContents.setSizePolicy(sizePolicy4)
+        self.verticalLayout_6 = QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.waveform_grid = QGridLayout()
+        self.waveform_grid.setObjectName(u"waveform_grid")
+        self.line_3 = QFrame(self.scrollAreaWidgetContents)
+        self.line_3.setObjectName(u"line_3")
+        self.line_3.setFrameShape(QFrame.Shape.HLine)
+        self.line_3.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.waveform_grid.addWidget(self.line_3, 1, 0, 1, 1)
+
+        self.waveform_combobox = QComboBox(self.scrollAreaWidgetContents)
+        self.waveform_combobox.addItem("")
+        self.waveform_combobox.addItem("")
+        self.waveform_combobox.addItem("")
+        self.waveform_combobox.addItem("")
+        self.waveform_combobox.addItem("")
+        self.waveform_combobox.addItem("")
+        self.waveform_combobox.setObjectName(u"waveform_combobox")
+        self.waveform_combobox.setFont(font2)
+
+        self.waveform_grid.addWidget(self.waveform_combobox, 3, 0, 1, 1)
+
+        self.label_14 = QLabel(self.scrollAreaWidgetContents)
+        self.label_14.setObjectName(u"label_14")
+        sizePolicy4.setHeightForWidth(self.label_14.sizePolicy().hasHeightForWidth())
+        self.label_14.setSizePolicy(sizePolicy4)
+        self.label_14.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
+
+        self.waveform_grid.addWidget(self.label_14, 0, 0, 1, 1)
+
+        self.pushButton_4 = QPushButton(self.scrollAreaWidgetContents)
+        self.pushButton_4.setObjectName(u"pushButton_4")
+        self.pushButton_4.setFont(font2)
+
+        self.waveform_grid.addWidget(self.pushButton_4, 4, 0, 1, 1)
+
+
+        self.verticalLayout_6.addLayout(self.waveform_grid)
+
+        self.horizontalSpacer_6 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.verticalLayout_6.addItem(self.horizontalSpacer_6)
+
+        self.freq_grid = QGridLayout()
+        self.freq_grid.setObjectName(u"freq_grid")
+        self.freq_spinbox = QDoubleSpinBox(self.scrollAreaWidgetContents)
+        self.freq_spinbox.setObjectName(u"freq_spinbox")
+        sizePolicy4.setHeightForWidth(self.freq_spinbox.sizePolicy().hasHeightForWidth())
+        self.freq_spinbox.setSizePolicy(sizePolicy4)
+        self.freq_spinbox.setFont(font2)
+        self.freq_spinbox.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+        self.freq_spinbox.setMinimum(1.000000000000000)
+        self.freq_spinbox.setMaximum(999.000000000000000)
+
+        self.freq_grid.addWidget(self.freq_spinbox, 2, 0, 1, 2)
+
+        self.freq_combo_box = QComboBox(self.scrollAreaWidgetContents)
+        self.freq_combo_box.addItem("")
+        self.freq_combo_box.addItem("")
+        self.freq_combo_box.addItem("")
+        self.freq_combo_box.addItem("")
+        self.freq_combo_box.addItem("")
+        self.freq_combo_box.addItem("")
+        self.freq_combo_box.setObjectName(u"freq_combo_box")
+        sizePolicy4.setHeightForWidth(self.freq_combo_box.sizePolicy().hasHeightForWidth())
+        self.freq_combo_box.setSizePolicy(sizePolicy4)
+        self.freq_combo_box.setFont(font2)
+
+        self.freq_grid.addWidget(self.freq_combo_box, 2, 2, 1, 1)
+
+        self.line_9 = QFrame(self.scrollAreaWidgetContents)
+        self.line_9.setObjectName(u"line_9")
+        self.line_9.setFrameShape(QFrame.Shape.HLine)
+        self.line_9.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.freq_grid.addWidget(self.line_9, 1, 0, 1, 3)
+
+        self.label_15 = QLabel(self.scrollAreaWidgetContents)
+        self.label_15.setObjectName(u"label_15")
+        sizePolicy4.setHeightForWidth(self.label_15.sizePolicy().hasHeightForWidth())
+        self.label_15.setSizePolicy(sizePolicy4)
+        self.label_15.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
+
+        self.freq_grid.addWidget(self.label_15, 0, 0, 1, 3)
+
+        self.freq_slider = QSlider(self.scrollAreaWidgetContents)
+        self.freq_slider.setObjectName(u"freq_slider")
+        self.freq_slider.setOrientation(Qt.Orientation.Horizontal)
+
+        self.freq_grid.addWidget(self.freq_slider, 3, 0, 1, 3)
+
+
+        self.verticalLayout_6.addLayout(self.freq_grid)
+
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+
+        self.verticalLayout_4.addWidget(self.scrollArea)
+
+        self.tabWidget.addTab(self.afg_tab, "")
 
         self.tool_layout.addWidget(self.tabWidget)
 
@@ -625,7 +749,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -670,11 +794,30 @@ class Ui_MainWindow(object):
         self.pid_checkbox.setText("")
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Activate PID Control", None))
         self.mouse_pos.setText(QCoreApplication.translate("MainWindow", u"Frame Position (X, Y): ", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.video_filters_tab), QCoreApplication.translate("MainWindow", u"Video Analysis", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.video_filters_tab), QCoreApplication.translate("MainWindow", u"Video Tools", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Connect Camera", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Connect DLP", None))
         self.refresh_devices.setText(QCoreApplication.translate("MainWindow", u"Refresh Device List", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.devices_tab), QCoreApplication.translate("MainWindow", u"Devices", None))
+        self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Connect Function Generator", None))
+        self.waveform_combobox.setItemText(0, QCoreApplication.translate("MainWindow", u"Sine", None))
+        self.waveform_combobox.setItemText(1, QCoreApplication.translate("MainWindow", u"Square", None))
+        self.waveform_combobox.setItemText(2, QCoreApplication.translate("MainWindow", u"Ramp", None))
+        self.waveform_combobox.setItemText(3, QCoreApplication.translate("MainWindow", u"Triangle", None))
+        self.waveform_combobox.setItemText(4, QCoreApplication.translate("MainWindow", u"Pulse", None))
+        self.waveform_combobox.setItemText(5, QCoreApplication.translate("MainWindow", u"Noise", None))
+
+        self.label_14.setText(QCoreApplication.translate("MainWindow", u"Waveform", None))
+        self.pushButton_4.setText(QCoreApplication.translate("MainWindow", u"Reset Waveform", None))
+        self.freq_combo_box.setItemText(0, QCoreApplication.translate("MainWindow", u"MHz", None))
+        self.freq_combo_box.setItemText(1, QCoreApplication.translate("MainWindow", u"kHz", None))
+        self.freq_combo_box.setItemText(2, QCoreApplication.translate("MainWindow", u"dHz", None))
+        self.freq_combo_box.setItemText(3, QCoreApplication.translate("MainWindow", u"cHz", None))
+        self.freq_combo_box.setItemText(4, QCoreApplication.translate("MainWindow", u"mHz", None))
+        self.freq_combo_box.setItemText(5, QCoreApplication.translate("MainWindow", u"uHz", None))
+
+        self.label_15.setText(QCoreApplication.translate("MainWindow", u"Frequency", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.afg_tab), QCoreApplication.translate("MainWindow", u"Function Generator", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
     # retranslateUi
 

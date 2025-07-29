@@ -366,7 +366,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.opened_files.append(files[0])
                 file = self.opened_files[-1]
             self.update_settings("source", "video")
-            self.video_frame.setText("Video Opened - Click Activate Analysis")
+            self.video_frame.setText("Video Opened")
 
         if self.ReadThread is not None and self.ReadThread.isRunning():
             self.ReadThread.stop()
