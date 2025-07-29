@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1130</width>
-    <height>841</height>
+    <height>845</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -218,7 +218,7 @@
             <enum>Qt::LayoutDirection::LeftToRight</enum>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="video_filters_tab">
             <property name="sizePolicy">
@@ -228,7 +228,7 @@
              </sizepolicy>
             </property>
             <attribute name="title">
-             <string>Video Filters</string>
+             <string>Video Analysis</string>
             </attribute>
             <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0">
              <item>
@@ -977,13 +977,7 @@
     <addaction name="actionOpen"/>
     <addaction name="actionSave_As"/>
    </widget>
-   <widget class="QMenu" name="menuTools">
-    <property name="title">
-     <string>Tools</string>
-    </property>
-   </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuTools"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen">
