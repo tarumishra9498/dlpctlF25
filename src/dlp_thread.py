@@ -56,7 +56,7 @@ class DlpThread(QThread):
                     self.device.SeqPut(padded_seq)
                     self._img_seq = padded_seq
 
-    def pad_seq_centered(self, img_seq: NDArray) -> NDArray:
+    def pad_seq_centered(self, img_seq: NDArray[np.int64]) -> NDArray[np.int64]:
         target_x = self.device.nSizeX
         target_y = self.device.nSizeY
 
@@ -66,14 +66,19 @@ class DlpThread(QThread):
         pad_rows = (target_y - actual_y) // 2
         pad_cols = (target_x - actual_x) // 2
 
+        print(f"nSizeX: {self.device.nSizeX}")
+        print(f"nSizeY: {self.device.nSizeY}")
+        print(f"pad_rows: {pad_rows}")
+        print(f"pad_cols: {pad_cols}")
+
         return np.pad(
             array=img_seq,
-            pad_width=((pad_rows, pad_rows), (pad_cols, pad_cols)),
+            pad_width=((pad_cols, pad_cols), (pad_rows, pad_rows)),
             mode="constant",
             constant_values=0,
         )
 
-    def validate_img_seq(self, img_seq: NDArray) -> bool:
+    def validate_img_seq(self, img_seq: NDArray[np.int64]) -> bool:
         """
         Returns True if img_seq is a valid image sequence for the DLP to allocate/use
         """
