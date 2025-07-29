@@ -43,30 +43,31 @@ class DlpThread(QThread):
                 id = self.device.SeqAlloc(nbImg=1, bitDepth=img_seq.shape[2])
                 self.seq_ids.append(id)
 
-                additional_bits = (self.device.nSizeX * self.device.nSizeY) - (
-                    img_seq.shape[0] * img_seq.shape[1]
-                )
-                padded_seq = np.pad(
-                    array=img_seq.ravel(),
-                    pad_width=additional_bits,
-                    constant_values=0,
-                )
+                padded_seq = self.pad_seq_centered(img_seq)
                 self.device.SeqPut(padded_seq)
+
+    def pad_seq_centered(self, img_seq: NDArray) -> NDArray:
+        target_x = self.device.nSizeX
+        target_y = self.device.nSizeY
+
+        actual_x = img_seq.size[0]
+        actual_y = img_seq.size[1]
+
+        pad_rows = (target_y - actual_y) // 2
+        pad_cols = (target_x - actual_x) // 2
+
+        return np.pad(
+            array=img_seq,
+            pad_width=((pad_rows, pad_rows), (pad_cols, pad_cols)),
+            mode="constant",
+            constant_values=0,
+        )
 
     def validate_img_seq(self, img_seq: NDArray) -> bool:
         """
         Returns True if img_seq is a valid image sequence for the DLP to allocate/use
         """
-        if (
-            img_seq is not None
-            and img_seq.shape <= (self.device.nSizeX, self.device.nSizeY)
-            and True
-            and True
-            and True
-        ):
-            return True
-        else:
-            return False
+        return img_seq.shape <= (self.device.nSizeX, self.device.nSizeY)
 
     def close(self) -> None:
         self.device.Halt()
