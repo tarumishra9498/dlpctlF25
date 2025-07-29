@@ -60,8 +60,8 @@ class DlpThread(QThread):
         target_x = self.device.nSizeX
         target_y = self.device.nSizeY
 
-        actual_x = img_seq.size[0]
-        actual_y = img_seq.size[1]
+        actual_x = img_seq.shape[0]
+        actual_y = img_seq.shape[1]
 
         pad_rows = (target_y - actual_y) // 2
         pad_cols = (target_x - actual_x) // 2
