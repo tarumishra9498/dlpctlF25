@@ -1,8 +1,9 @@
-from typing import override
+from typing import TypeAlias, override
 import numpy as np
 from ALP4 import ALP4, ALPError
-from numpy._typing import NDArray
 from PySide6.QtCore import QMutex, QMutexLocker, QThread
+
+Img: TypeAlias = np.ndarray[tuple[int, int, int], np.dtype[np.integer]]
 
 
 class DlpThread(QThread):
@@ -11,11 +12,11 @@ class DlpThread(QThread):
         self.device: ALP4 = ALP4(version="4.1")
         self.connected: bool = False
         self.set_img_mutex: QMutex = QMutex()
-        self._img: NDArray[np.int64] | None = None
+        self._img: Img | None = None
 
     @override
     def run(self) -> None:
-        if self.img:
+        if self.img is not None:
             self.device.Run(None, True)  # pyright: ignore[reportUnknownMemberType]
 
     def open(self) -> bool:
@@ -31,11 +32,11 @@ class DlpThread(QThread):
             return False
 
     @property
-    def img(self) -> NDArray[np.int64] | None:
+    def img(self) -> Img | None:
         return self._img
 
     @img.setter
-    def img(self, new_img: NDArray[np.int64] | None) -> None:
+    def img(self, new_img: Img | None) -> None:
         """
         Push a new image sequence to the DLP
         """
@@ -51,12 +52,12 @@ class DlpThread(QThread):
                         self.device.FreeSeq()
 
                     # Allocate and push new sequence data
-                    self.device.SeqAlloc(nbImg=1, bitDepth=new_img.shape[2])
+                    self.device.SeqAlloc(nbImg=1, bitDepth=1)
                     padded_seq = self.pad_img_centered(new_img)
                     self.device.SeqPut(padded_seq)
                     self._img = padded_seq
 
-    def pad_img_centered(self, img: NDArray[np.int64]) -> NDArray[np.int64]:
+    def pad_img_centered(self, img: Img) -> Img:
         target_x = self.device.nSizeX
         target_y = self.device.nSizeY
 
@@ -71,14 +72,15 @@ class DlpThread(QThread):
         print(f"pad_rows: {pad_rows}")
         print(f"pad_cols: {pad_cols}")
 
-        return np.pad(
+        padded_img = np.pad(
             array=img,
             pad_width=((pad_cols, pad_cols), (pad_rows, pad_rows)),
             mode="constant",
             constant_values=0,
         )
+        return padded_img
 
-    def validate_img(self, img: NDArray[np.int64]) -> bool:
+    def validate_img(self, img: Img) -> bool:
         """
         Returns True if img is a valid image for the DLP to allocate/use
         """
