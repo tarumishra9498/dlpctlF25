@@ -19,7 +19,6 @@ class DlpThread(QThread):
         for i, _ in enumerate(self.img_seqs):
             print(f"Running img_seq {i + 1}")
             self.device.Run(self.seq_ids[i], loop=True)
-            time.sleep(10)
 
     def open(self) -> bool:
         """
