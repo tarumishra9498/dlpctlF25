@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlEQZNDR.ui'
+## Form generated from reading UI file 'dlpctlVDINrT.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -74,6 +74,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.horizontalLayout_3.setContentsMargins(0, 0, -1, -1)
+        self.label_13 = QLabel(self.horizontalFrame_2)
+        self.label_13.setObjectName(u"label_13")
+
+        self.horizontalLayout_3.addWidget(self.label_13)
+
         self.exposure_slider = QSlider(self.horizontalFrame_2)
         self.exposure_slider.setObjectName(u"exposure_slider")
         self.exposure_slider.setMinimum(100)
@@ -165,11 +170,11 @@ class Ui_MainWindow(object):
         self.video_filters_tab.setSizePolicy(sizePolicy2)
         self.verticalLayout_3 = QVBoxLayout(self.video_filters_tab)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.start_button = QPushButton(self.video_filters_tab)
-        self.start_button.setObjectName(u"start_button")
-        self.start_button.setCheckable(True)
+        self.analysis_button = QPushButton(self.video_filters_tab)
+        self.analysis_button.setObjectName(u"analysis_button")
+        self.analysis_button.setCheckable(True)
 
-        self.verticalLayout_3.addWidget(self.start_button)
+        self.verticalLayout_3.addWidget(self.analysis_button)
 
         self.show_filters = QPushButton(self.video_filters_tab)
         self.show_filters.setObjectName(u"show_filters")
@@ -620,6 +625,7 @@ class Ui_MainWindow(object):
         self.actionOpen.setText(QCoreApplication.translate("MainWindow", u"Open", None))
         self.actionSave_As.setText(QCoreApplication.translate("MainWindow", u"Save As", None))
         self.video_frame.setText(QCoreApplication.translate("MainWindow", u"Video", None))
+        self.label_13.setText(QCoreApplication.translate("MainWindow", u"Exposure", None))
 #if QT_CONFIG(tooltip)
         self.exposure_slider.setToolTip(QCoreApplication.translate("MainWindow", u"Exposure", None))
 #endif // QT_CONFIG(tooltip)
@@ -631,7 +637,7 @@ class Ui_MainWindow(object):
         self.replay.setText(QCoreApplication.translate("MainWindow", u"Replay", None))
         self.capture.setText(QCoreApplication.translate("MainWindow", u"Capture", None))
         self.load_bitmask.setText(QCoreApplication.translate("MainWindow", u"Load Bitmask", None))
-        self.start_button.setText(QCoreApplication.translate("MainWindow", u"Start Analysis", None))
+        self.analysis_button.setText(QCoreApplication.translate("MainWindow", u"Analysis Off", None))
         self.show_filters.setText(QCoreApplication.translate("MainWindow", u"Show Filters", None))
         self.blur_checkbox.setText("")
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"Activate Gaussian Blur", None))

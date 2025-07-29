@@ -72,9 +72,13 @@ class VideoReadThread(QThread):
             cap.set(cv.CAP_PROP_POS_FRAMES, self.frame_start)
         
         while self.running:
+            if self.settings["analysis_on"] == False:
+                print('stopping')
+                self.running = False
             while self.paused and self.running:
                 time.sleep(0.01)
 
+        
             start_tick = cv.getTickCount()
             
             with QMutexLocker(self.settings_mutex):

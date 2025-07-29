@@ -113,8 +113,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.capture.setEnabled(False)
         self.capture.pressed.connect(self.on_capture)
 
-        self.start_button.setChecked(self.analysis_on)
-        self.start_button.clicked.connect(self.checked_analysis)
+        self.analysis_button.setChecked(self.analysis_on)
+        self.analysis_button.clicked.connect(self.checked_analysis)
 
         self.show_filters.setChecked(self.filters_on)
         self.show_filters.clicked.connect(self.checked_filters)
@@ -366,7 +366,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.opened_files.append(files[0])
                 file = self.opened_files[-1]
             self.update_settings("source", "video")
-            self.video_frame.setText("Video Opened - Click Start Analysis")
+            self.video_frame.setText("Video Opened - Click Activate Analysis")
 
         if self.ReadThread is not None and self.ReadThread.isRunning():
             self.ReadThread.stop()
@@ -422,7 +422,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.settings[name] = value
 
     def checked_analysis(self):
-        self.update_settings("analysis_on", self.start_button.isChecked())
+        self.update_settings("analysis_on", self.analysis_button.isChecked())
+        if self.analysis_button.isChecked():
+            self.analysis_button.setText("Analysis On")
+        else:
+            self.analysis_button.setText("Analysis Off")
 
     def checked_filters(self):
         self.update_settings("filters_on", self.show_filters.isChecked())
