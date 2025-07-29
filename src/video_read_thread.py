@@ -9,6 +9,7 @@ from frame_analysis import frame_analysis
 
 class VideoReadThread(QThread):
     FrameUpdate = Signal(object)
+    PIDCommands = Signal(object)
 
     def __init__ (
         self,
@@ -150,7 +151,12 @@ class VideoReadThread(QThread):
                     self.frame_start,
                     self.bubble_counter_start
                 )
+                if local_settings["pid_on"]:
+                    commands = [circle.pid.control_signal for circle in updated_circles]
+                else:
+                    commands = []
 
+                self.PIDCommands.emit(commands)
                 self.FrameUpdate.emit(updated_frame)
                 self.out.write(updated_frame)
 

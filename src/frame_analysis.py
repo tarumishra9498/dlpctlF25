@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 
 class Circle:
-    def __init__(self, x1, y1, r1):
-        self.center = (x1, y1)
+    def __init__(self, x, y, r1):
+        self.center = (x, y)
         self.history = []
         self.kalman = None
         self.pid = None
@@ -48,7 +48,7 @@ class CirclePID:
         self.integral = 0
         self.derivative = 0
         self.dt = dt
-        self.control_signal = 0
+        self.control_signal = (self.x, self.y, 0)
 
     def update(self, measurement):
         self.pv = measurement
@@ -58,10 +58,10 @@ class CirclePID:
             (self.error - self.prev_error) / self.dt if self.dt > 0 else 0.0
         )
         self.control_signal = (
-            self.kp * self.error + self.ki * self.integral + self.kd * self.derivative
+            self.x, self.y, self.kp * self.error + self.ki * self.integral + self.kd * self.derivative
         )
         self.prev_error = self.error
-        return (self.x, self.y, self.control_signal)
+        return self.control_signal
 
 
 def closest_idx_finder(array2d, x, y, tolerance):
@@ -135,7 +135,6 @@ def frame_analysis(
                 circularity = 0
 
             if settings["selection_on"]:
-                # add hovering
                 h, w = frame.shape[:2]
                 if len(selected_circles) > 0:
                     selections_np = np.array(selected_circles, dtype=np.float32)

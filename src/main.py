@@ -286,6 +286,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.dlp.push(arr)
         self.dlp.run()
+    
+    def send_pid_commands(self, commands):
+        if commands != []:
+            pass
 
     def update_display(self, data):
         q_img = None
@@ -384,6 +388,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
 
         self.ReadThread.FrameUpdate.connect(self.update_display)
+        self.ReadThread.PIDCommands.connect(self.send_pid_commands)
         self.ReadThread.start()
 
     def showEvent(self, event):
