@@ -10,8 +10,8 @@ class DlpThread(QThread):
         super().__init__()
         self.device: ALP4 = ALP4(version="4.1")
         self.connected: bool = False
-        self._img_seq: NDArray[np.int64] | None = None
         self.set_img_seq_mutex: QMutex = QMutex()
+        self._img_seq: NDArray[np.int64] | None = None
 
     @override
     def run(self) -> None:
@@ -35,23 +35,26 @@ class DlpThread(QThread):
         return self._img_seq
 
     @img_seq.setter
-    def img_seq(self, new_img_seq: NDArray[np.int64]) -> None:
+    def img_seq(self, new_img_seq: NDArray[np.int64] | None) -> None:
         """
         Push a new image sequence to the DLP
         """
-        with QMutexLocker(self.set_img_seq_mutex):
-            if self.validate_img_seq(new_img_seq):
-                # Pause and get rid of old sequence if already allocated
-                if self.img_seq:
-                    self._img_seq = None
-                    self.device.Halt()
-                    self.device.FreeSeq()
+        if new_img_seq is None:
+            self._img_seq = None
+        else:
+            with QMutexLocker(self.set_img_seq_mutex):
+                if self.validate_img_seq(new_img_seq):
+                    # Pause and get rid of old sequence if already allocated
+                    if self.img_seq:
+                        self._img_seq = None
+                        self.device.Halt()
+                        self.device.FreeSeq()
 
-                # Allocate and push new sequence data
-                self.device.SeqAlloc(nbImg=1, bitDepth=new_img_seq.shape[2])
-                padded_seq = self.pad_seq_centered(new_img_seq)
-                self.device.SeqPut(padded_seq)
-                self._img_seq = padded_seq
+                    # Allocate and push new sequence data
+                    self.device.SeqAlloc(nbImg=1, bitDepth=new_img_seq.shape[2])
+                    padded_seq = self.pad_seq_centered(new_img_seq)
+                    self.device.SeqPut(padded_seq)
+                    self._img_seq = padded_seq
 
     def pad_seq_centered(self, img_seq: NDArray) -> NDArray:
         target_x = self.device.nSizeX
