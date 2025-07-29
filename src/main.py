@@ -282,11 +282,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         bitmask = cv.imread(filename, cv.IMREAD_GRAYSCALE)
         w = bitmask.shape[0]
         h = bitmask.shape[1]
-        arr = bitmask.ravel().reshape(w, h, 1)
+        bit_depth = 1
+        arr = bitmask.ravel().reshape(w, h, bit_depth)
 
-        self.dlp.push(arr)
+        self.dlp.img_seq = arr
         self.dlp.run()
-    
+
     def send_pid_commands(self, commands):
         if commands != []:
             pass

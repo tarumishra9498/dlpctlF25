@@ -1,6 +1,4 @@
-import time
-from ctypes import c_long
-
+from typing import override
 import numpy as np
 from ALP4 import ALP4, ALPError
 from numpy._typing import NDArray
@@ -9,16 +7,16 @@ from PySide6.QtCore import QMutex, QMutexLocker, QThread
 
 class DlpThread(QThread):
     def __init__(self) -> None:
+        super().__init__()
         self.device: ALP4 = ALP4(version="4.1")
-        self.connected = False
-        self.img_seqs: list[NDArray] = []
-        self.seq_ids: list[c_long] = []
-        self.load_bitmask_mutex = QMutex()
+        self.connected: bool = False
+        self._img_seq: NDArray[np.int64] | None = None
+        self.set_img_seq_mutex: QMutex = QMutex()
 
+    @override
     def run(self) -> None:
-        for i, _ in enumerate(self.img_seqs):
-            print(f"Running img_seq {i + 1}")
-            self.device.Run(self.seq_ids[i], loop=True)
+        if self.img_seq:
+            self.device.Run(None, True)  # pyright: ignore[reportUnknownMemberType]
 
     def open(self) -> bool:
         """
@@ -32,18 +30,28 @@ class DlpThread(QThread):
             self.connected = True
             return False
 
-    def push(self, img_seq: NDArray) -> None:
+    @property
+    def img_seq(self) -> NDArray[np.int64] | None:
+        return self._img_seq
+
+    @img_seq.setter
+    def img_seq(self, new_img_seq: NDArray[np.int64]) -> None:
         """
         Push a new image sequence to the DLP
         """
-        with QMutexLocker(self.load_bitmask_mutex):
-            if self.validate_img_seq(img_seq):
-                self.img_seqs.append(img_seq)
-                id = self.device.SeqAlloc(nbImg=1, bitDepth=img_seq.shape[2])
-                self.seq_ids.append(id)
+        with QMutexLocker(self.set_img_seq_mutex):
+            if self.validate_img_seq(new_img_seq):
+                # Pause and get rid of old sequence if already allocated
+                if self.img_seq:
+                    self._img_seq = None
+                    self.device.Halt()
+                    self.device.FreeSeq()
 
-                padded_seq = self.pad_seq_centered(img_seq)
+                # Allocate and push new sequence data
+                self.device.SeqAlloc(nbImg=1, bitDepth=new_img_seq.shape[2])
+                padded_seq = self.pad_seq_centered(new_img_seq)
                 self.device.SeqPut(padded_seq)
+                self._img_seq = padded_seq
 
     def pad_seq_centered(self, img_seq: NDArray) -> NDArray:
         target_x = self.device.nSizeX
@@ -70,11 +78,10 @@ class DlpThread(QThread):
 
     def close(self) -> None:
         self.device.Halt()
-        for id in self.seq_ids:
-            self.device.FreeSeq(id)
+        self.device.FreeSeq()
         self.device.Free()
 
-    def stop(self):
+    def stop(self) -> None:
         self.quit()
 
     def __del__(self) -> None:
