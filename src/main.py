@@ -47,7 +47,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.contour_on = True
         self.tracking_on = True
         self.selection_on = False
-        self.pid_on = True
+        self.pid_on = False
 
         self.camera_data = []
 
@@ -396,14 +396,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_settings("video_frame_h", self.video_frame.height())
 
     def closeEvent(self, event):
-        self.camera.stop_recording()
-        self.video_writer.stop()
-        self.ReadThread.out.release()
-
-        if hasattr(self, "read_thread") and self.ReadThread.isRunning():
+        if self.ReadThread and self.ReadThread.isRunning():
             self.ReadThread.stop()
             self.ReadThread.wait()
 
+        self.camera.stop_recording()
+        self.video_writer.stop()
         super().closeEvent(event)
 
     def on_video_click(self, x, y):

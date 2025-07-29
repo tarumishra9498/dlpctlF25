@@ -96,12 +96,17 @@ class VideoReadThread(QThread):
                 if frame_analysis_iteration == 1:
                     self.frame_start = cap.get(cv.CAP_PROP_POS_FRAMES)
                     h, w = frame.shape[:2]
-                    self.out = cv.VideoWriter("filtered_output.mp4",
-                    cv.VideoWriter.fourcc(*'mp4v'),
-                    30,
-                    (w, h),
-                    isColor=False,
+
+                    self.out = cv.VideoWriter(
+                        "filtered_output.mp4", 
+                        cv.VideoWriter.fourcc(*'mp4v'),
+                        30,
+                        (w, h),
+                        isColor=True,          
                     )
+                    if not self.out.isOpened():
+                        raise RuntimeError("Could not open VideoWriter for AVI output")
+
                 frame_pos = cap.get(cv.CAP_PROP_POS_FRAMES)
                 
             # if the camera is the source, get the camera frame
@@ -110,7 +115,6 @@ class VideoReadThread(QThread):
                 # don't change frame_start
                 frame_pos += 1
                 print("camera frame grabbed")
-
             else:
                 print("Source not found")
                 break
@@ -158,7 +162,17 @@ class VideoReadThread(QThread):
 
                 self.PIDCommands.emit(commands)
                 self.FrameUpdate.emit(updated_frame)
-                self.out.write(updated_frame)
+
+                if updated_frame.ndim == 2:
+                    print('converting')         
+                    write_frame = cv.cvtColor(updated_frame,
+                                            cv.COLOR_GRAY2BGR)
+                else:
+                    write_frame = updated_frame
+                try:
+                    self.out.write(write_frame)
+                except Exception as e:
+                    print(e)
 
                 with QMutexLocker(self.circles_mutex):
                     self.circles.clear()
@@ -176,6 +190,7 @@ class VideoReadThread(QThread):
 
         if cap:
             cap.release()
+
         if self.out:
             self.out.release()
 
