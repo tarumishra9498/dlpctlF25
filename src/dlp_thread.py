@@ -9,7 +9,7 @@ from PySide6.QtCore import QMutex, QMutexLocker, QThread
 
 class DlpThread(QThread):
     def __init__(self) -> None:
-        self.dmd: ALP4 = ALP4(version="4.1")
+        self.device: ALP4 = ALP4(version="4.1")
         self.connected = False
         self.img_seqs: list[NDArray] = []
         self.seq_ids: list[c_long] = []
@@ -18,7 +18,7 @@ class DlpThread(QThread):
     def run(self) -> None:
         for i, _ in enumerate(self.img_seqs):
             print(f"Running img_seq {i + 1}")
-            self.dmd.Run(self.seq_ids[i], loop=True)
+            self.device.Run(self.seq_ids[i], loop=True)
             time.sleep(10)
 
     def open(self) -> bool:
@@ -26,7 +26,7 @@ class DlpThread(QThread):
         Open connection to DLP
         """
         try:
-            self.dmd.Initialize()
+            self.device.Initialize()
             self.connected = True
             return True
         except ALPError:
@@ -40,10 +40,10 @@ class DlpThread(QThread):
         with QMutexLocker(self.load_bitmask_mutex):
             if self.validate_img_seq(img_seq):
                 self.img_seqs.append(img_seq)
-                id = self.dmd.SeqAlloc(nbImg=1, bitDepth=img_seq.shape[2])
+                id = self.device.SeqAlloc(nbImg=1, bitDepth=img_seq.shape[2])
                 self.seq_ids.append(id)
 
-                additional_bits = (self.dmd.nSizeX * self.dmd.nSizeY) - (
+                additional_bits = (self.device.nSizeX * self.device.nSizeY) - (
                     img_seq.shape[0] * img_seq.shape[1]
                 )
                 padded_seq = np.pad(
@@ -51,7 +51,7 @@ class DlpThread(QThread):
                     pad_width=additional_bits,
                     constant_values=0,
                 )
-                self.dmd.SeqPut(padded_seq)
+                self.device.SeqPut(padded_seq)
 
     def validate_img_seq(self, img_seq: NDArray) -> bool:
         """
@@ -59,7 +59,7 @@ class DlpThread(QThread):
         """
         if (
             img_seq is not None
-            and img_seq.shape <= (self.dmd.nSizeX, self.dmd.nSizeY)
+            and img_seq.shape <= (self.device.nSizeX, self.device.nSizeY)
             and True
             and True
             and True
@@ -69,8 +69,10 @@ class DlpThread(QThread):
             return False
 
     def close(self) -> None:
-        self.dmd.Halt()
-        self.dmd.Free()
+        self.device.Halt()
+        for id in self.seq_ids:
+            self.device.FreeSeq(id)
+        self.device.Free()
 
     def stop(self):
         self.quit()
