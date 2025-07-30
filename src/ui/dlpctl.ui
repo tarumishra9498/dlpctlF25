@@ -225,7 +225,7 @@
             <enum>Qt::LayoutDirection::LeftToRight</enum>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>2</number>
            </property>
            <widget class="QWidget" name="video_filters_tab">
             <property name="sizePolicy">
@@ -1000,7 +1000,7 @@
                   <x>0</x>
                   <y>0</y>
                   <width>237</width>
-                  <height>219</height>
+                  <height>190</height>
                  </rect>
                 </property>
                 <property name="sizePolicy">
@@ -1012,13 +1012,6 @@
                 <layout class="QVBoxLayout" name="verticalLayout_6">
                  <item>
                   <layout class="QGridLayout" name="waveform_grid">
-                   <item row="1" column="0">
-                    <widget class="Line" name="line_3">
-                     <property name="orientation">
-                      <enum>Qt::Orientation::Horizontal</enum>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="3" column="0">
                     <widget class="QComboBox" name="waveform_combobox">
                      <property name="font">
@@ -1044,11 +1037,6 @@
                      </item>
                      <item>
                       <property name="text">
-                       <string>Triangle</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
                        <string>Pulse</string>
                       </property>
                      </item>
@@ -1057,6 +1045,13 @@
                        <string>Noise</string>
                       </property>
                      </item>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="Line" name="line_3">
+                     <property name="orientation">
+                      <enum>Qt::Orientation::Horizontal</enum>
+                     </property>
                     </widget>
                    </item>
                    <item row="0" column="0">
@@ -1072,19 +1067,6 @@
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="0">
-                    <widget class="QPushButton" name="pushButton_4">
-                     <property name="font">
-                      <font>
-                       <pointsize>8</pointsize>
-                       <bold>true</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Reset Waveform</string>
                      </property>
                     </widget>
                    </item>
@@ -1159,12 +1141,7 @@
                      </item>
                      <item>
                       <property name="text">
-                       <string>dHz</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>cHz</string>
+                       <string>Hz</string>
                       </property>
                      </item>
                      <item>
@@ -1204,6 +1181,12 @@
                    </item>
                    <item row="3" column="0" colspan="3">
                     <widget class="QSlider" name="freq_slider">
+                     <property name="minimum">
+                      <number>1</number>
+                     </property>
+                     <property name="maximum">
+                      <number>999</number>
+                     </property>
                      <property name="orientation">
                       <enum>Qt::Orientation::Horizontal</enum>
                      </property>
