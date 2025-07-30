@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlzxElbW.ui'
+## Form generated from reading UI file 'dlpctlXklLWf.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -183,9 +183,17 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addWidget(self.show_filters)
 
+        self.scrollArea_2 = QScrollArea(self.video_filters_tab)
+        self.scrollArea_2.setObjectName(u"scrollArea_2")
+        self.scrollArea_2.setWidgetResizable(True)
+        self.scrollAreaWidgetContents_2 = QWidget()
+        self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 225, 633))
+        self.verticalLayout_7 = QVBoxLayout(self.scrollAreaWidgetContents_2)
+        self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.blur_grid = QGridLayout()
         self.blur_grid.setObjectName(u"blur_grid")
-        self.blur_spinbox = QSpinBox(self.video_filters_tab)
+        self.blur_spinbox = QSpinBox(self.scrollAreaWidgetContents_2)
         self.blur_spinbox.setObjectName(u"blur_spinbox")
         sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
@@ -200,14 +208,14 @@ class Ui_MainWindow(object):
 
         self.blur_grid.addWidget(self.blur_spinbox, 3, 1, 1, 1)
 
-        self.blur_checkbox = QCheckBox(self.video_filters_tab)
+        self.blur_checkbox = QCheckBox(self.scrollAreaWidgetContents_2)
         self.blur_checkbox.setObjectName(u"blur_checkbox")
         sizePolicy3.setHeightForWidth(self.blur_checkbox.sizePolicy().hasHeightForWidth())
         self.blur_checkbox.setSizePolicy(sizePolicy3)
 
         self.blur_grid.addWidget(self.blur_checkbox, 0, 1, 1, 1, Qt.AlignmentFlag.AlignRight)
 
-        self.label_11 = QLabel(self.video_filters_tab)
+        self.label_11 = QLabel(self.scrollAreaWidgetContents_2)
         self.label_11.setObjectName(u"label_11")
         sizePolicy.setHeightForWidth(self.label_11.sizePolicy().hasHeightForWidth())
         self.label_11.setSizePolicy(sizePolicy)
@@ -218,7 +226,7 @@ class Ui_MainWindow(object):
 
         self.blur_grid.addWidget(self.label_11, 0, 0, 1, 1)
 
-        self.blur_slider = QSlider(self.video_filters_tab)
+        self.blur_slider = QSlider(self.scrollAreaWidgetContents_2)
         self.blur_slider.setObjectName(u"blur_slider")
         sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy4.setHorizontalStretch(0)
@@ -231,7 +239,7 @@ class Ui_MainWindow(object):
 
         self.blur_grid.addWidget(self.blur_slider, 3, 0, 1, 1)
 
-        self.label_12 = QLabel(self.video_filters_tab)
+        self.label_12 = QLabel(self.scrollAreaWidgetContents_2)
         self.label_12.setObjectName(u"label_12")
         sizePolicy4.setHeightForWidth(self.label_12.sizePolicy().hasHeightForWidth())
         self.label_12.setSizePolicy(sizePolicy4)
@@ -239,7 +247,7 @@ class Ui_MainWindow(object):
 
         self.blur_grid.addWidget(self.label_12, 2, 0, 1, 2)
 
-        self.line_8 = QFrame(self.video_filters_tab)
+        self.line_8 = QFrame(self.scrollAreaWidgetContents_2)
         self.line_8.setObjectName(u"line_8")
         self.line_8.setFrameShape(QFrame.Shape.HLine)
         self.line_8.setFrameShadow(QFrame.Shadow.Sunken)
@@ -249,15 +257,15 @@ class Ui_MainWindow(object):
         self.blur_grid.setColumnStretch(0, 2)
         self.blur_grid.setColumnStretch(1, 1)
 
-        self.verticalLayout_3.addLayout(self.blur_grid)
+        self.verticalLayout_7.addLayout(self.blur_grid)
 
         self.horizontalSpacer = QSpacerItem(40, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
-        self.verticalLayout_3.addItem(self.horizontalSpacer)
+        self.verticalLayout_7.addItem(self.horizontalSpacer)
 
         self.thresh_grid = QGridLayout()
         self.thresh_grid.setObjectName(u"thresh_grid")
-        self.thresh_area_slider = QSlider(self.video_filters_tab)
+        self.thresh_area_slider = QSlider(self.scrollAreaWidgetContents_2)
         self.thresh_area_slider.setObjectName(u"thresh_area_slider")
         sizePolicy4.setHeightForWidth(self.thresh_area_slider.sizePolicy().hasHeightForWidth())
         self.thresh_area_slider.setSizePolicy(sizePolicy4)
@@ -266,7 +274,7 @@ class Ui_MainWindow(object):
 
         self.thresh_grid.addWidget(self.thresh_area_slider, 3, 0, 1, 1)
 
-        self.label_3 = QLabel(self.video_filters_tab)
+        self.label_3 = QLabel(self.scrollAreaWidgetContents_2)
         self.label_3.setObjectName(u"label_3")
         sizePolicy4.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
         self.label_3.setSizePolicy(sizePolicy4)
@@ -274,7 +282,7 @@ class Ui_MainWindow(object):
 
         self.thresh_grid.addWidget(self.label_3, 2, 0, 1, 2)
 
-        self.thresh_const_slider = QSlider(self.video_filters_tab)
+        self.thresh_const_slider = QSlider(self.scrollAreaWidgetContents_2)
         self.thresh_const_slider.setObjectName(u"thresh_const_slider")
         sizePolicy4.setHeightForWidth(self.thresh_const_slider.sizePolicy().hasHeightForWidth())
         self.thresh_const_slider.setSizePolicy(sizePolicy4)
@@ -282,7 +290,7 @@ class Ui_MainWindow(object):
 
         self.thresh_grid.addWidget(self.thresh_const_slider, 5, 0, 1, 1)
 
-        self.line_6 = QFrame(self.video_filters_tab)
+        self.line_6 = QFrame(self.scrollAreaWidgetContents_2)
         self.line_6.setObjectName(u"line_6")
         sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         sizePolicy5.setHorizontalStretch(0)
@@ -294,13 +302,13 @@ class Ui_MainWindow(object):
 
         self.thresh_grid.addWidget(self.line_6, 1, 0, 1, 2)
 
-        self.label_7 = QLabel(self.video_filters_tab)
+        self.label_7 = QLabel(self.scrollAreaWidgetContents_2)
         self.label_7.setObjectName(u"label_7")
         self.label_7.setFont(font2)
 
         self.thresh_grid.addWidget(self.label_7, 0, 0, 1, 1)
 
-        self.label_4 = QLabel(self.video_filters_tab)
+        self.label_4 = QLabel(self.scrollAreaWidgetContents_2)
         self.label_4.setObjectName(u"label_4")
         sizePolicy4.setHeightForWidth(self.label_4.sizePolicy().hasHeightForWidth())
         self.label_4.setSizePolicy(sizePolicy4)
@@ -308,14 +316,14 @@ class Ui_MainWindow(object):
 
         self.thresh_grid.addWidget(self.label_4, 4, 0, 1, 2)
 
-        self.thresh_checkbox = QCheckBox(self.video_filters_tab)
+        self.thresh_checkbox = QCheckBox(self.scrollAreaWidgetContents_2)
         self.thresh_checkbox.setObjectName(u"thresh_checkbox")
         sizePolicy3.setHeightForWidth(self.thresh_checkbox.sizePolicy().hasHeightForWidth())
         self.thresh_checkbox.setSizePolicy(sizePolicy3)
 
         self.thresh_grid.addWidget(self.thresh_checkbox, 0, 1, 1, 1, Qt.AlignmentFlag.AlignRight)
 
-        self.thresh_area_spinbox = QSpinBox(self.video_filters_tab)
+        self.thresh_area_spinbox = QSpinBox(self.scrollAreaWidgetContents_2)
         self.thresh_area_spinbox.setObjectName(u"thresh_area_spinbox")
         sizePolicy3.setHeightForWidth(self.thresh_area_spinbox.sizePolicy().hasHeightForWidth())
         self.thresh_area_spinbox.setSizePolicy(sizePolicy3)
@@ -324,7 +332,7 @@ class Ui_MainWindow(object):
 
         self.thresh_grid.addWidget(self.thresh_area_spinbox, 3, 1, 1, 1)
 
-        self.thresh_const_spinbox = QSpinBox(self.video_filters_tab)
+        self.thresh_const_spinbox = QSpinBox(self.scrollAreaWidgetContents_2)
         self.thresh_const_spinbox.setObjectName(u"thresh_const_spinbox")
         sizePolicy3.setHeightForWidth(self.thresh_const_spinbox.sizePolicy().hasHeightForWidth())
         self.thresh_const_spinbox.setSizePolicy(sizePolicy3)
@@ -335,15 +343,15 @@ class Ui_MainWindow(object):
         self.thresh_grid.setColumnStretch(0, 2)
         self.thresh_grid.setColumnStretch(1, 1)
 
-        self.verticalLayout_3.addLayout(self.thresh_grid)
+        self.verticalLayout_7.addLayout(self.thresh_grid)
 
         self.horizontalSpacer_2 = QSpacerItem(40, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
-        self.verticalLayout_3.addItem(self.horizontalSpacer_2)
+        self.verticalLayout_7.addItem(self.horizontalSpacer_2)
 
         self.contour_grid = QGridLayout()
         self.contour_grid.setObjectName(u"contour_grid")
-        self.contour_spinbox = QSpinBox(self.video_filters_tab)
+        self.contour_spinbox = QSpinBox(self.scrollAreaWidgetContents_2)
         self.contour_spinbox.setObjectName(u"contour_spinbox")
         sizePolicy3.setHeightForWidth(self.contour_spinbox.sizePolicy().hasHeightForWidth())
         self.contour_spinbox.setSizePolicy(sizePolicy3)
@@ -351,13 +359,13 @@ class Ui_MainWindow(object):
 
         self.contour_grid.addWidget(self.contour_spinbox, 3, 1, 1, 1)
 
-        self.label_6 = QLabel(self.video_filters_tab)
+        self.label_6 = QLabel(self.scrollAreaWidgetContents_2)
         self.label_6.setObjectName(u"label_6")
         self.label_6.setFont(font2)
 
         self.contour_grid.addWidget(self.label_6, 0, 0, 1, 1)
 
-        self.label_8 = QLabel(self.video_filters_tab)
+        self.label_8 = QLabel(self.scrollAreaWidgetContents_2)
         self.label_8.setObjectName(u"label_8")
         sizePolicy4.setHeightForWidth(self.label_8.sizePolicy().hasHeightForWidth())
         self.label_8.setSizePolicy(sizePolicy4)
@@ -365,7 +373,7 @@ class Ui_MainWindow(object):
 
         self.contour_grid.addWidget(self.label_8, 4, 0, 1, 2)
 
-        self.label_5 = QLabel(self.video_filters_tab)
+        self.label_5 = QLabel(self.scrollAreaWidgetContents_2)
         self.label_5.setObjectName(u"label_5")
         sizePolicy4.setHeightForWidth(self.label_5.sizePolicy().hasHeightForWidth())
         self.label_5.setSizePolicy(sizePolicy4)
@@ -373,14 +381,14 @@ class Ui_MainWindow(object):
 
         self.contour_grid.addWidget(self.label_5, 2, 0, 1, 2)
 
-        self.contour_checkbox = QCheckBox(self.video_filters_tab)
+        self.contour_checkbox = QCheckBox(self.scrollAreaWidgetContents_2)
         self.contour_checkbox.setObjectName(u"contour_checkbox")
         sizePolicy3.setHeightForWidth(self.contour_checkbox.sizePolicy().hasHeightForWidth())
         self.contour_checkbox.setSizePolicy(sizePolicy3)
 
         self.contour_grid.addWidget(self.contour_checkbox, 0, 1, 1, 1, Qt.AlignmentFlag.AlignRight)
 
-        self.line_5 = QFrame(self.video_filters_tab)
+        self.line_5 = QFrame(self.scrollAreaWidgetContents_2)
         self.line_5.setObjectName(u"line_5")
         sizePolicy5.setHeightForWidth(self.line_5.sizePolicy().hasHeightForWidth())
         self.line_5.setSizePolicy(sizePolicy5)
@@ -393,7 +401,7 @@ class Ui_MainWindow(object):
 
         self.contour_grid.addWidget(self.line_5, 1, 0, 1, 2)
 
-        self.contour_slider = QSlider(self.video_filters_tab)
+        self.contour_slider = QSlider(self.scrollAreaWidgetContents_2)
         self.contour_slider.setObjectName(u"contour_slider")
         sizePolicy4.setHeightForWidth(self.contour_slider.sizePolicy().hasHeightForWidth())
         self.contour_slider.setSizePolicy(sizePolicy4)
@@ -401,7 +409,7 @@ class Ui_MainWindow(object):
 
         self.contour_grid.addWidget(self.contour_slider, 3, 0, 1, 1)
 
-        self.circularity_spinbox = QDoubleSpinBox(self.video_filters_tab)
+        self.circularity_spinbox = QDoubleSpinBox(self.scrollAreaWidgetContents_2)
         self.circularity_spinbox.setObjectName(u"circularity_spinbox")
         sizePolicy4.setHeightForWidth(self.circularity_spinbox.sizePolicy().hasHeightForWidth())
         self.circularity_spinbox.setSizePolicy(sizePolicy4)
@@ -415,15 +423,15 @@ class Ui_MainWindow(object):
         self.contour_grid.setColumnStretch(0, 2)
         self.contour_grid.setColumnStretch(1, 1)
 
-        self.verticalLayout_3.addLayout(self.contour_grid)
+        self.verticalLayout_7.addLayout(self.contour_grid)
 
         self.horizontalSpacer_3 = QSpacerItem(40, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
-        self.verticalLayout_3.addItem(self.horizontalSpacer_3)
+        self.verticalLayout_7.addItem(self.horizontalSpacer_3)
 
         self.tracking_grid = QGridLayout()
         self.tracking_grid.setObjectName(u"tracking_grid")
-        self.label_9 = QLabel(self.video_filters_tab)
+        self.label_9 = QLabel(self.scrollAreaWidgetContents_2)
         self.label_9.setObjectName(u"label_9")
         sizePolicy4.setHeightForWidth(self.label_9.sizePolicy().hasHeightForWidth())
         self.label_9.setSizePolicy(sizePolicy4)
@@ -431,14 +439,14 @@ class Ui_MainWindow(object):
 
         self.tracking_grid.addWidget(self.label_9, 0, 0, 1, 1)
 
-        self.line_7 = QFrame(self.video_filters_tab)
+        self.line_7 = QFrame(self.scrollAreaWidgetContents_2)
         self.line_7.setObjectName(u"line_7")
         self.line_7.setFrameShape(QFrame.Shape.HLine)
         self.line_7.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.tracking_grid.addWidget(self.line_7, 1, 0, 1, 2)
 
-        self.label_10 = QLabel(self.video_filters_tab)
+        self.label_10 = QLabel(self.scrollAreaWidgetContents_2)
         self.label_10.setObjectName(u"label_10")
         sizePolicy4.setHeightForWidth(self.label_10.sizePolicy().hasHeightForWidth())
         self.label_10.setSizePolicy(sizePolicy4)
@@ -446,14 +454,14 @@ class Ui_MainWindow(object):
 
         self.tracking_grid.addWidget(self.label_10, 2, 0, 1, 2)
 
-        self.tracking_checkbox = QCheckBox(self.video_filters_tab)
+        self.tracking_checkbox = QCheckBox(self.scrollAreaWidgetContents_2)
         self.tracking_checkbox.setObjectName(u"tracking_checkbox")
         sizePolicy5.setHeightForWidth(self.tracking_checkbox.sizePolicy().hasHeightForWidth())
         self.tracking_checkbox.setSizePolicy(sizePolicy5)
 
         self.tracking_grid.addWidget(self.tracking_checkbox, 0, 1, 1, 1, Qt.AlignmentFlag.AlignRight)
 
-        self.tracking_min_error_spinbox = QDoubleSpinBox(self.video_filters_tab)
+        self.tracking_min_error_spinbox = QDoubleSpinBox(self.scrollAreaWidgetContents_2)
         self.tracking_min_error_spinbox.setObjectName(u"tracking_min_error_spinbox")
         sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy6.setHorizontalStretch(0)
@@ -470,35 +478,35 @@ class Ui_MainWindow(object):
         self.tracking_grid.setColumnStretch(0, 2)
         self.tracking_grid.setColumnStretch(1, 1)
 
-        self.verticalLayout_3.addLayout(self.tracking_grid)
+        self.verticalLayout_7.addLayout(self.tracking_grid)
 
         self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
-        self.verticalLayout_3.addItem(self.horizontalSpacer_4)
+        self.verticalLayout_7.addItem(self.horizontalSpacer_4)
 
         self.selection_grid = QGridLayout()
         self.selection_grid.setObjectName(u"selection_grid")
-        self.line_4 = QFrame(self.video_filters_tab)
+        self.line_4 = QFrame(self.scrollAreaWidgetContents_2)
         self.line_4.setObjectName(u"line_4")
         self.line_4.setFrameShape(QFrame.Shape.HLine)
         self.line_4.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.selection_grid.addWidget(self.line_4, 1, 0, 1, 2)
 
-        self.selection_checkbox = QCheckBox(self.video_filters_tab)
+        self.selection_checkbox = QCheckBox(self.scrollAreaWidgetContents_2)
         self.selection_checkbox.setObjectName(u"selection_checkbox")
         sizePolicy5.setHeightForWidth(self.selection_checkbox.sizePolicy().hasHeightForWidth())
         self.selection_checkbox.setSizePolicy(sizePolicy5)
 
         self.selection_grid.addWidget(self.selection_checkbox, 0, 1, 1, 1, Qt.AlignmentFlag.AlignRight)
 
-        self.clear_all = QPushButton(self.video_filters_tab)
+        self.clear_all = QPushButton(self.scrollAreaWidgetContents_2)
         self.clear_all.setObjectName(u"clear_all")
         self.clear_all.setFont(font2)
 
         self.selection_grid.addWidget(self.clear_all, 2, 0, 1, 2)
 
-        self.label = QLabel(self.video_filters_tab)
+        self.label = QLabel(self.scrollAreaWidgetContents_2)
         self.label.setObjectName(u"label")
         self.label.setFont(font2)
 
@@ -506,21 +514,15 @@ class Ui_MainWindow(object):
 
         self.selection_grid.setColumnStretch(0, 2)
 
-        self.verticalLayout_3.addLayout(self.selection_grid)
+        self.verticalLayout_7.addLayout(self.selection_grid)
 
         self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
-        self.verticalLayout_3.addItem(self.horizontalSpacer_5)
+        self.verticalLayout_7.addItem(self.horizontalSpacer_5)
 
         self.pid_grid = QGridLayout()
         self.pid_grid.setObjectName(u"pid_grid")
-        self.label_2 = QLabel(self.video_filters_tab)
-        self.label_2.setObjectName(u"label_2")
-        self.label_2.setFont(font2)
-
-        self.pid_grid.addWidget(self.label_2, 0, 0, 1, 1)
-
-        self.pid_checkbox = QCheckBox(self.video_filters_tab)
+        self.pid_checkbox = QCheckBox(self.scrollAreaWidgetContents_2)
         self.pid_checkbox.setObjectName(u"pid_checkbox")
         sizePolicy5.setHeightForWidth(self.pid_checkbox.sizePolicy().hasHeightForWidth())
         self.pid_checkbox.setSizePolicy(sizePolicy5)
@@ -528,7 +530,13 @@ class Ui_MainWindow(object):
 
         self.pid_grid.addWidget(self.pid_checkbox, 0, 1, 1, 1)
 
-        self.line_2 = QFrame(self.video_filters_tab)
+        self.label_2 = QLabel(self.scrollAreaWidgetContents_2)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setFont(font2)
+
+        self.pid_grid.addWidget(self.label_2, 0, 0, 1, 1)
+
+        self.line_2 = QFrame(self.scrollAreaWidgetContents_2)
         self.line_2.setObjectName(u"line_2")
         self.line_2.setFrameShape(QFrame.Shape.HLine)
         self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
@@ -537,7 +545,11 @@ class Ui_MainWindow(object):
 
         self.pid_grid.setColumnStretch(0, 2)
 
-        self.verticalLayout_3.addLayout(self.pid_grid)
+        self.verticalLayout_7.addLayout(self.pid_grid)
+
+        self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
+
+        self.verticalLayout_3.addWidget(self.scrollArea_2)
 
         self.mouse_pos = QLabel(self.video_filters_tab)
         self.mouse_pos.setObjectName(u"mouse_pos")
@@ -599,7 +611,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 237, 225))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 237, 219))
         sizePolicy4.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents.setSizePolicy(sizePolicy4)
         self.verticalLayout_6 = QVBoxLayout(self.scrollAreaWidgetContents)
@@ -731,7 +743,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -773,8 +785,8 @@ class Ui_MainWindow(object):
         self.selection_checkbox.setText("")
         self.clear_all.setText(QCoreApplication.translate("MainWindow", u"Clear All Bubbles", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Activate Bubble Selection", None))
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Activate PID Control", None))
         self.pid_checkbox.setText("")
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Activate PID Control", None))
         self.mouse_pos.setText(QCoreApplication.translate("MainWindow", u"Frame Position (X, Y): ", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.video_filters_tab), QCoreApplication.translate("MainWindow", u"Video Tools", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Connect Camera", None))
