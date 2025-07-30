@@ -100,6 +100,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.exposure_spinbox.valueChanged.connect(self.exposure_slider.setValue)
 
         self.function_generator: FunctionGenerator = FunctionGenerator()
+        self.waveform_combobox.activated.connect(self.update_waveform)
+
+        self.freq_slider.valueChanged.connect(self.freq_spinbox.setValue)
+        self.freq_slider.valueChanged.connect(self.update_freq)
+        self.freq_spinbox.valueChanged.connect(self.freq_slider.setValue)
+        self.freq_spinbox.valueChanged.connect(self.update_freq)
 
         self.rm = ResourceManager()
         self.refresh_devices.clicked.connect(self.refresh_devices_clicked)
@@ -217,9 +223,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                         if "Waveform Generator" in instrument.model_name:
                             list_button.clicked.connect(
-                                partial(self.connect_function_generator_clicked, idn)
+                                partial(self.connect_function_generator_clicked, resource)
                             )
-
             except Exception as e:
                 print(e)
                 self.visa_insts[resource] = ("VISA Device (No IDN)", None, None)
@@ -231,6 +236,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def connect_function_generator_clicked(self, idn: str):
         self.function_generator.select_instrument(self.rm, idn)
+    
+    def update_waveform(self):
+        commands = {
+            "Sine" : "SIN",
+            "Square" : "SQU",
+            "Ramp" : "RAMP",
+            "Pulse" : "PULS",
+            "Noise" : "NOIS"
+         
+        }
+        command_str = self.waveform_combobox.currentText()
+        if command_str in commands:
+            self.function_generator.set_function(commands[command_str])
+
+    def update_freq(self, val):
+        units = {
+            "MHz" : 1e6,
+            "kHz" : 1e3,
+            "Hz" : 1,
+            "mHz" : 1e-3,
+            "uHz" : 1e-6
+        }
+
+        val *= units[self.freq_combo_box.currentText()]
+        if val < 100 * 1e-6:
+            print("Frequency too low, min frequency: 100 uHz")
+        if val > 10 * 1e6:
+            print("Frequency too high, max frequency: 10 MHz")
+        else:
+            self.function_generator.set_frequency(int(val))
 
     def connect_camera(self):
         if not self.camera.basler:

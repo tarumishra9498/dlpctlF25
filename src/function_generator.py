@@ -13,16 +13,15 @@ class FunctionGenerator:
         self.rm = pyvisa.ResourceManager()
         self.PEAK_TO_PEAK = 10  # volts
 
-    def select_instrument(self, rm: pyvisa.ResourceManager, idn) -> None:
+    def select_instrument(self, rm: pyvisa.ResourceManager, resource_name) -> None:
         """
-        Used to connect instrument with name `idn`
+        Used to connect instrument with resource name 
         """
         # Close existing connection
         if self.instrument:
             self.instrument.close()
 
-        instrument = rm.open_resource(idn)
-        assert instrument is USBInstrument
+        instrument = rm.open_resource(resource_name)
         self.instrument = instrument
         self.set_voltage(0)
         self.set_frequency(1500)
