@@ -1,78 +1,97 @@
-import time
-from ctypes import c_long
-
+from typing import TypeAlias, override
 import numpy as np
 from ALP4 import ALP4, ALPError
-from numpy._typing import NDArray
 from PySide6.QtCore import QMutex, QMutexLocker, QThread
+
+Img: TypeAlias = np.ndarray[tuple[int, int, int], np.dtype[np.integer]]
 
 
 class DlpThread(QThread):
     def __init__(self) -> None:
-        self.dmd: ALP4 = ALP4(version="4.1")
-        self.connected = False
-        self.img_seqs: list[NDArray] = []
-        self.seq_ids: list[c_long] = []
-        self.load_bitmask_mutex = QMutex()
+        super().__init__()
+        self.device: ALP4 = ALP4(version="4.1")
+        self.connected: bool = False
+        self.set_img_mutex: QMutex = QMutex()
+        self._img: Img | None = None
 
+    @override
     def run(self) -> None:
-        for i, _ in enumerate(self.img_seqs):
-            print(f"Running img_seq {i + 1}")
-            self.dmd.Run(self.seq_ids[i], loop=True)
-            time.sleep(10)
+        if self.img is not None:
+            self.device.Run(None, True)  # pyright: ignore[reportUnknownMemberType]
 
     def open(self) -> bool:
         """
         Open connection to DLP
         """
         try:
-            self.dmd.Initialize()
+            self.device.Initialize()
             self.connected = True
             return True
         except ALPError:
             self.connected = True
             return False
 
-    def push(self, img_seq: NDArray) -> None:
+    @property
+    def img(self) -> Img | None:
+        return self._img
+
+    @img.setter
+    def img(self, new_img: Img | None) -> None:
         """
         Push a new image sequence to the DLP
         """
-        with QMutexLocker(self.load_bitmask_mutex):
-            if self.validate_img_seq(img_seq):
-                self.img_seqs.append(img_seq)
-                id = self.dmd.SeqAlloc(nbImg=1, bitDepth=img_seq.shape[2])
-                self.seq_ids.append(id)
-
-                additional_bits = (self.dmd.nSizeX * self.dmd.nSizeY) - (
-                    img_seq.shape[0] * img_seq.shape[1]
-                )
-                padded_seq = np.pad(
-                    array=img_seq.ravel(),
-                    pad_width=additional_bits,
-                    constant_values=0,
-                )
-                self.dmd.SeqPut(padded_seq)
-
-    def validate_img_seq(self, img_seq: NDArray) -> bool:
-        """
-        Returns True if img_seq is a valid image sequence for the DLP to allocate/use
-        """
-        if (
-            img_seq is not None
-            and img_seq.shape <= (self.dmd.nSizeX, self.dmd.nSizeY)
-            and True
-            and True
-            and True
-        ):
-            return True
+        if new_img is None:
+            self._img = None
         else:
-            return False
+            with QMutexLocker(self.set_img_mutex):
+                if self.validate_img(new_img):
+                    # Pause and get rid of old sequence if already allocated
+                    if self.img:
+                        self._img = None
+                        self.device.Halt()
+                        self.device.FreeSeq()
+
+                    # Allocate and push new sequence data
+                    self.device.SeqAlloc(nbImg=1, bitDepth=1)
+                    padded_seq = self.pad_img_centered(new_img)
+                    self.device.SeqPut(padded_seq)
+                    self._img = padded_seq
+
+    def pad_img_centered(self, img: Img) -> Img:
+        target_x = self.device.nSizeX
+        target_y = self.device.nSizeY
+
+        actual_x = img.shape[0]
+        actual_y = img.shape[1]
+
+        pad_rows = (target_y - actual_y) // 2
+        pad_cols = (target_x - actual_x) // 2
+
+        print(f"nSizeX: {self.device.nSizeX}")
+        print(f"nSizeY: {self.device.nSizeY}")
+        print(f"pad_rows: {pad_rows}")
+        print(f"pad_cols: {pad_cols}")
+
+        padded_img = np.pad(
+            array=img,
+            pad_width=((pad_cols, pad_cols), (pad_rows, pad_rows)),
+            mode="constant",
+            constant_values=0,
+        )
+        return padded_img
+
+    def validate_img(self, img: Img) -> bool:
+        """
+        Returns True if img is a valid image for the DLP to allocate/use
+        """
+        return img.shape <= (self.device.nSizeX, self.device.nSizeY)
 
     def close(self) -> None:
-        self.dmd.Halt()
-        self.dmd.Free()
+        self.device.Halt()
+        self.device.FreeSeq()
+        self.device.Free()
 
-    def stop(self):
+    def stop(self) -> None:
         self.quit()
 
     def __del__(self) -> None:
