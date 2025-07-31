@@ -225,7 +225,7 @@
             <enum>Qt::LayoutDirection::LeftToRight</enum>
            </property>
            <property name="currentIndex">
-            <number>2</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="video_filters_tab">
             <property name="sizePolicy">
@@ -1128,6 +1128,9 @@
                        <pointsize>8</pointsize>
                        <bold>true</bold>
                       </font>
+                     </property>
+                     <property name="currentText">
+                      <string>MHz</string>
                      </property>
                      <item>
                       <property name="text">
