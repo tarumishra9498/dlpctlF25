@@ -10,14 +10,17 @@ class DlpThread(QThread):
     def __init__(self) -> None:
         super().__init__()
         self.device: ALP4 = ALP4(version="4.1")
+        self.running: bool = True
         self.connected: bool = False
         self.set_img_mutex: QMutex = QMutex()
         self._img: Img | None = None
 
     @override
     def run(self) -> None:
-        if self.img is not None:
+        if self.img is not None and not self.running:
             self.device.Run(None, True)  # pyright: ignore[reportUnknownMemberType]
+        else:
+            pass
 
     def open(self) -> bool:
         """
@@ -55,6 +58,8 @@ class DlpThread(QThread):
                     self.device.SeqAlloc(nbImg=1, bitDepth=1)
                     padded_seq = self.pad_img_centered(new_img)
                     self.device.SeqPut(padded_seq)
+
+                    self.device.SetTiming(pictureTime=20_000)
                     self._img = padded_seq
 
     def pad_img_centered(self, img: Img) -> Img:
