@@ -167,8 +167,7 @@ class VideoReadThread(QThread):
                 self.PIDCommands.emit(commands)
                 self.FrameUpdate.emit(updated_frame)
 
-                if updated_frame.ndim == 2:
-                    print('converting')         
+                if updated_frame.ndim == 2:      
                     write_frame = cv.cvtColor(updated_frame,
                                             cv.COLOR_GRAY2BGR)
                 else:
