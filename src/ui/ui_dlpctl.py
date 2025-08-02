@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlhdAzKN.ui'
+## Form generated from reading UI file 'dlpctlszSmwQ.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -30,7 +30,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(976, 845)
+        MainWindow.resize(980, 853)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -188,7 +188,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollAreaWidgetContents_2 = QWidget()
         self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 225, 633))
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 226, 633))
         self.verticalLayout_7 = QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.blur_grid = QGridLayout()
@@ -611,7 +611,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 237, 190))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 238, 418))
         sizePolicy4.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents.setSizePolicy(sizePolicy4)
         self.verticalLayout_6 = QVBoxLayout(self.scrollAreaWidgetContents)
@@ -671,8 +671,8 @@ class Ui_MainWindow(object):
         self.freq_combo_box.addItem("")
         self.freq_combo_box.addItem("")
         self.freq_combo_box.setObjectName(u"freq_combo_box")
-        sizePolicy4.setHeightForWidth(self.freq_combo_box.sizePolicy().hasHeightForWidth())
-        self.freq_combo_box.setSizePolicy(sizePolicy4)
+        sizePolicy5.setHeightForWidth(self.freq_combo_box.sizePolicy().hasHeightForWidth())
+        self.freq_combo_box.setSizePolicy(sizePolicy5)
         self.freq_combo_box.setFont(font2)
 
         self.freq_grid.addWidget(self.freq_combo_box, 2, 2, 1, 1)
@@ -700,8 +700,121 @@ class Ui_MainWindow(object):
 
         self.freq_grid.addWidget(self.freq_slider, 3, 0, 1, 3)
 
+        self.freq_grid.setColumnStretch(1, 1)
 
         self.verticalLayout_6.addLayout(self.freq_grid)
+
+        self.horizontalSpacer_7 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.verticalLayout_6.addItem(self.horizontalSpacer_7)
+
+        self.amp_grid = QGridLayout()
+        self.amp_grid.setObjectName(u"amp_grid")
+        self.line_10 = QFrame(self.scrollAreaWidgetContents)
+        self.line_10.setObjectName(u"line_10")
+        self.line_10.setFrameShape(QFrame.Shape.HLine)
+        self.line_10.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.amp_grid.addWidget(self.line_10, 1, 0, 1, 2)
+
+        self.amp_combo_box = QComboBox(self.scrollAreaWidgetContents)
+        self.amp_combo_box.addItem("")
+        self.amp_combo_box.addItem("")
+        self.amp_combo_box.setObjectName(u"amp_combo_box")
+        sizePolicy5.setHeightForWidth(self.amp_combo_box.sizePolicy().hasHeightForWidth())
+        self.amp_combo_box.setSizePolicy(sizePolicy5)
+        self.amp_combo_box.setFont(font2)
+
+        self.amp_grid.addWidget(self.amp_combo_box, 2, 1, 1, 1)
+
+        self.amp_spinbox = QDoubleSpinBox(self.scrollAreaWidgetContents)
+        self.amp_spinbox.setObjectName(u"amp_spinbox")
+        sizePolicy4.setHeightForWidth(self.amp_spinbox.sizePolicy().hasHeightForWidth())
+        self.amp_spinbox.setSizePolicy(sizePolicy4)
+        self.amp_spinbox.setFont(font2)
+        self.amp_spinbox.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+        self.amp_spinbox.setDecimals(2)
+        self.amp_spinbox.setMinimum(1.000000000000000)
+        self.amp_spinbox.setMaximum(999.000000000000000)
+        self.amp_spinbox.setSingleStep(0.010000000000000)
+
+        self.amp_grid.addWidget(self.amp_spinbox, 2, 0, 1, 1)
+
+        self.label_16 = QLabel(self.scrollAreaWidgetContents)
+        self.label_16.setObjectName(u"label_16")
+        sizePolicy4.setHeightForWidth(self.label_16.sizePolicy().hasHeightForWidth())
+        self.label_16.setSizePolicy(sizePolicy4)
+
+        self.amp_grid.addWidget(self.label_16, 0, 0, 1, 2)
+
+        self.amp_grid.setColumnStretch(0, 1)
+
+        self.verticalLayout_6.addLayout(self.amp_grid)
+
+        self.amp_slider = QSlider(self.scrollAreaWidgetContents)
+        self.amp_slider.setObjectName(u"amp_slider")
+        sizePolicy6.setHeightForWidth(self.amp_slider.sizePolicy().hasHeightForWidth())
+        self.amp_slider.setSizePolicy(sizePolicy6)
+        self.amp_slider.setMinimum(1)
+        self.amp_slider.setMaximum(999)
+        self.amp_slider.setSingleStep(1)
+        self.amp_slider.setValue(1)
+        self.amp_slider.setSliderPosition(1)
+        self.amp_slider.setOrientation(Qt.Orientation.Horizontal)
+
+        self.verticalLayout_6.addWidget(self.amp_slider)
+
+        self.horizontalSpacer_8 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.verticalLayout_6.addItem(self.horizontalSpacer_8)
+
+        self.offset_voltage_grid = QGridLayout()
+        self.offset_voltage_grid.setObjectName(u"offset_voltage_grid")
+        self.label_17 = QLabel(self.scrollAreaWidgetContents)
+        self.label_17.setObjectName(u"label_17")
+
+        self.offset_voltage_grid.addWidget(self.label_17, 0, 0, 1, 2)
+
+        self.offset_voltage_combo_box = QComboBox(self.scrollAreaWidgetContents)
+        self.offset_voltage_combo_box.addItem("")
+        self.offset_voltage_combo_box.addItem("")
+        self.offset_voltage_combo_box.setObjectName(u"offset_voltage_combo_box")
+        sizePolicy5.setHeightForWidth(self.offset_voltage_combo_box.sizePolicy().hasHeightForWidth())
+        self.offset_voltage_combo_box.setSizePolicy(sizePolicy5)
+        self.offset_voltage_combo_box.setFont(font2)
+
+        self.offset_voltage_grid.addWidget(self.offset_voltage_combo_box, 2, 1, 1, 1)
+
+        self.offset_voltage_spinbox = QDoubleSpinBox(self.scrollAreaWidgetContents)
+        self.offset_voltage_spinbox.setObjectName(u"offset_voltage_spinbox")
+        sizePolicy6.setHeightForWidth(self.offset_voltage_spinbox.sizePolicy().hasHeightForWidth())
+        self.offset_voltage_spinbox.setSizePolicy(sizePolicy6)
+        self.offset_voltage_spinbox.setFont(font2)
+        self.offset_voltage_spinbox.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+        self.offset_voltage_spinbox.setMinimum(-999.000000000000000)
+        self.offset_voltage_spinbox.setMaximum(999.000000000000000)
+        self.offset_voltage_spinbox.setSingleStep(0.010000000000000)
+        self.offset_voltage_spinbox.setValue(0.000000000000000)
+
+        self.offset_voltage_grid.addWidget(self.offset_voltage_spinbox, 2, 0, 1, 1)
+
+        self.offset_voltage_slider = QSlider(self.scrollAreaWidgetContents)
+        self.offset_voltage_slider.setObjectName(u"offset_voltage_slider")
+        self.offset_voltage_slider.setMinimum(-939)
+        self.offset_voltage_slider.setMaximum(939)
+        self.offset_voltage_slider.setOrientation(Qt.Orientation.Horizontal)
+
+        self.offset_voltage_grid.addWidget(self.offset_voltage_slider, 3, 0, 1, 2)
+
+        self.line_11 = QFrame(self.scrollAreaWidgetContents)
+        self.line_11.setObjectName(u"line_11")
+        self.line_11.setFrameShape(QFrame.Shape.HLine)
+        self.line_11.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.offset_voltage_grid.addWidget(self.line_11, 1, 0, 1, 2)
+
+
+        self.verticalLayout_6.addLayout(self.offset_voltage_grid)
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
@@ -723,7 +836,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 976, 33))
+        self.menubar.setGeometry(QRect(0, 0, 980, 33))
         self.menuFile = QMenu(self.menubar)
         self.menuFile.setObjectName(u"menuFile")
         MainWindow.setMenuBar(self.menubar)
@@ -800,7 +913,16 @@ class Ui_MainWindow(object):
         self.freq_combo_box.setItemText(3, QCoreApplication.translate("MainWindow", u"mHz", None))
         self.freq_combo_box.setItemText(4, QCoreApplication.translate("MainWindow", u"uHz", None))
 
+        self.freq_combo_box.setCurrentText(QCoreApplication.translate("MainWindow", u"MHz", None))
         self.label_15.setText(QCoreApplication.translate("MainWindow", u"Frequency", None))
+        self.amp_combo_box.setItemText(0, QCoreApplication.translate("MainWindow", u"Vpp", None))
+        self.amp_combo_box.setItemText(1, QCoreApplication.translate("MainWindow", u"mVpp", None))
+
+        self.label_16.setText(QCoreApplication.translate("MainWindow", u"Amplitude", None))
+        self.label_17.setText(QCoreApplication.translate("MainWindow", u"Offset Voltage", None))
+        self.offset_voltage_combo_box.setItemText(0, QCoreApplication.translate("MainWindow", u"Vdc", None))
+        self.offset_voltage_combo_box.setItemText(1, QCoreApplication.translate("MainWindow", u"mVdc", None))
+
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.afg_tab), QCoreApplication.translate("MainWindow", u"Function Generator", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
     # retranslateUi

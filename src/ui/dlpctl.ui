@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>976</width>
-    <height>845</height>
+    <width>980</width>
+    <height>853</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -225,7 +225,7 @@
             <enum>Qt::LayoutDirection::LeftToRight</enum>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>2</number>
            </property>
            <widget class="QWidget" name="video_filters_tab">
             <property name="sizePolicy">
@@ -271,7 +271,7 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>225</width>
+                  <width>226</width>
                   <height>633</height>
                  </rect>
                 </property>
@@ -999,8 +999,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>237</width>
-                  <height>190</height>
+                  <width>238</width>
+                  <height>418</height>
                  </rect>
                 </property>
                 <property name="sizePolicy">
@@ -1089,7 +1089,7 @@
                   </spacer>
                  </item>
                  <item>
-                  <layout class="QGridLayout" name="freq_grid">
+                  <layout class="QGridLayout" name="freq_grid" columnstretch="0,1,0">
                    <item row="2" column="0" colspan="2">
                     <widget class="QDoubleSpinBox" name="freq_spinbox">
                      <property name="sizePolicy">
@@ -1118,7 +1118,7 @@
                    <item row="2" column="2">
                     <widget class="QComboBox" name="freq_combo_box">
                      <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
@@ -1197,6 +1197,229 @@
                    </item>
                   </layout>
                  </item>
+                 <item>
+                  <spacer name="horizontalSpacer_7">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <layout class="QGridLayout" name="amp_grid" columnstretch="1,0">
+                   <item row="1" column="0" colspan="2">
+                    <widget class="Line" name="line_10">
+                     <property name="orientation">
+                      <enum>Qt::Orientation::Horizontal</enum>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QComboBox" name="amp_combo_box">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>8</pointsize>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <item>
+                      <property name="text">
+                       <string>Vpp</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>mVpp</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QDoubleSpinBox" name="amp_spinbox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>8</pointsize>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="layoutDirection">
+                      <enum>Qt::LayoutDirection::RightToLeft</enum>
+                     </property>
+                     <property name="decimals">
+                      <number>2</number>
+                     </property>
+                     <property name="minimum">
+                      <double>1.000000000000000</double>
+                     </property>
+                     <property name="maximum">
+                      <double>999.000000000000000</double>
+                     </property>
+                     <property name="singleStep">
+                      <double>0.010000000000000</double>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0" colspan="2">
+                    <widget class="QLabel" name="label_16">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>Amplitude</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <widget class="QSlider" name="amp_slider">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimum">
+                    <number>1</number>
+                   </property>
+                   <property name="maximum">
+                    <number>999</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>1</number>
+                   </property>
+                   <property name="value">
+                    <number>1</number>
+                   </property>
+                   <property name="sliderPosition">
+                    <number>1</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_8">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <layout class="QGridLayout" name="offset_voltage_grid">
+                   <item row="0" column="0" colspan="2">
+                    <widget class="QLabel" name="label_17">
+                     <property name="text">
+                      <string>Offset Voltage</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QComboBox" name="offset_voltage_combo_box">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>8</pointsize>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <item>
+                      <property name="text">
+                       <string>Vdc</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>mVdc</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QDoubleSpinBox" name="offset_voltage_spinbox">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>8</pointsize>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="layoutDirection">
+                      <enum>Qt::LayoutDirection::RightToLeft</enum>
+                     </property>
+                     <property name="minimum">
+                      <double>-999.000000000000000</double>
+                     </property>
+                     <property name="maximum">
+                      <double>999.000000000000000</double>
+                     </property>
+                     <property name="singleStep">
+                      <double>0.010000000000000</double>
+                     </property>
+                     <property name="value">
+                      <double>0.000000000000000</double>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="0" colspan="2">
+                    <widget class="QSlider" name="offset_voltage_slider">
+                     <property name="minimum">
+                      <number>-939</number>
+                     </property>
+                     <property name="maximum">
+                      <number>939</number>
+                     </property>
+                     <property name="orientation">
+                      <enum>Qt::Orientation::Horizontal</enum>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0" colspan="2">
+                    <widget class="Line" name="line_11">
+                     <property name="orientation">
+                      <enum>Qt::Orientation::Horizontal</enum>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
                 </layout>
                </widget>
               </widget>
@@ -1217,7 +1440,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>976</width>
+     <width>980</width>
      <height>33</height>
     </rect>
    </property>
