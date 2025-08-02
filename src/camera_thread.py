@@ -26,6 +26,7 @@ class CameraThread(QThread):
 
         # If `None`, there is no Basler connection
         self.basler: InstantCamera | None = None
+        self.running = False
 
     def start_grabbing(self) -> None:
         """
@@ -73,9 +74,14 @@ class CameraThread(QThread):
         previous_frame = None
         accumulator = 0
         acc_ratio = 30 / self.desired_fps
+        self.running = True
 
         if self.basler:
             while self.basler.IsGrabbing():
+
+                if self.running == False:
+                    break
+
                 grab_result: GrabResult = self.basler.RetrieveResult(
                     5000, pylon.TimeoutHandling_ThrowException
                 )
@@ -189,3 +195,9 @@ class CameraThread(QThread):
         """
         if self.basler:
             self.basler.Close()
+            self.basler = None
+
+    def stop(self):
+        self.stop_grabbing()
+        self.running = False
+        self.quit()
