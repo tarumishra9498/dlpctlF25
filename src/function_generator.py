@@ -23,20 +23,24 @@ class FunctionGenerator:
 
         instrument = rm.open_resource(resource_name)
         self.instrument = instrument
-        self.set_voltage(0)
+        self.set_voltage(0, "vpp")
+        self.set_voltage(0, "vdc")
         self.set_frequency(1500)
         self.set_function("SIN")
 
-    def set_voltage(self, voltage: float) -> None:
+    def set_voltage(self, voltage: float, type: str) -> None:
         if self.instrument:
             try:
-                self.instrument.write("VOLT:UNIT VPP")
-                self.instrument.write("VOLT:OFFS -5V")
-                self.instrument.write("OUTP:LOAD INF")
-                self.instrument.write(f"VOLT {voltage}")
-                volt_read = np.float64(self.instrument.query("VOLT?").strip())
-                volt_unit = self.instrument.query("VOLT:UNIT?").strip()
-                print(f"Current voltage: {volt_read:.4f} {volt_unit}")
+                if type == "vpp":
+                    self.instrument.write("VOLT:UNIT VPP")
+                    self.instrument.write(f"VOLT {voltage}")
+                    volt_read = float(self.instrument.query("VOLT?"))
+                    volt_unit = self.instrument.query("VOLT:UNIT?").strip()
+                    print(f"Amplitude: {volt_read:.4f} {volt_unit}")
+                else: 
+                    self.instrument.write(f"VOLT:OFFS {voltage}")
+                    off_read = float(self.instrument.query("VOLT:OFFS?"))
+                    print(f"Offset: {off_read:.4f} V")
             except pyvisa.errors.Error as e:
                 print(f"Error setting voltage: {e}")
         else:
