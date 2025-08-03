@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
+import time 
 
 
 class Circle:
@@ -47,22 +48,37 @@ class CirclePID:
         self.prev_error = 0
         self.integral = 0
         self.derivative = 0
-        self.dt = dt
-        self.control_signal = (self.x, self.y, 0)
+        self.control_signal = 0
+        self.cycle_time = 80
+        self.pwm_cycle = [40, 40]
+        self.max_ratio = 50
 
-    def update(self, measurement):
-        self.pv = measurement
-        self.error = self.pv - self.setpoint
-        self.integral += self.error * self.dt
-        self.derivative = (
-            (self.error - self.prev_error) / self.dt if self.dt > 0 else 0.0
-        )
-        self.control_signal = (
-            self.x, self.y, self.kp * self.error + self.ki * self.integral + self.kd * self.derivative
-        )
-        self.prev_error = self.error
-        return self.control_signal
+    def update(self, measurement, dt):
+        try:
+            self.pv = measurement
 
+            if self.pv > 100:
+                self.control_signal = 0
+            else:
+                self.error = self.setpoint - self.pv
+                self.integral += self.error * dt
+                self.derivative = (
+                    (self.error - self.prev_error) / dt if dt > 0 else 0.0
+                )
+                
+                self.control_signal = self.kp * self.error + self.ki * self.integral + self.kd * self.derivative
+
+            self.prev_error = self.error
+            
+            u = max(0.0, min(self.control_signal, self.max_ratio))
+            on_time = (u / self.max_ratio ) * self.cycle_time
+            off_time = self.cycle_time - on_time
+
+            self.pwm_cycle = [round(on_time, 2), round(off_time, 2)]
+
+        except Exception as e:
+            pass
+            # print(f"pid error: {e}")
 
 def closest_idx_finder(array2d, x, y, tolerance):
     if len(array2d) == 0:
@@ -78,17 +94,6 @@ def closest_idx_finder(array2d, x, y, tolerance):
         except Exception as e:
             print(f"closest index finder {e}")
             return np.array([])
-
-
-# def plotting(circles):
-#     x_coords = [pair[0] for pair in circles[0][2]]
-#     y_coords = [pair[1] for pair in circles[0][2]]
-#     plt.plot(x_coords, y_coords, 'o')
-#     plt.title("Radius per Frame of Single Circle")
-#     plt.xlabel("Frame")
-#     plt.ylabel("Radius (pixels)")
-#     plt.show()
-
 
 def frame_analysis(
     frame, settings, circles, selected_circles, frame_pos, frame_start, bubble_counter
@@ -180,7 +185,7 @@ def frame_analysis(
                             detected_idxs.append(bubble_counter)
                             if settings["pid_on"]:
                                 # change setpoint
-                                circles[bubble_counter].pid = CirclePID(x, y, 0, r, dt)
+                                circles[bubble_counter].pid = CirclePID(x, y, 100, r, dt)
                                 circles[bubble_counter].pid.update(r, dt)
                             bubble_counter += 1
 
@@ -228,7 +233,6 @@ def frame_analysis(
                                     )
                                 if settings["pid_on"]:
                                     circles[closest_idx].pid.update(r, dt)
-                                    pass
                                 detected_idxs.append(closest_idx)
 
                         except Exception as e:
