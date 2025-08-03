@@ -39,7 +39,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.circularity = 0.7
         self.min_pos_err = 5
 
-        self.source = "video"
+        self.source = None
         self.analysis_on = False
         self.filters_on = False
         self.blur_on = True
@@ -80,6 +80,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "pixmap_w": 0,
             "fps": 0,
             "video_iteration": 0,
+            "freq" : 0,
+            "waveform" : None,
+            "vpp" : 0,
+            "vdc" : 0,
         }
 
         self.frame_pos = 0
@@ -106,6 +110,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.freq_slider.valueChanged.connect(self.update_freq)
         self.freq_spinbox.valueChanged.connect(self.freq_slider.setValue)
         self.freq_spinbox.valueChanged.connect(self.update_freq)
+
+        self.amp_slider.valueChanged.connect(partial(self.update_voltage, "vpp", "slider"))
+        self.amp_spinbox.valueChanged.connect(partial(self.update_voltage, "vpp", "spinbox"))
+
+        self.offset_voltage_slider.valueChanged.connect(partial(self.update_voltage, "vdc", "slider"))
+        self.offset_voltage_spinbox.valueChanged.connect(partial(self.update_voltage, "vdc", "spinbox"))
+
 
         self.rm = ResourceManager()
         self.refresh_devices.clicked.connect(self.refresh_devices_clicked)
@@ -175,12 +186,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.contour_checkbox.stateChanged.connect(self.checked_contour)
         self.tracking_checkbox.stateChanged.connect(self.checked_tracking)
         self.selection_checkbox.stateChanged.connect(self.checked_selection)
+        self.pid_checkbox.stateChanged.connect(self.checked_pid)
 
         self.clear_all.pressed.connect(self.clear_all_bubbles)
 
-        self.actionOpen.triggered.connect(self.read_video)
+        self.actionOpen.triggered.connect(self.on_open)
         self.ReadThread = VideoReadThread(
-            None, None, None, None, None, None, None, None, None, None, None
+            None, None, None, None, None, None, None, None, None, None, None, None
         )
         self.play.clicked.connect(lambda: self.ReadThread.on_pause(False))
         self.pause.clicked.connect(lambda: self.ReadThread.on_pause(True))
@@ -237,6 +249,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def connect_function_generator_clicked(self, idn: str):
         self.function_generator.select_instrument(self.rm, idn)
     
+
     def update_waveform(self):
         commands = {
             "Sine" : "SIN",
@@ -249,6 +262,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         command_str = self.waveform_combobox.currentText()
         if command_str in commands:
             self.function_generator.set_function(commands[command_str])
+            self.update_settings("waveform", commands[command_str])
 
     def update_freq(self, val):
         units = {
@@ -267,6 +281,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.function_generator.set_frequency(int(val))
 
+        self.update_settings("freq", int(val))
+
+    def update_voltage(self, type: str, source: str, val: float):
+        units = {
+            "Vpp" : 1,
+            "Vdc" : 1,
+            "mVpp" : 1e-3,
+            "mVdc" : 1e-3
+        }
+        
+        if source == "spinbox":
+            if type == "vpp":
+                val *= units[self.amp_combo_box.currentText()]
+                print(val)
+                self.function_generator.set_voltage(val, "vpp")
+                self.update_settings("vpp", val)
+            else:
+                val *= units[self.offset_voltage_combo_box.currentText()]
+                print(val)
+                self.function_generator.set_voltage(val, "vdc")
+                self.update_settings("vdc", val)
+        
     def connect_camera(self):
         if not self.camera.basler:
             if self.camera.open():
@@ -319,9 +355,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dlp.img = bitmask
         self.dlp.run()
 
-    def send_pid_commands(self, commands):
-        if commands != []:
-            pass
+    def on_open(self):
+        self.update_settings("source", "video")
+        self.read_video()
 
     def update_display(self, data):
         q_img = None
@@ -371,6 +407,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.selected_circles_mutex,
                 self.frame_pos,
                 self.frame_pos_mutex,
+                self.function_generator
             )
             self.ReadThread.FrameUpdate.connect(self.update_display)
             # look into this
@@ -417,10 +454,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.selected_circles_mutex,
             self.frame_pos,
             self.frame_pos_mutex,
+            self.function_generator
         )
 
         self.ReadThread.FrameUpdate.connect(self.update_display)
-        self.ReadThread.PIDCommands.connect(self.send_pid_commands)
         self.ReadThread.start()
 
     def showEvent(self, event):
@@ -428,12 +465,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_settings("video_frame_h", self.video_frame.height())
 
     def closeEvent(self, event):
-        if self.ReadThread and self.ReadThread.isRunning():
+        self.camera.stop_recording()
+        self.camera.close()
+        self.camera.stop()
+        self.camera.wait(1000)
+        self.video_writer.stop()
+        self.video_writer.wait()
+        self.dlp.stop()
+        self.dlp.wait()
+
+        if self.ReadThread:
             self.ReadThread.stop()
             self.ReadThread.wait()
-
-        self.camera.stop_recording()
-        self.video_writer.stop()
         super().closeEvent(event)
 
     def on_video_click(self, x, y):
