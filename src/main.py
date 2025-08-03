@@ -283,26 +283,69 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.update_settings("freq", int(val))
 
-    def update_voltage(self, type: str, source: str, val: float):
+    # def update_voltage(self, voltage_type: str, source: str, val: float):
+    #     units = {
+    #         "Vpp" : 1,
+    #         "Vdc" : 1,
+    #         "mVpp" : 1e-3,
+    #         "mVdc" : 1e-3
+    #     }
+        
+    #     if source == "spinbox":
+    #         if voltage_type == "vpp":
+    #             val *= units[self.amp_combo_box.currentText()]
+    #             print(val)
+    #             self.function_generator.set_voltage(val, "vpp")
+    #             self.update_settings("vpp", val)
+    #             self.amp_slider.setValue(int(val))
+    #         else:
+    #             val *= units[self.offset_voltage_combo_box.currentText()]
+    #             print(val)
+    #             self.function_generator.set_voltage(val, "vdc")
+    #             self.update_settings("vdc", val)
+    #             self.offset_voltage_slider.setValue(int(val))
+    #     else:
+    #         if voltage_type == "vpp":
+    #             self.function_generator.set_voltage(val, "vpp")
+    #             self.update_settings("vpp", val)
+    #             self.amp_spinbox.setValue(int(val))
+    #         else:
+    #             self.function_generator.set_voltage(val, "vdc")
+    #             self.update_settings("vdc", val)
+    #             self.offset_voltage_spinbox.setValue(int(val))
+
+    def update_voltage(self, voltage_type: str, source: str, val: float):
         units = {
-            "Vpp" : 1,
-            "Vdc" : 1,
-            "mVpp" : 1e-3,
-            "mVdc" : 1e-3
+            "Vpp": 1,
+            "Vdc": 1,
+            "mVpp": 1e-3,
+            "mVdc": 1e-3,
         }
-        
+
+        cfg = {
+            "vpp": {
+                "unit_widget": self.amp_combo_box,
+                "slider": self.amp_slider,
+                "spinbox": self.amp_spinbox,
+            },
+            "vdc": {
+                "unit_widget": self.offset_voltage_combo_box,
+                "slider": self.offset_voltage_slider,
+                "spinbox": self.offset_voltage_spinbox,
+            },
+        }[voltage_type]
+
         if source == "spinbox":
-            if type == "vpp":
-                val *= units[self.amp_combo_box.currentText()]
-                print(val)
-                self.function_generator.set_voltage(val, "vpp")
-                self.update_settings("vpp", val)
-            else:
-                val *= units[self.offset_voltage_combo_box.currentText()]
-                print(val)
-                self.function_generator.set_voltage(val, "vdc")
-                self.update_settings("vdc", val)
+            cfg["slider"].setValue(int(val))
+        else:
+            cfg["spinbox"].setValue(int(val))
         
+        factor = units[cfg["unit_widget"].currentText()]
+        val = val * factor
+
+        self.function_generator.set_voltage(val, voltage_type)
+        self.update_settings(voltage_type, val)
+
     def connect_camera(self):
         if not self.camera.basler:
             if self.camera.open():
