@@ -272,7 +272,7 @@
                   <x>0</x>
                   <y>0</y>
                   <width>226</width>
-                  <height>633</height>
+                  <height>639</height>
                  </rect>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -1000,7 +1000,7 @@
                   <x>0</x>
                   <y>0</y>
                   <width>238</width>
-                  <height>418</height>
+                  <height>426</height>
                  </rect>
                 </property>
                 <property name="sizePolicy">
@@ -1182,20 +1182,20 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="0" colspan="3">
-                    <widget class="QSlider" name="freq_slider">
-                     <property name="minimum">
-                      <number>1</number>
-                     </property>
-                     <property name="maximum">
-                      <number>999</number>
-                     </property>
-                     <property name="orientation">
-                      <enum>Qt::Orientation::Horizontal</enum>
-                     </property>
-                    </widget>
-                   </item>
                   </layout>
+                 </item>
+                 <item>
+                  <widget class="QSlider" name="freq_slider">
+                   <property name="minimum">
+                    <number>1</number>
+                   </property>
+                   <property name="maximum">
+                    <number>999</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <spacer name="horizontalSpacer_7">
@@ -1401,10 +1401,10 @@
                    <item row="3" column="0" colspan="2">
                     <widget class="QSlider" name="offset_voltage_slider">
                      <property name="minimum">
-                      <number>-939</number>
+                      <number>-999</number>
                      </property>
                      <property name="maximum">
-                      <number>939</number>
+                      <number>999</number>
                      </property>
                      <property name="orientation">
                       <enum>Qt::Orientation::Horizontal</enum>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlszSmwQ.ui'
+## Form generated from reading UI file 'dlpctlLJFCAf.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -188,7 +188,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollAreaWidgetContents_2 = QWidget()
         self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 226, 633))
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 176, 639))
         self.verticalLayout_7 = QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.blur_grid = QGridLayout()
@@ -611,7 +611,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 238, 418))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 238, 426))
         sizePolicy4.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents.setSizePolicy(sizePolicy4)
         self.verticalLayout_6 = QVBoxLayout(self.scrollAreaWidgetContents)
@@ -692,17 +692,17 @@ class Ui_MainWindow(object):
 
         self.freq_grid.addWidget(self.label_15, 0, 0, 1, 3)
 
+        self.freq_grid.setColumnStretch(1, 1)
+
+        self.verticalLayout_6.addLayout(self.freq_grid)
+
         self.freq_slider = QSlider(self.scrollAreaWidgetContents)
         self.freq_slider.setObjectName(u"freq_slider")
         self.freq_slider.setMinimum(1)
         self.freq_slider.setMaximum(999)
         self.freq_slider.setOrientation(Qt.Orientation.Horizontal)
 
-        self.freq_grid.addWidget(self.freq_slider, 3, 0, 1, 3)
-
-        self.freq_grid.setColumnStretch(1, 1)
-
-        self.verticalLayout_6.addLayout(self.freq_grid)
+        self.verticalLayout_6.addWidget(self.freq_slider)
 
         self.horizontalSpacer_7 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
@@ -800,8 +800,8 @@ class Ui_MainWindow(object):
 
         self.offset_voltage_slider = QSlider(self.scrollAreaWidgetContents)
         self.offset_voltage_slider.setObjectName(u"offset_voltage_slider")
-        self.offset_voltage_slider.setMinimum(-939)
-        self.offset_voltage_slider.setMaximum(939)
+        self.offset_voltage_slider.setMinimum(-999)
+        self.offset_voltage_slider.setMaximum(999)
         self.offset_voltage_slider.setOrientation(Qt.Orientation.Horizontal)
 
         self.offset_voltage_grid.addWidget(self.offset_voltage_slider, 3, 0, 1, 2)
