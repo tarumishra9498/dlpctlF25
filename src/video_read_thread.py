@@ -5,6 +5,9 @@ import numpy as np
 import traceback
 
 from frame_analysis import frame_analysis
+import matplotlib
+matplotlib.use('Agg') 
+import matplotlib.pyplot as plt
 
 
 class VideoReadThread(QThread):
@@ -24,6 +27,7 @@ class VideoReadThread(QThread):
         selected_circles_mutex,
         frame_start,
         frame_pos_mutex,
+        fgen
     ):
         super().__init__()
         self.path = path
@@ -38,9 +42,13 @@ class VideoReadThread(QThread):
         self.running = False
         self.frame_start = frame_start
         self.frame_pos_mutex = frame_pos_mutex
+        self.fgen = fgen
         self.paused = False
         self.display_fps = 30.0
         self.bubble_counter_start = 1
+
+        self.radii = []
+        self.control_vals = []
 
     def run(self):
         while not(self.running):
@@ -72,6 +80,11 @@ class VideoReadThread(QThread):
             cap.set(cv.CAP_PROP_POS_FRAMES, self.frame_start)
         
         while self.running:
+
+            if video_iteration == 2:
+                print('breaking')
+                break
+
             if self.settings["analysis_on"] == False:
                 print('stopping')
                 self.running = False
@@ -159,13 +172,44 @@ class VideoReadThread(QThread):
                     self.frame_start,
                     self.bubble_counter_start
                 )
-                if local_settings["pid_on"]:
-                    commands = [circle.pid.control_signal for circle in updated_circles]
-                else:
-                    commands = []
 
-                self.PIDCommands.emit(commands)
-                self.FrameUpdate.emit(updated_frame)
+                if local_settings["pid_on"] and len(updated_circles) > 0:
+                    self.radii.append([updated_circles[1].history[-1][0], updated_circles[1].history[-1][-1]])
+                    self.control_vals.append([updated_circles[1].history[-1][0], updated_circles[1].pid.control_signal])
+                    on_time, off_time = updated_circles[1].pid.pwm_cycle
+
+                    cycle_start = time.time() * 1000
+
+                    command_sent = round(time.time() * 1000)
+                    # print(f"on command sent: {command_sent}ms")
+                    # send command simulation
+                    # either want to do the amplitude off or turn the voltage off
+                    self.fgen.set_voltage(self.settings["vpp"], "vpp")
+                    command_received = round(time.time() * 1000)
+                    time_elapsed = command_received - command_sent
+
+                    if time_elapsed < on_time:
+                        print("lag acceptable")
+                        time.sleep((on_time - time_elapsed) / 1000)
+
+                    time.sleep(on_time / 1000)
+
+                    # print(f"finished on command {round(time.time() * 1000)}")
+                    command_sent = round(time.time() * 1000)
+                    # print(f"off command sent: {command_sent}ms")
+                    # send command simulation
+                    # self.fgen.set_voltage(0.0, "vpp")
+                    command_received = round(time.time() * 1000)
+                    time_elapsed = command_received - command_sent
+
+                    if time_elapsed < off_time:
+                        print("lag acceptable")
+                        time.sleep((off_time - time_elapsed) / 1000)
+                    
+                    cycle_rem = (time.time() * 1000) - cycle_start
+
+                    if cycle_rem < 80:
+                        time.sleep((80 - cycle_rem) / 1000)
 
                 if updated_frame.ndim == 2:      
                     write_frame = cv.cvtColor(updated_frame,
@@ -196,6 +240,19 @@ class VideoReadThread(QThread):
 
         if self.out:
             self.out.release()
+        
+        if local_settings["pid_on"]:
+            fig, ax = plt.subplots()
+            xs_r, ys_r = zip(*self.radii)
+            xs_c, ys_c = zip(*self.control_vals)
+
+            ax.scatter(xs_r, ys_r, c='blue', s = 5, label='Radii')
+            ax.scatter(xs_c, ys_c, c='red', s = 5, label='Control')
+            ax.grid()
+            ax.legend()  
+            plt.title("Control and Radius vs Time")
+            fig.savefig("control_vs_radius.png", dpi=300, bbox_inches='tight')
+            plt.close(fig)
 
     @Slot(bool)
     def on_pause(self, do_pause):
