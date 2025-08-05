@@ -10,17 +10,13 @@ class DlpThread(QThread):
     def __init__(self) -> None:
         super().__init__()
         self.device: ALP4 = ALP4(version="4.1")
-        self.running: bool = True
         self.connected: bool = False
         self.set_img_mutex: QMutex = QMutex()
         self._img: Img | None = None
 
     @override
     def run(self) -> None:
-        if self.img is not None and not self.running:
-            self.device.Run(None, True)  # pyright: ignore[reportUnknownMemberType]
-        else:
-            pass
+        self.device.Run()
 
     def open(self) -> bool:
         """
