@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'dlpctlLJFCAf.ui'
+## Form generated from reading UI file 'dlpctlrzAIBU.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -188,7 +188,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollAreaWidgetContents_2 = QWidget()
         self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 176, 639))
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 226, 633))
         self.verticalLayout_7 = QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.blur_grid = QGridLayout()
@@ -611,11 +611,17 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 238, 426))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 238, 450))
         sizePolicy4.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents.setSizePolicy(sizePolicy4)
         self.verticalLayout_6 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.fgen_output_on = QPushButton(self.scrollAreaWidgetContents)
+        self.fgen_output_on.setObjectName(u"fgen_output_on")
+        self.fgen_output_on.setCheckable(True)
+
+        self.verticalLayout_6.addWidget(self.fgen_output_on)
+
         self.waveform_grid = QGridLayout()
         self.waveform_grid.setObjectName(u"waveform_grid")
         self.waveform_combobox = QComboBox(self.scrollAreaWidgetContents)
@@ -900,6 +906,7 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Connect DLP", None))
         self.refresh_devices.setText(QCoreApplication.translate("MainWindow", u"Refresh Device List", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.devices_tab), QCoreApplication.translate("MainWindow", u"Devices", None))
+        self.fgen_output_on.setText(QCoreApplication.translate("MainWindow", u"Output On", None))
         self.waveform_combobox.setItemText(0, QCoreApplication.translate("MainWindow", u"Sine", None))
         self.waveform_combobox.setItemText(1, QCoreApplication.translate("MainWindow", u"Square", None))
         self.waveform_combobox.setItemText(2, QCoreApplication.translate("MainWindow", u"Ramp", None))

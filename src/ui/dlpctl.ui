@@ -271,8 +271,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>226</width>
-                  <height>639</height>
+                  <width>176</width>
+                  <height>633</height>
                  </rect>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -1000,7 +1000,7 @@
                   <x>0</x>
                   <y>0</y>
                   <width>238</width>
-                  <height>426</height>
+                  <height>450</height>
                  </rect>
                 </property>
                 <property name="sizePolicy">
@@ -1010,6 +1010,16 @@
                  </sizepolicy>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_6">
+                 <item>
+                  <widget class="QPushButton" name="fgen_output_on">
+                   <property name="text">
+                    <string>Output On</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <layout class="QGridLayout" name="waveform_grid">
                    <item row="3" column="0">
