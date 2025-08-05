@@ -23,6 +23,7 @@ class FunctionGenerator:
 
         instrument = rm.open_resource(resource_name)
         self.instrument = instrument
+        self.instrument.write("OUTP OFF")
         self.set_voltage(0, "vpp")
         self.set_voltage(0, "vdc")
         self.set_frequency(1500)

@@ -1,6 +1,6 @@
 from typing import TypeAlias, override
 import numpy as np
-from ALP4 import ALP4, ALPError
+from ALP4 import ALP4, ALPError, ALP_PROJ_MODE, ALP_MASTER, ALP_DATA_FORMAT, ALP_DATA_BINARY_TOPDOWN, ALP_BIN_MODE, ALP_BIN_UNINTERRUPTED
 from PySide6.QtCore import QMutex, QMutexLocker, QThread
 
 Img: TypeAlias = np.ndarray[tuple[int, int, int], np.dtype[np.integer]]
@@ -10,17 +10,17 @@ class DlpThread(QThread):
     def __init__(self) -> None:
         super().__init__()
         self.device: ALP4 = ALP4(version="4.1")
-        self.running: bool = True
         self.connected: bool = False
         self.set_img_mutex: QMutex = QMutex()
         self._img: Img | None = None
 
     @override
     def run(self) -> None:
-        if self.img is not None and not self.running:
-            self.device.Run(None, True)  # pyright: ignore[reportUnknownMemberType]
-        else:
-            pass
+        # if self.img is not None and not self.running:
+        #     self.device.Run(None, True)  # pyright: ignore[reportUnknownMemberType]
+        # else:
+        #     pass
+        self.device.Run()
 
     def open(self) -> bool:
         """
@@ -28,6 +28,8 @@ class DlpThread(QThread):
         """
         try:
             self.device.Initialize()
+            self.device.ProjControl(ALP_PROJ_MODE, ALP_MASTER)
+
             self.connected = True
             return True
         except ALPError:
@@ -57,14 +59,18 @@ class DlpThread(QThread):
                     # Allocate and push new sequence data
                     self.device.SeqAlloc(nbImg=1, bitDepth=1)
                     padded_seq = self.pad_img_centered(new_img)
-                    self.device.SeqPut(padded_seq)
 
-                    self.device.SetTiming(pictureTime=20_000)
+                    self.device.SeqControl(ALP_DATA_FORMAT, ALP_DATA_BINARY_TOPDOWN)
+                    self.device.SeqControl(ALP_BIN_MODE, ALP_BIN_UNINTERRUPTED)
+
+                    self.device.SeqPut(np.packbits(padded_seq * 255))
+
+                    # self.device.SetTiming(pictureTime=20_000)
                     self._img = padded_seq
 
     def pad_img_centered(self, img: Img) -> Img:
-        target_x = self.device.nSizeX
-        target_y = self.device.nSizeY
+        target_x = 1024
+        target_y = 768
 
         actual_x = img.shape[0]
         actual_y = img.shape[1]
@@ -83,6 +89,7 @@ class DlpThread(QThread):
             mode="constant",
             constant_values=0,
         )
+
         return padded_img
 
     def validate_img(self, img: Img) -> bool:

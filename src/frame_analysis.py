@@ -49,8 +49,8 @@ class CirclePID:
         self.integral = 0
         self.derivative = 0
         self.control_signal = 0
-        self.cycle_time = 80
-        self.pwm_cycle = [40, 40]
+        self.cycle_time = 50
+        self.pwm_cycle = [25, 25]
         self.max_ratio = 50
 
     def update(self, measurement, dt):

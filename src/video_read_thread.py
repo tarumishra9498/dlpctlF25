@@ -3,16 +3,18 @@ import cv2 as cv
 import time
 import numpy as np
 import traceback
+import serial
 
-from frame_analysis import frame_analysis
 import matplotlib
 matplotlib.use('Agg') 
 import matplotlib.pyplot as plt
 
+from frame_analysis import frame_analysis
+
 
 class VideoReadThread(QThread):
     FrameUpdate = Signal(object)
-    PIDCommands = Signal(object)
+    PIDcmds = Signal(object)
 
     def __init__ (
         self,
@@ -27,7 +29,8 @@ class VideoReadThread(QThread):
         selected_circles_mutex,
         frame_start,
         frame_pos_mutex,
-        fgen
+        fgen, 
+        serial
     ):
         super().__init__()
         self.path = path
@@ -43,10 +46,10 @@ class VideoReadThread(QThread):
         self.frame_start = frame_start
         self.frame_pos_mutex = frame_pos_mutex
         self.fgen = fgen
+        self.serial = serial
         self.paused = False
         self.display_fps = 30.0
         self.bubble_counter_start = 1
-
         self.radii = []
         self.control_vals = []
 
@@ -80,7 +83,6 @@ class VideoReadThread(QThread):
             cap.set(cv.CAP_PROP_POS_FRAMES, self.frame_start)
         
         while self.running:
-
             if video_iteration == 2:
                 print('breaking')
                 break
@@ -175,49 +177,27 @@ class VideoReadThread(QThread):
 
                 if local_settings["pid_on"] and len(updated_circles) > 0:
                     self.radii.append([updated_circles[1].history[-1][0], updated_circles[1].history[-1][-1]])
-                    self.control_vals.append([updated_circles[1].history[-1][0], updated_circles[1].pid.control_signal])
+                    self.control_vals.append([updated_circles[1].history[-1][0], updated_circles[1].pid.control_signal])                   
+                   
                     on_time, off_time = updated_circles[1].pid.pwm_cycle
 
-                    cycle_start = time.time() * 1000
+                    cmd_sent = time.time() * 1000
+                    self.send_command(self.serial, updated_circles[1].pid.cycle_time, on_time)
+                    response = None
+                    while response != "DONE":
+                        response = self.serial.readline().decode().strip()
+                    cmd_received = round(time.time() * 1000)
 
-                    command_sent = round(time.time() * 1000)
-                    # print(f"on command sent: {command_sent}ms")
-                    # send command simulation
-                    # either want to do the amplitude off or turn the voltage off
-                    self.fgen.set_voltage(self.settings["vpp"], "vpp")
-                    command_received = round(time.time() * 1000)
-                    time_elapsed = command_received - command_sent
-
-                    if time_elapsed < on_time:
-                        print("lag acceptable")
-                        time.sleep((on_time - time_elapsed) / 1000)
-
-                    time.sleep(on_time / 1000)
-
-                    # print(f"finished on command {round(time.time() * 1000)}")
-                    command_sent = round(time.time() * 1000)
-                    # print(f"off command sent: {command_sent}ms")
-                    # send command simulation
-                    # self.fgen.set_voltage(0.0, "vpp")
-                    command_received = round(time.time() * 1000)
-                    time_elapsed = command_received - command_sent
-
-                    if time_elapsed < off_time:
-                        print("lag acceptable")
-                        time.sleep((off_time - time_elapsed) / 1000)
-                    
-                    cycle_rem = (time.time() * 1000) - cycle_start
-
-                    if cycle_rem < 80:
-                        time.sleep((80 - cycle_rem) / 1000)
+                    time_elapsed = cmd_received - cmd_sent - updated_circles[1].pid.cycle_time
+                    # print(f"latency: {time_elapsed}")
 
                 if updated_frame.ndim == 2:      
-                    write_frame = cv.cvtColor(updated_frame,
-                                            cv.COLOR_GRAY2BGR)
+                    write_frame = cv.cvtColor(updated_frame, cv.COLOR_GRAY2BGR)
                 else:
                     write_frame = updated_frame
                 try:
                     self.out.write(write_frame)
+                    self.FrameUpdate.emit(write_frame)
                 except Exception as e:
                     print(e)
 
@@ -229,7 +209,7 @@ class VideoReadThread(QThread):
                 print(f"Frame analysis failed: {e}")
                 traceback.print_exc()
                 break
-
+            
             frame_analysis_iteration += 1
             proc_ticks = cv.getTickCount() - start_tick
             proc_secs = proc_ticks / tick_freq
@@ -265,3 +245,9 @@ class VideoReadThread(QThread):
 
     def stop(self):
         self.running = False
+
+    def send_command(self, serial, cycle_time, on_time):
+        command = f"{int(cycle_time)} {int(on_time)}\n"
+        # print(command)
+        serial.write(command.encode()) 
+        

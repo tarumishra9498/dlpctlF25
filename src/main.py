@@ -14,6 +14,10 @@ from PySide6.QtWidgets import (
 import cv2 as cv
 import numpy as np
 
+import serial
+
+import time
+
 from pyvisa import ResourceManager
 from pyvisa.resources import USBInstrument
 
@@ -80,7 +84,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "pixmap_w": 0,
             "fps": 0,
             "video_iteration": 0,
-            "freq" : 0,
+            "freq" : None,
             "waveform" : None,
             "vpp" : 0,
             "vdc" : 0,
@@ -99,6 +103,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.dlp: DlpThread = DlpThread()
         self.pushButton_2.clicked.connect(self.connect_dlp)
+
+        self.serial = None
+        self.serial_port = 'COM5'
 
         self.exposure_slider.sliderReleased.connect(self.exposure_slider_changed)
         self.exposure_spinbox.valueChanged.connect(self.exposure_slider.setValue)
@@ -192,7 +199,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.actionOpen.triggered.connect(self.on_open)
         self.ReadThread = VideoReadThread(
-            None, None, None, None, None, None, None, None, None, None, None, None
+            None, None, None, None, None, None, None, None, None, None, None, None, None
         )
         self.play.clicked.connect(lambda: self.ReadThread.on_pause(False))
         self.pause.clicked.connect(lambda: self.ReadThread.on_pause(True))
@@ -203,6 +210,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.video_frame.setMouseTracking(True)
         self.video_frame.clicked.connect(self.on_video_click)
         self.video_frame.moved.connect(self.on_mouse_move)
+
+        self.fgen_output_on.clicked.connect(self.checked_fgen_output_on)
 
     def on_camera_frame(self, data):
         self.ReadThread.update_camera_frame(data)
@@ -283,36 +292,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.update_settings("freq", int(val))
 
-    # def update_voltage(self, voltage_type: str, source: str, val: float):
-    #     units = {
-    #         "Vpp" : 1,
-    #         "Vdc" : 1,
-    #         "mVpp" : 1e-3,
-    #         "mVdc" : 1e-3
-    #     }
-        
-    #     if source == "spinbox":
-    #         if voltage_type == "vpp":
-    #             val *= units[self.amp_combo_box.currentText()]
-    #             print(val)
-    #             self.function_generator.set_voltage(val, "vpp")
-    #             self.update_settings("vpp", val)
-    #             self.amp_slider.setValue(int(val))
-    #         else:
-    #             val *= units[self.offset_voltage_combo_box.currentText()]
-    #             print(val)
-    #             self.function_generator.set_voltage(val, "vdc")
-    #             self.update_settings("vdc", val)
-    #             self.offset_voltage_slider.setValue(int(val))
-    #     else:
-    #         if voltage_type == "vpp":
-    #             self.function_generator.set_voltage(val, "vpp")
-    #             self.update_settings("vpp", val)
-    #             self.amp_spinbox.setValue(int(val))
-    #         else:
-    #             self.function_generator.set_voltage(val, "vdc")
-    #             self.update_settings("vdc", val)
-    #             self.offset_voltage_spinbox.setValue(int(val))
 
     def update_voltage(self, voltage_type: str, source: str, val: float):
         units = {
@@ -450,7 +429,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.selected_circles_mutex,
                 self.frame_pos,
                 self.frame_pos_mutex,
-                self.function_generator
+                self.function_generator,
+                self.serial
             )
             self.ReadThread.FrameUpdate.connect(self.update_display)
             # look into this
@@ -497,7 +477,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.selected_circles_mutex,
             self.frame_pos,
             self.frame_pos_mutex,
-            self.function_generator
+            self.function_generator,
+            self.serial
         )
 
         self.ReadThread.FrameUpdate.connect(self.update_display)
@@ -572,7 +553,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def checked_pid(self):
         self.update_settings("pid_on", self.pid_checkbox.isChecked())
+        self.serial = None
+        if self.pid_checkbox.isChecked():
+            if self.function_generator.instrument:
+                self.function_generator.instrument.write('BURS:MODE GAT')
+                self.function_generator.instrument.write('BURS:PHAS 0.0')
+                self.function_generator.instrument.write('BURS:STAT ON')
+                self.function_generator.instrument.write('OUTP ON')
+            else:
+                print("Function generator not selected!")
+            try:
+                # make like a serial combo box that makes you select it until it works
+                self.serial = serial.Serial(self.serial_port, 115200, timeout = 1)
+                time.sleep(2)
+            except Exception as e:
+                print(f"Serial Connection Error: {e}")
+                print("Make sure serial port is correct and arduino program is running")
 
+    def checked_fgen_on(self):
+        if self.function_generator.instrument:
+            if self.fgen_output_on.isChecked():
+                self.function_generator.instrument.write("OUTP ON")
+            else:
+                self.function_generator.instrument.write("OUTP ON")
+        else:
+            print("Function generator not selected!")
+    
     def update_blur(self, val):
         if val % 2 == 0:
             val += 1
