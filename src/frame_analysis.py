@@ -49,9 +49,9 @@ class CirclePID:
         self.integral = 0
         self.derivative = 0
         self.control_signal = 0
-        self.cycle_time = 50
-        self.pwm_cycle = [25, 25]
-        self.max_ratio = 50
+        self.cycle_time = 100
+        self.pwm_cycle = [50, 50]
+        self.max_ratio = 100
 
     def update(self, measurement, dt):
         try:
@@ -99,8 +99,11 @@ def frame_analysis(
     frame, settings, circles, selected_circles, frame_pos, frame_start, bubble_counter
 ):
     return_frame = None
-    gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-
+    if frame.ndim == 3:
+        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    else:
+        gray = frame
+        
     if settings["blur_on"]:
         gray = cv.GaussianBlur(gray, (settings["blur"], settings["blur"]), 0)
     if settings["thresh_on"]:

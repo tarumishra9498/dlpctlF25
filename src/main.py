@@ -52,6 +52,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tracking_on = True
         self.selection_on = False
         self.pid_on = False
+        self.fgen_output_on = False
 
         self.camera_data = []
 
@@ -97,8 +98,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.camera: CameraThread = CameraThread()
         self.pushButton.clicked.connect(self.connect_camera)
-        self.pushButton.clicked.connect(self.read_video)
-
+        
         self.video_writer: VideoWriteThread = VideoWriteThread()
 
         self.dlp: DlpThread = DlpThread()
@@ -187,6 +187,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tracking_checkbox.setChecked(self.tracking_on)
         self.selection_checkbox.setChecked(self.selection_on)
         self.pid_checkbox.setChecked(self.pid_on)
+        self.fgen_output_on_button.setChecked(self.fgen_output_on)
 
         self.blur_checkbox.stateChanged.connect(self.checked_blur)
         self.thresh_checkbox.stateChanged.connect(self.checked_thresh)
@@ -211,7 +212,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.video_frame.clicked.connect(self.on_video_click)
         self.video_frame.moved.connect(self.on_mouse_move)
 
-        self.fgen_output_on.clicked.connect(self.checked_fgen_output_on)
+        self.fgen_output_on_button.clicked.connect(self.checked_fgen_output_on)
 
     def on_camera_frame(self, data):
         self.ReadThread.update_camera_frame(data)
@@ -332,9 +333,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.capture.setEnabled(True)
                 self.pushButton.setStyleSheet("color: green;")
                 self.camera.frame_out.connect(self.video_writer.save_frame)
-                self.camera.display_out.connect(self.update_display)
+                # self.camera.display_out.connect(self.update_display)
                 self.camera.display_out.connect(self.on_camera_frame)
                 self.update_settings("source", "camera")
+                self.read_video()
             else:
                 self.capture.setEnabled(False)
                 self.pushButton.setStyleSheet("")
@@ -526,6 +528,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.analysis_button.setText("Analysis On")
         else:
             self.analysis_button.setText("Analysis Off")
+        
+        if self.ReadThread.isRunning():
+            self.ReadThread.stop()
 
     def checked_filters(self):
         self.update_settings("filters_on", self.show_filters.isChecked())
@@ -553,29 +558,45 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def checked_pid(self):
         self.update_settings("pid_on", self.pid_checkbox.isChecked())
-        self.serial = None
-        if self.pid_checkbox.isChecked():
-            if self.function_generator.instrument:
-                self.function_generator.instrument.write('BURS:MODE GAT')
-                self.function_generator.instrument.write('BURS:PHAS 0.0')
-                self.function_generator.instrument.write('BURS:STAT ON')
-                self.function_generator.instrument.write('OUTP ON')
-            else:
-                print("Function generator not selected!")
-            try:
-                # make like a serial combo box that makes you select it until it works
-                self.serial = serial.Serial(self.serial_port, 115200, timeout = 1)
-                time.sleep(2)
-            except Exception as e:
-                print(f"Serial Connection Error: {e}")
-                print("Make sure serial port is correct and arduino program is running")
+        # self.serial = None
+        # if self.pid_checkbox.isChecked():
+        #     if self.function_generator.instrument:
+                # self.function_generator.instrument.write('OUTP OFF')
+                # time.sleep(100)
+                # self.function_generator.instrument.write('OUTP OFF')
+                # self.function_generator.instrument.write("AM:SOUR EXT")        # or "AM:SOUR EXT" for external control                self.function_generator.instrument.write("AM:INT:FUNC SQU")
+                # self.function_generator.instrument.write("AM:DEPT 100")
+                # self.function_generator.instrument.write("AM:STAT ON")
+                # self.function_generator.instrument.write('OUTP ON')
+            #     self.function_generator.instrument.write('BURS:MODE GAT')
+            #     self.function_generator.instrument.write('BURS:PHAS 0.0')
+            #     self.function_generator.instrument.write('BURS:STAT ON')
+            #     self.function_generator.instrument.write('OUTP OFF')
+            # else:
+            #     print("Function generator not selected!")
+            # try:
+            #     # make like a serial combo box that makes you select it until it works
+            #     self.serial = serial.Serial(self.serial_port, 115200, timeout = 1)
+            #     self.serial.reset_input_buffer()
+            #     xself.serial.reset_output_buffer()
+            #     time.sleep(2)
+            # except Exception as e:
+            #     print(f"Serial Connection Error: {e}")
+            #     print("Make sure serial port is correct and arduino program is running")
+                # for i in range(3):
+                #     self.function_generator.instrument.write('OUTP ON')
+                #     time.sleep(.1)
+                #     self.function_generator.instrument.write('OUTP OFF')
+                #     time.sleep(.1)
+        
 
-    def checked_fgen_on(self):
+
+    def checked_fgen_output_on(self):
         if self.function_generator.instrument:
-            if self.fgen_output_on.isChecked():
+            if self.fgen_output_on_button.isChecked():
                 self.function_generator.instrument.write("OUTP ON")
             else:
-                self.function_generator.instrument.write("OUTP ON")
+                self.function_generator.instrument.write("OUTP OFF")
         else:
             print("Function generator not selected!")
     

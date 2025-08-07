@@ -58,6 +58,26 @@ class VideoReadThread(QThread):
             if self.settings["analysis_on"]:
                 self.running = True
             time.sleep(0.1)
+            if self.settings["source"] == "camera":
+                frame, camera_fps, exposure, recording_state = self.camera_data
+                self.FrameUpdate.emit(frame)
+            
+            if self.settings["pid_on"]:
+                if self.fgen.instrument:
+                    self.fgen.instrument.write('OUTP OFF')
+
+                if len(self.radii) > 0:
+                    fig, ax = plt.subplots()
+                    xs_r, ys_r = zip(*self.radii)
+                    xs_c, ys_c = zip(*self.control_vals)
+
+                    ax.scatter(xs_r, ys_r, c='blue', s = 5, label='Radii')
+                    ax.scatter(xs_c, ys_c, c='red', s = 5, label='Control')
+                    ax.grid()
+                    ax.legend()  
+                    plt.title("Control and Radius vs Time")
+                    fig.savefig("control_vs_radius.png", dpi=300, bbox_inches='tight')
+                    plt.close(fig)
 
         frame_analysis_iteration = 1
         video_iteration = 1
@@ -125,6 +145,12 @@ class VideoReadThread(QThread):
                     )
                     if not self.out.isOpened():
                         raise RuntimeError("Could not open VideoWriter for AVI output")
+                    
+                    # if self.settings["pid_on"] and self.fgen is not None:
+                    #     print("creating bubble")
+                    #     self.fgen.instrument.write('OUTP ON')
+                    #     time.sleep(.2)
+                    #     self.fgen.instrument.write('OUTP ON')
 
                 frame_pos = cap.get(cv.CAP_PROP_POS_FRAMES)
                 
@@ -132,8 +158,28 @@ class VideoReadThread(QThread):
             elif self.settings["source"] == "camera":
                 frame, camera_fps, exposure, recording_state = self.camera_data
                 # don't change frame_start
+
+                if frame_analysis_iteration == 1:
+                    self.frame_start = 1
+                    h, w = frame.shape[:2]
+                    self.out = cv.VideoWriter(
+                        "filtered_output.mp4", 
+                        cv.VideoWriter.fourcc(*'mp4v'),
+                        30,
+                        (w, h),
+                        isColor=True,          
+                    )
+                    if not self.out.isOpened():
+                        raise RuntimeError("Could not open VideoWriter for AVI output")
+                    
+                    if self.settings["pid_on"]:
+                        print("creating bubble")
+                        self.fgen.instrument.write('OUTP ON')
+                        time.sleep(.2)
+                        self.fgen.instrument.write('OUTP ON')
+
+
                 frame_pos += 1
-                print("camera frame grabbed")
             else:
                 print("Source not found")
                 break
@@ -154,10 +200,7 @@ class VideoReadThread(QThread):
                 local_settings = self.settings.copy()
             local_settings["video_iteration"] = video_iteration
 
-            if self.settings["source"] == "video":
-                local_settings["fps"] = fps
-            else:
-                local_settings["fps"] = camera_fps
+            local_settings["fps"] = fps
 
             with QMutexLocker(self.circles_mutex):
                 local_circles = self.circles.copy()
@@ -174,22 +217,25 @@ class VideoReadThread(QThread):
                     self.frame_start,
                     self.bubble_counter_start
                 )
-
+                
                 if local_settings["pid_on"] and len(updated_circles) > 0:
                     self.radii.append([updated_circles[1].history[-1][0], updated_circles[1].history[-1][-1]])
                     self.control_vals.append([updated_circles[1].history[-1][0], updated_circles[1].pid.control_signal])                   
                    
-                    on_time, off_time = updated_circles[1].pid.pwm_cycle
+                    # on_time, off_time = updated_circles[1].pid.pwm_cycle
+                    # if frame_analysis_iteration % 2:
 
-                    cmd_sent = time.time() * 1000
-                    self.send_command(self.serial, updated_circles[1].pid.cycle_time, on_time)
-                    response = None
-                    while response != "DONE":
-                        response = self.serial.readline().decode().strip()
-                    cmd_received = round(time.time() * 1000)
+                    #     cmd_sent = time.time() * 1000
+                    #     self.fgen.instrument.write("OUTP ON")
+                    #     time.sleep(on_time / 1000) 
+                    #     self.fgen.instrument.write("OUTP OFF")
+                    #     time.sleep(off_time / 1000)
 
-                    time_elapsed = cmd_received - cmd_sent - updated_circles[1].pid.cycle_time
-                    # print(f"latency: {time_elapsed}")
+                    #     cmd_received = round(time.time() * 1000)
+
+                    #     time_elapsed = cmd_received - cmd_sent - updated_circles[1].pid.cycle_time
+
+                    # # print(f"latency: {time_elapsed}")
 
                 if updated_frame.ndim == 2:      
                     write_frame = cv.cvtColor(updated_frame, cv.COLOR_GRAY2BGR)
@@ -220,19 +266,6 @@ class VideoReadThread(QThread):
 
         if self.out:
             self.out.release()
-        
-        if local_settings["pid_on"]:
-            fig, ax = plt.subplots()
-            xs_r, ys_r = zip(*self.radii)
-            xs_c, ys_c = zip(*self.control_vals)
-
-            ax.scatter(xs_r, ys_r, c='blue', s = 5, label='Radii')
-            ax.scatter(xs_c, ys_c, c='red', s = 5, label='Control')
-            ax.grid()
-            ax.legend()  
-            plt.title("Control and Radius vs Time")
-            fig.savefig("control_vs_radius.png", dpi=300, bbox_inches='tight')
-            plt.close(fig)
 
     @Slot(bool)
     def on_pause(self, do_pause):
@@ -246,8 +279,12 @@ class VideoReadThread(QThread):
     def stop(self):
         self.running = False
 
-    def send_command(self, serial, cycle_time, on_time):
+        if self.out:
+            self.out.release()
+
+    def send_command(self, serial_code, cycle_time, on_time):
         command = f"{int(cycle_time)} {int(on_time)}\n"
-        # print(command)
-        serial.write(command.encode()) 
-        
+        print(command)
+        serial_code.write(command.encode()) 
+    
+    def graph(self)
