@@ -160,7 +160,7 @@ class CameraThread(QThread):
             self.basler.Open()
             self.basler.PixelFormat.Value = "Mono8"
             self.basler.ExposureAuto.Value = "Off"
-            self.basler.Gain.Value = 0
+            self.basler.Gain.Value = 8
 
             self.MAX_EXPOSURE = 20000
             self.MIN_EXPOSURE = 100
