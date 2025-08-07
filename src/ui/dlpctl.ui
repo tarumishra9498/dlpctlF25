@@ -1011,7 +1011,7 @@
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_6">
                  <item>
-                  <widget class="QPushButton" name="fgen_output_on">
+                  <widget class="QPushButton" name="fgen_output_on_button">
                    <property name="text">
                     <string>Output On</string>
                    </property>
