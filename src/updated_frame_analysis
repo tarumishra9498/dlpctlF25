@@ -1,0 +1,223 @@
+import cv2 as cv
+import numpy as np
+import matplotlib.pyplot as plt
+import time
+from collections import deque
+
+
+# -----------------------------
+# Core circle classes
+# -----------------------------
+class Circle:
+    def __init__(self, x, y, r1, max_history=15):
+        self.center = (x, y)
+        self.history = []
+        self.kalman = None
+        self.pid = None
+        self.r_window = deque(maxlen=max_history)   # NEW: moving average for radius
+
+    def add_circle(self, frame_pos, x, y, r):
+        self.history.append([frame_pos, int(x), int(y), round(r, 2)])
+        self.r_window.append(r)
+
+    def avg_radius(self):
+        if len(self.r_window) == 0:
+            return None
+        return np.mean(self.r_window)
+
+
+class CircleKalman:
+    def __init__(self, x, y, r, dt, q_process_noise=1e-1, r_measurement_noise=1e-2):
+        self.kf = cv.KalmanFilter(2, 1)
+        self.kf.transitionMatrix = np.array([[1, dt], [0, 1]], dtype=np.float32)
+        self.kf.measurementMatrix = np.array([[1, 0]], dtype=np.float32)
+        self.kf.processNoiseCov = q_process_noise * np.eye(2, dtype=np.float32)
+        self.kf.measurementNoiseCov = np.array([[r_measurement_noise]], dtype=np.float32)
+        self.kf.statePost = np.array([[r], [dt]], dtype=np.float32)
+        self.kf.errorCovPost = np.eye(2, dtype=np.float32)
+        self.center = (x, y)
+
+    def correct(self, measurement):
+        self.kf.correct(measurement)
+
+    def predict(self):
+        return self.kf.predict()
+
+
+class CirclePID:
+    def __init__(self, x, y, setpoint, init_r, dt):
+        self.x = x
+        self.y = y
+        self.setpoint = setpoint
+        self.pv = init_r
+        self.kp = 0.6
+        self.ki = 0.3
+        self.kd = 0.1
+        self.error = 0
+        self.prev_error = 0
+        self.integral = 0
+        self.derivative = 0
+        self.control_signal = 0
+        self.cycle_time = 100
+        self.pwm_cycle = [50, 50]
+        self.max_ratio = 100
+
+    def update(self, measurement, dt):
+        self.pv = measurement
+        self.error = self.setpoint - self.pv
+        self.integral += self.error * dt
+        self.derivative = (self.error - self.prev_error) / dt if dt > 0 else 0.0
+        self.control_signal = (
+            self.kp * self.error + self.ki * self.integral + self.kd * self.derivative
+        )
+        self.prev_error = self.error
+
+        u = np.clip(self.control_signal, 0, self.max_ratio)
+        on_time = (u / self.max_ratio) * self.cycle_time
+        off_time = self.cycle_time - on_time
+        self.pwm_cycle = [round(on_time, 2), round(off_time, 2)]
+
+
+# -----------------------------
+# Utility: find closest circle
+# -----------------------------
+def closest_idx_finder(array2d, x, y, tolerance):
+    if len(array2d) == 0:
+        return np.array([])
+    try:
+        sub_x = np.abs(array2d[:, 0] - x)
+        sub_y = np.abs(array2d[:, 1] - y)
+        return np.intersect1d(np.where(sub_x < tolerance), np.where(sub_y < tolerance))
+    except Exception as e:
+        print(f"closest index finder {e}")
+        return np.array([])
+
+
+# -----------------------------
+# Frame Analysis Function
+# -----------------------------
+def frame_analysis(frame, settings, circles, selected_circles, frame_pos, frame_start, bubble_counter):
+    return_frame = None
+    gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY) if frame.ndim == 3 else frame
+
+    if settings["blur_on"]:
+        gray = cv.GaussianBlur(gray, (settings["blur"], settings["blur"]), 0)
+
+    if settings["thresh_on"]:
+        gray = cv.adaptiveThreshold(
+            gray, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY_INV,
+            settings["adapt_area"], settings["adapt_c"]
+        )
+
+        ### NEW: morphological filtering ###
+        if settings.get("morph_on", True):
+            kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (3, 3))
+            gray = cv.morphologyEx(gray, cv.MORPH_OPEN, kernel)
+            gray = cv.morphologyEx(gray, cv.MORPH_CLOSE, kernel)
+
+    return_frame = gray if settings["filters_on"] else frame
+
+    if settings["contour_on"] and settings["thresh_on"] and settings["blur_on"]:
+        contours, _ = cv.findContours(gray, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+        detected_idxs = []
+
+        for contour in contours:
+            area = cv.contourArea(contour)
+            if area < settings["min_area"]:
+                continue
+
+            (x, y), r = cv.minEnclosingCircle(contour)
+            perimeter = cv.arcLength(contour, True)
+            approx = cv.approxPolyDP(contour, 0.03 * perimeter, True)
+            circle_area = np.pi * (r ** 2)
+            circularity = area / circle_area if circle_area > 0 else 0
+
+            if len(approx) > 4 and circularity > 0.7:
+                x, y, r = round(x, 2), round(y, 2), round(r, 2)
+                center = (int(x), int(y))
+                cv.circle(return_frame, center, int(r), (173, 216, 230), 2)
+                cv.circle(return_frame, center, 2, (0, 255, 0), 1)
+
+                dt = 1 / settings["fps"] if settings["fps"] > 0 else 0.0
+
+                # -------------------------
+                # Populate or update circles
+                # -------------------------
+                if int(frame_pos) == frame_start or (
+                    settings["selection_on"] and len(circles) == 0
+                ):
+                    circles[bubble_counter] = Circle(x, y, r)
+                    circles[bubble_counter].add_circle(frame_pos, x, y, r)
+                    if settings["pid_on"]:
+                        circles[bubble_counter].pid = CirclePID(x, y, 100, r, dt)
+                        circles[bubble_counter].pid.update(r, dt)
+                    detected_idxs.append(bubble_counter)
+                    bubble_counter += 1
+
+                else:
+                    keys = list(circles.keys())
+                    centers_np = np.array([circles[k].center for k in keys], dtype=np.float32)
+                    idx = closest_idx_finder(centers_np, x, y, settings["min_pos_err"])
+
+                    if idx.size == 0:
+                        circles[bubble_counter] = Circle(x, y, r)
+                        circles[bubble_counter].add_circle(frame_pos, x, y, r)
+                        if settings["pid_on"]:
+                            circles[bubble_counter].pid = CirclePID(x, y, 0, r, dt)
+                            circles[bubble_counter].pid.update(r, dt)
+                        detected_idxs.append(bubble_counter)
+                        bubble_counter += 1
+                    else:
+                        closest_idx = keys[idx[0]]
+                        c = circles[closest_idx]
+                        c.add_circle(frame_pos, x, y, r)
+
+                        # NEW: radius averaging
+                        avg_r = c.avg_radius()
+                        if avg_r:
+                            r = avg_r
+
+                        if c.kalman is None:
+                            c.kalman = CircleKalman(x, y, r, dt)
+                        pred = c.kalman.predict()
+                        c.kalman.correct(np.array([[r]], dtype=np.float32))
+
+                        # NEW: feed-forward + PID
+                        if settings["pid_on"]:
+                            c.pid.update(r, dt)
+                            pwm_ff = 0
+                            if "calibration" in settings and settings["calibration"] is not None:
+                                cal = settings["calibration"]
+                                pwm_vals, rad_vals = cal[:, 0], cal[:, 1]
+                                pwm_ff = np.interp(c.pid.setpoint, rad_vals, pwm_vals)
+                            u_pid = c.pid.control_signal
+                            u_total = np.clip(pwm_ff + u_pid, 0, 100)
+                            c.pid.pwm_cycle = [u_total, 100 - u_total]
+                        detected_idxs.append(closest_idx)
+
+    cv.putText(
+        return_frame, f"FPS: {int(settings['fps'])}",
+        (10, 30), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv.LINE_AA
+    )
+
+    return return_frame, circles
+
+
+# -----------------------------
+# NEW: Pulse-width sweep for calibration
+# -----------------------------
+def pulse_width_sweep(esp32_trigger_func, analyze_func, pwm_values):
+    """
+    Runs a PWM sweep to build radius–energy calibration.
+    """
+    results = []
+    for pwm in pwm_values:
+        esp32_trigger_func(pwm)
+        time.sleep(0.5)  # wait for bubble to form
+        radius = analyze_func()
+        if radius is not None:
+            results.append([pwm, radius])
+            print(f"PWM={pwm} -> radius={radius:.2f}")
+    calibration_table = np.array(results)
+    np.save("radius_calibration.npy", calibration_table)
+    return calibration_table
