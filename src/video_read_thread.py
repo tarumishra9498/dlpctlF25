@@ -287,4 +287,5 @@ class VideoReadThread(QThread):
         print(command)
         serial_code.write(command.encode()) 
     
-    def graph(self)
+    def graph(self):
+        pass
